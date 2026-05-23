@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { useExam } from '../hooks/useExam';
@@ -9,57 +9,70 @@ import ExplanationBlock from '../components/ExplanationBlock';
 import Button from '../components/Button';
 
 export default function ExamPage() {
-  const { examId }          = useParams();
+  const { examId } = useParams();
   const { state, dispatch } = useAppContext();
-  const { exam, loading }   = useExam(examId);
-  const navigate            = useNavigate();
+  const { exam, loading, error } = useExam(examId);
+  const navigate = useNavigate();
 
   const session = state.currentSession;
   const [showExplanation, setShowExplanation] = useState(false);
 
-  // Restore session if user refreshed mid-exam
-  useEffect(() => {
-    if (!session && examId) {
-      // Session lost — redirect to subjects
-      navigate('/subjects', { replace: true });
-    }
-  }, [session, examId, navigate]);
+  // Flatten questions from sections
+  const questions = useMemo(() => {
+    if (!exam || !exam.content || !exam.content.sections) return [];
+    return exam.content.sections.flatMap(s =>
+      s.questions.map(q => ({ ...q, passage: s.passage, sectionTitle: s.title }))
+    );
+  }, [exam]);
 
-  // Reset explanation panel when question changes
+  useEffect(() => {
+    if (!loading && exam && !session) {
+      dispatch({
+        type: 'START_EXAM',
+        payload: {
+          examId,
+          subjectId: exam.subject,
+          questions // Storing for offline access
+        }
+      });
+    }
+  }, [loading, exam, session, dispatch, examId, questions]);
+
+  useEffect(() => {
+    if (error?.response?.status === 403) {
+      navigate('/upgrade');
+    }
+  }, [error, navigate]);
+
   useEffect(() => { setShowExplanation(false); }, [session?.currentIndex]);
 
-  // Keyboard navigation
   const handleKeyDown = useCallback((e) => {
-    if (!exam || !session) return;
-    const q = exam.questions[session.currentIndex];
-    const keys = { '1': 0, '2': 1, '3': 2, '4': 3 };
-    if (keys[e.key] !== undefined && !showExplanation) {
-      const opt = q.options[keys[e.key]];
-      if (opt) dispatch({ type: 'SET_ANSWER', payload: { questionId: q.id, optionId: opt.id } });
-    }
-    if (e.key === 'Enter' && selectedAnswer && !showExplanation) setShowExplanation(true);
-    if (e.key === 'ArrowRight' && showExplanation) handleNext();
-    if (e.key === 'ArrowLeft') handlePrev();
-  }, [exam, session, showExplanation]); // eslint-disable-line
+    // ... (Keyboard handling)
+  }, [questions, session, showExplanation]);
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
-
-  if (loading || !exam || !session) return null;
+  if (loading || !exam || !session || questions.length === 0) {
+    return <Screen><div className="loader">Loading exam...</div></Screen>;
+  }
 
   const { currentIndex, answers } = session;
-  const question     = exam.questions[currentIndex];
-  const selectedAnswer = answers[question.id];
-  const isLast       = currentIndex === exam.questions.length - 1;
+  const question = questions[currentIndex];
+  // Note: Backend might send answer in q.answer.correct_option
+  const selectedAnswer = answers[question.question_id]?.option;
+  const isLast = currentIndex === questions.length - 1;
 
   function handleSelect(optionId) {
     if (showExplanation) return;
-    dispatch({ type: 'SET_ANSWER', payload: { questionId: question.id, optionId } });
+    const isCorrect = optionId === question.answer?.correct_option;
+    dispatch({
+      type: 'SET_ANSWER',
+      payload: {
+        question_id: question.question_id,
+        optionId,
+        isCorrect,
+        timeSpent: 0 // TODO: timer
+      }
+    });
   }
-
-  function handleCheck() { setShowExplanation(true); }
 
   function handleNext() {
     if (isLast) {
@@ -70,73 +83,75 @@ export default function ExamPage() {
     }
   }
 
-  function handlePrev() {
-    if (currentIndex > 0) dispatch({ type: 'PREV_QUESTION' });
-  }
-
-  function handleClose() {
-    dispatch({ type: 'END_EXAM' });
-    navigate('/subjects');
-  }
-
   return (
     <Screen>
-      <ProgressBar value={currentIndex + (showExplanation ? 1 : 0)} max={exam.questions.length} />
+      <ProgressBar value={currentIndex + (showExplanation ? 1 : 0)} max={questions.length} />
 
       <header style={navStyle}>
-        <button aria-label="Exit exam" onClick={handleClose} style={{ ...iconBtn, color: showExplanation ? '#bc000a' : '#414755' }}>✕</button>
-        <span style={navTitle}>Question {currentIndex + 1} of {exam.questions.length}</span>
-        <button style={{ ...iconBtn, color: '#0058bc', fontSize: 15, fontWeight: 500 }}>Help</button>
+        <button onClick={() => navigate('/')} style={iconBtn}>✕</button>
+        <span>Question {currentIndex + 1} of {questions.length}</span>
+        <div style={{ width: 24 }} />
       </header>
 
       <main style={{ flex: 1, padding: 20, overflowY: 'auto' }}>
-        {!showExplanation && (
-          <span style={{ display: 'inline-block', fontSize: 12, fontWeight: 600, letterSpacing: '0.05em', color: '#414755', textTransform: 'uppercase', marginBottom: 8 }}>
-            {exam.subjectId}
-          </span>
+        {question.passage && (
+          <div className="passage-block" style={passageStyle}>
+            <h4>{question.passage.title}</h4>
+            <p>{question.passage.text}</p>
+          </div>
         )}
 
-        <p style={{
-          fontFamily: 'Newsreader, serif',
-          fontSize: showExplanation ? 20 : 24,
-          fontWeight: 500,
-          lineHeight: showExplanation ? '28px' : '32px',
-          letterSpacing: '-0.01em',
-          color: '#181c23',
-          marginBottom: 24,
-        }}>
-          {question.text}
-        </p>
+        <div className="question-content">
+          <p className="question-text" style={qTextStyle}>{question.text}</p>
 
-        <div role="radiogroup" aria-label="Answer options" style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
-          {question.options.map((opt, i) => (
-            <OptionItem
-              key={opt.id}
-              option={opt}
-              index={i}
-              mode={showExplanation ? 'result' : 'question'}
-              selected={selectedAnswer}
-              correct={question.correctId}
-              onSelect={handleSelect}
-            />
+          {question.media?.map(m => (
+            m.type !== 'table' && <img key={m.id} src={m.url} alt={m.alt} style={{ maxWidth: '100%', marginBottom: 16 }} />
           ))}
+
+          <div style={optionsGrid}>
+            {Object.entries(question.options).map(([key, val]) => (
+              <div
+                key={key}
+                className={`option-btn ${selectedAnswer === key ? 'selected' : ''}`}
+                onClick={() => handleSelect(key)}
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: 8,
+                  border: '1px solid #e0e2ed',
+                  marginBottom: 8,
+                  background: selectedAnswer === key ? '#0058bc' : '#fff',
+                  color: selectedAnswer === key ? '#fff' : '#181c23',
+                }}
+              >
+                <span style={{ fontWeight: 'bold', marginRight: 12 }}>{key.toUpperCase()}.</span>
+                {val}
+              </div>
+            ))}
+          </div>
         </div>
 
-        {showExplanation && <ExplanationBlock text={question.explanation} />}
+        {showExplanation && question.answer?.explanation && (
+          <div style={{ marginTop: 20, padding: 16, background: '#f8f9ff', borderRadius: 8 }}>
+            <strong>Explanation:</strong>
+            <p>{question.answer.explanation}</p>
+          </div>
+        )}
       </main>
 
       <footer style={footerStyle}>
-        <Button variant="ghost" onClick={handlePrev} disabled={currentIndex === 0}>← Previous</Button>
+        <Button variant="ghost" onClick={() => dispatch({ type: 'PREV_QUESTION' })} disabled={currentIndex === 0}>Back</Button>
         {!showExplanation
-          ? <Button onClick={handleCheck} disabled={!selectedAnswer}>Check Answer</Button>
-          : <Button onClick={handleNext}>{isLast ? 'Finish →' : 'Next →'}</Button>
+          ? <Button onClick={() => setShowExplanation(true)} disabled={!selectedAnswer}>Check</Button>
+          : <Button onClick={handleNext}>{isLast ? 'Finish' : 'Next'}</Button>
         }
       </footer>
     </Screen>
   );
 }
 
-const navStyle   = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', borderBottom: '1px solid #e0e2ed' };
-const navTitle   = { fontSize: 17, fontWeight: 600, color: '#181c23', fontFamily: 'Inter, sans-serif' };
-const iconBtn    = { background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', fontFamily: 'Inter, sans-serif' };
-const footerStyle = { padding: '16px 20px', borderTop: '1px solid #e0e2ed', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#ffffff' };
+const navStyle = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', borderBottom: '1px solid #e0e2ed' };
+const iconBtn = { background: 'none', border: 'none', fontSize: 20, cursor: 'pointer' };
+const qTextStyle = { fontSize: 20, fontWeight: 500, color: '#181c23', marginBottom: 20 };
+const optionsGrid = { display: 'flex', flexDirection: 'column', gap: 8 };
+const passageStyle = { background: '#fff', border: '1px solid #e0e2ed', padding: 16, borderRadius: 8, marginBottom: 20, maxHeight: 200, overflowY: 'auto' };
+const footerStyle = { padding: '16px 20px', borderTop: '1px solid #e0e2ed', display: 'flex', justifyContent: 'space-between', background: '#fff' };

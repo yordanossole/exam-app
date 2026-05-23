@@ -22,8 +22,8 @@ export default function SubjectCard({ subject, onClick }) {
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 16, fontWeight: 500, color: '#181c23' }}>{subject.name}</div>
-        <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.05em', color: '#717786', textTransform: 'uppercase', marginTop: 2 }}>
-          {subject.examCount} Exams
+        <div style={{ fontSize: 12, fontWeight: 600, color: '#717786' }}>
+          {subject.category}
         </div>
       </div>
       <span style={{ color: '#c1c6d7', fontSize: 18 }}>›</span>
