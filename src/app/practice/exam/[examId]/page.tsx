@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getExamById } from '../../../../lib/db';
 import PaidGradeGate from '../../../../screens/practice/PaidGradeGate';
+import BackButton from '../../../../components/BackButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,31 +13,30 @@ export default async function Page({ params }: { params: Promise<{ examId: strin
 
   return (
     <PaidGradeGate grade={exam.grade}>
+      <BackButton fallback="/practice" label="Back to Exams" />
       <main style={shell}>
-      <Link href={`/practice/grade/${exam.grade}/subject/${exam.subject}`} style={backLink}>← Exams</Link>
-      <h1 style={title}>{exam.subject_display}</h1>
-      <p style={subtitle}>Grade {exam.grade} · {exam.year_ec} E.C. · {exam.total_questions} questions</p>
+        <h1 style={title}>{exam.subject_display}</h1>
+        <p style={subtitle}>Grade {exam.grade} · {exam.year_ec} E.C. · {exam.total_questions} questions</p>
 
-      <section style={grid}>
-        <Link href={`/practice/exam/${exam.exam_id}/practice`} style={card}>
-          <span style={cardTitle}>Practice Mode</span>
-          <span style={meta}>Check answers, request hints, and reveal explanations question by question.</span>
-          <span style={arrow}>›</span>
-        </Link>
-        <Link href={`/practice/exam/${exam.exam_id}/mock`} style={card}>
-          <span style={cardTitle}>Mock Exam</span>
-          <span style={meta}>Move through the paper without explanations, then submit for a topic report.</span>
-          <span style={arrow}>›</span>
-        </Link>
-      </section>
-      <div style={{ height: 80 }} />
+        <section style={grid}>
+          <Link href={`/practice/exam/${exam.exam_id}/practice`} style={card}>
+            <span style={cardTitle}>Practice Mode</span>
+            <span style={meta}>Check answers, request hints, and reveal explanations question by question.</span>
+            <span style={arrow}>›</span>
+          </Link>
+          <Link href={`/practice/exam/${exam.exam_id}/mock`} style={card}>
+            <span style={cardTitle}>Mock Exam</span>
+            <span style={meta}>Move through the paper without explanations, then submit for a topic report.</span>
+            <span style={arrow}>›</span>
+          </Link>
+        </section>
+        <div style={{ height: 80 }} />
       </main>
     </PaidGradeGate>
   );
 }
 
 const shell = { minHeight: '100dvh', maxWidth: 520, margin: '0 auto', padding: 16, background: 'var(--color-bg)' } as const;
-const backLink = { display: 'inline-flex', minHeight: 44, alignItems: 'center', color: 'var(--color-primary)', textDecoration: 'none', font: 'var(--text-btn)' } as const;
 const title = { font: 'var(--text-screen-title)', color: 'var(--color-text-strong)', marginTop: 8 } as const;
 const subtitle = { font: 'var(--text-body)', color: 'var(--color-text-secondary)', margin: '8px 0 20px' } as const;
 const grid = { display: 'grid', gap: 12 } as const;

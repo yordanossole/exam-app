@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useAppContext } from '../../context/AppContext';
 import { getPaidGrade } from '../../lib/subscription';
+import BackButton from '../../components/BackButton';
 
 export default function PaidGradeGate({ grade, children }) {
   const { state } = useAppContext();
@@ -11,6 +12,7 @@ export default function PaidGradeGate({ grade, children }) {
   if (!paidGrade) {
     return (
       <main style={shell}>
+        <BackButton fallback="/practice" label="Back to Exams" />
         <section style={card}>
           <h1 style={title}>No active grade plan</h1>
           <p style={body}>Activate a grade plan to access its exams.</p>
@@ -23,6 +25,7 @@ export default function PaidGradeGate({ grade, children }) {
   if (paidGrade !== grade) {
     return (
       <main style={shell}>
+        <BackButton fallback="/practice" label="Back to Exams" />
         <section style={card}>
           <h1 style={title}>Grade {grade} is not in your plan</h1>
           <p style={body}>Your active plan is for Grade {paidGrade}.</p>

@@ -6,6 +6,7 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import { Badge } from '../components/StatChip';
 import { paymentApi } from '../services/api';
+import BackButton from '../components/BackButton';
 
 export default function UpgradePage() {
   const [plans, setPlans] = useState([]);
@@ -36,6 +37,7 @@ export default function UpgradePage() {
 
   return (
     <div style={screenWrap}>
+      <BackButton fallback="/profile" label="Back to Profile" />
       <main style={scrollContent}>
         <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', textAlign: 'center', marginBottom: 24 }}>
           Get full access to all past exams and detailed statistics.

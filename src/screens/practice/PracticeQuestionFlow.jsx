@@ -6,6 +6,7 @@ import { useAppContext } from '../../context/AppContext';
 import { getPaidGrade } from '../../lib/subscription';
 import Button from '../../components/Button';
 import ProgressBar from '../../components/ProgressBar';
+import BackButton from '../../components/BackButton';
 
 function parseTableRows(tableContent) {
   return String(tableContent || '')
@@ -86,6 +87,7 @@ export default function PracticeQuestionFlow({ exam, questions, mode }) {
   if (getPaidGrade(state.user) !== exam.grade) {
     return (
       <main style={shell}>
+        <BackButton fallback="/practice" label="Back to Exams" />
         <section style={unavailableCard}>
           <h1 style={questionText}>This exam is not included in your active grade plan.</h1>
           <button onClick={() => navigate('/practice')} style={backButton}>Back to My Exams</button>
@@ -160,8 +162,8 @@ export default function PracticeQuestionFlow({ exam, questions, mode }) {
 
   return (
     <main style={shell}>
+      <BackButton fallback={`/practice/exam/${exam.exam_id}`} label="Back to Exam" />
       <header style={topBar}>
-        <button onClick={() => navigate(`/practice/exam/${exam.exam_id}`)} aria-label="Exit exam" style={iconButton}>×</button>
         <div style={{ flex: 1 }}>
           <ProgressBar value={progress} max={questions.length} />
           <p style={progressText}>Q {index + 1} / {questions.length} · {mode === 'mock' ? 'Mock Exam' : 'Practice'}</p>
@@ -251,7 +253,6 @@ export default function PracticeQuestionFlow({ exam, questions, mode }) {
 
 const shell = { minHeight: '100dvh', maxWidth: 560, margin: '0 auto', background: 'var(--color-bg)', display: 'flex', flexDirection: 'column' };
 const topBar = { display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' };
-const iconButton = { width: 36, height: 36, borderRadius: 10, border: '1px solid var(--color-border)', background: 'var(--color-bg)', color: 'var(--color-text-secondary)', fontSize: 22 };
 const progressText = { marginTop: 4, font: 'var(--text-caption)', color: 'var(--color-text-secondary)', textAlign: 'center' };
 const content = { flex: 1, overflowY: 'auto', padding: 16 };
 const passageCard = { background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 16, marginBottom: 14, whiteSpace: 'pre-wrap' };

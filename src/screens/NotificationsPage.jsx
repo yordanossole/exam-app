@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 
 /* ── Toggle Switch ────────────────────────────────────────────── */
 function Toggle({ on, onChange }) {
@@ -92,6 +93,7 @@ export default function NotificationsPage() {
 
   return (
     <div style={screenWrap}>
+      <BackButton fallback="/profile" label="Back to Profile" />
       <main style={scrollContent}>
 
         {/* Master switch */}

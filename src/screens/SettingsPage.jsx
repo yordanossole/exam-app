@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 
 /* ── Reusable sub-components ──────────────────────────────────── */
 
 function PageShell({ children }) {
   return (
     <div style={screenWrap}>
+      <BackButton fallback="/profile" label="Back to Profile" />
       <main style={scrollContent}>{children}</main>
     </div>
   );

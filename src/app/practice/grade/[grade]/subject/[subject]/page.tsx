@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getExamsByGradeAndSubject } from '../../../../../../lib/db';
 import PaidGradeGate from '../../../../../../screens/practice/PaidGradeGate';
+import BackButton from '../../../../../../components/BackButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,29 +16,28 @@ export default async function Page({ params }: { params: Promise<{ grade: string
 
   return (
     <PaidGradeGate grade={gradeNumber}>
+      <BackButton fallback="/practice" label="Back to Exams" />
       <main style={shell}>
-      <Link href={`/practice/grade/${gradeNumber}`} style={backLink}>← Subjects</Link>
-      <h1 style={title}>{subjectName}</h1>
-      <p style={subtitle}>Choose an exam year, then select practice or mock exam mode.</p>
+        <h1 style={title}>{subjectName}</h1>
+        <p style={subtitle}>Choose an exam year, then select practice or mock exam mode.</p>
 
-      <section style={grid}>
-        {exams.map(exam => (
-          <Link key={exam.exam_id} href={`/practice/exam/${exam.exam_id}`} style={card}>
-            <span style={cardTitle}>{exam.year_ec} E.C.</span>
-            <span style={meta}>{exam.total_questions} questions · {exam.total_sections} sections</span>
-            {!exam.verified && <span style={reviewBadge}>Unverified</span>}
-            <span style={arrow}>›</span>
-          </Link>
-        ))}
-      </section>
-      <div style={{ height: 80 }} />
+        <section style={grid}>
+          {exams.map(exam => (
+            <Link key={exam.exam_id} href={`/practice/exam/${exam.exam_id}`} style={card}>
+              <span style={cardTitle}>{exam.year_ec} E.C.</span>
+              <span style={meta}>{exam.total_questions} questions · {exam.total_sections} sections</span>
+              {!exam.verified && <span style={reviewBadge}>Unverified</span>}
+              <span style={arrow}>›</span>
+            </Link>
+          ))}
+        </section>
+        <div style={{ height: 80 }} />
       </main>
     </PaidGradeGate>
   );
 }
 
 const shell = { minHeight: '100dvh', maxWidth: 520, margin: '0 auto', padding: 16, background: 'var(--color-bg)' } as const;
-const backLink = { display: 'inline-flex', minHeight: 44, alignItems: 'center', color: 'var(--color-primary)', textDecoration: 'none', font: 'var(--text-btn)' } as const;
 const title = { font: 'var(--text-screen-title)', color: 'var(--color-text-strong)', marginTop: 8, textTransform: 'capitalize' } as const;
 const subtitle = { font: 'var(--text-body)', color: 'var(--color-text-secondary)', margin: '8px 0 20px' } as const;
 const grid = { display: 'grid', gap: 12 } as const;

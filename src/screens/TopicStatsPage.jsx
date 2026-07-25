@@ -4,6 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import Card from '../components/Card';
 import CircularRing from '../components/CircularRing';
 import ProgressBar from '../components/ProgressBar';
+import BackButton from '../components/BackButton';
 
 export default function TopicStatsPage() {
   const { state } = useAppContext();
@@ -14,6 +15,7 @@ export default function TopicStatsPage() {
 
   return (
     <div style={screenWrap}>
+      <BackButton fallback="/profile" label="Back to Profile" />
       <main style={scrollContent}>
 
         {/* Overall accuracy ring */}

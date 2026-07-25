@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Card from '../components/Card';
+import BackButton from '../components/BackButton';
 
 const FAQS = [
   {
@@ -84,6 +85,7 @@ const CONTACT_ITEMS = [
 export default function HelpSupportPage() {
   return (
     <div style={screenWrap}>
+      <BackButton fallback="/profile" label="Back to Profile" />
       <main style={scrollContent}>
 
         {/* Search hint */}

@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from '../lib/navigation';
 import { paymentApi } from '../services/api';
 import Card from '../components/Card';
 import Button from '../components/Button';
+import BackButton from '../components/BackButton';
 
 export default function PaymentPage() {
   const location = useLocation();
@@ -18,6 +19,7 @@ export default function PaymentPage() {
   if (!plan) {
     return (
       <div style={{ ...screenWrap, alignItems: 'center', justifyContent: 'center' }}>
+        <BackButton fallback="/upgrade" label="Back to Plans" />
         <p style={{ font: 'var(--text-body)', color: 'var(--color-error)', padding: 24 }}>
           No plan selected. Please go back and choose a plan.
         </p>
@@ -46,6 +48,7 @@ export default function PaymentPage() {
   if (submitted) {
     return (
       <div style={{ ...screenWrap, alignItems: 'center', justifyContent: 'center', padding: '40px var(--screen-pad)' }}>
+        <BackButton fallback="/upgrade" label="Back to Plans" />
         <div style={{
           width: 80, height: 80, borderRadius: '50%',
           background: 'var(--color-accent-tint)', border: '2px solid var(--color-accent)',
@@ -67,6 +70,7 @@ export default function PaymentPage() {
 
   return (
     <div style={screenWrap}>
+      <BackButton fallback="/upgrade" label="Back to Plans" />
       <main style={scrollContent}>
 
         {/* Selected plan summary */}

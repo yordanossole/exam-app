@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { getQuestionsNeedingReview } from '../../../lib/db';
+import BackButton from '../../../components/BackButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,7 +8,7 @@ export default function Page() {
 
   return (
     <main style={shell}>
-      <Link href="/" style={backLink}>← App</Link>
+      <BackButton fallback="/" label="Back to App" />
       <h1 style={title}>Content Review</h1>
       <p style={subtitle}>{questions.length} flagged questions shown. These should be checked before publishing.</p>
 
@@ -32,7 +32,6 @@ export default function Page() {
 }
 
 const shell = { minHeight: '100dvh', maxWidth: 760, margin: '0 auto', padding: 16, background: 'var(--color-bg)' } as const;
-const backLink = { display: 'inline-flex', minHeight: 44, alignItems: 'center', color: 'var(--color-primary)', textDecoration: 'none', font: 'var(--text-btn)' } as const;
 const title = { font: 'var(--text-screen-title)', color: 'var(--color-text-strong)', marginTop: 8 } as const;
 const subtitle = { font: 'var(--text-body)', color: 'var(--color-text-secondary)', margin: '8px 0 20px' } as const;
 const list = { display: 'grid', gap: 10 } as const;

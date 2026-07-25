@@ -5,7 +5,6 @@ import { useNavigate, useLocation } from '../lib/navigation';
 const TABS = [
   { path: '/',         label: 'Home',     icon: '⊞' },
   { path: '/practice', label: 'Exams',    icon: '📝' },
-  { path: '/stats',    label: 'Progress', icon: '📊' },
   { path: '/profile',  label: 'Profile',  icon: '👤' },
 ];
 

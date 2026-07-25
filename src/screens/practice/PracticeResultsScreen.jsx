@@ -2,6 +2,7 @@
 
 import { useLocation, useNavigate } from '../../lib/navigation';
 import Button from '../../components/Button';
+import BackButton from '../../components/BackButton';
 
 export default function PracticeResultsScreen() {
   const { state } = useLocation();
@@ -12,6 +13,7 @@ export default function PracticeResultsScreen() {
   if (!result) {
     return (
       <main style={shellCentered}>
+        <BackButton fallback="/practice" label="Back to Exams" />
         <p>No result found.</p>
         <Button onClick={() => navigate('/practice')}>Back to Exams</Button>
       </main>
@@ -20,6 +22,7 @@ export default function PracticeResultsScreen() {
 
   return (
     <main style={shell}>
+      <BackButton fallback="/practice" label="Back to Exams" />
       <h1 style={title}>{result.score === null ? '—' : `${result.score}%`}</h1>
       <p style={subtitle}>{result.answer_key_available ? `${result.correct} of ${result.total} correct` : 'Answer key review is still pending'} · {exam?.subject_display ?? 'Exam'} {exam?.year_ec ? `${exam.year_ec} E.C.` : ''}</p>
 
