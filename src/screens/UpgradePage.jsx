@@ -1,22 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from '../lib/navigation';
-import BottomTabBar from '../components/BottomTabBar';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import { Badge } from '../components/StatChip';
-
-const MOCK_PLANS = [
-  { id: 'p1', name: 'Standard', price: 99,  duration_days: 30,  description: '30 days full access to all exams', badge: null },
-  { id: 'p2', name: 'Premium',  price: 250, duration_days: 90,  description: '90 days access + priority support', badge: 'Popular' },
-  { id: 'p3', name: 'Annual',   price: 800, duration_days: 365, description: 'Full year access — best value', badge: 'Best value' },
-];
+import { paymentApi } from '../services/api';
 
 export default function UpgradePage() {
-  const [plans] = useState(MOCK_PLANS);
-  const [loading] = useState(false);
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let active = true;
+    paymentApi.getPlans()
+      .then(response => {
+        const data = response.data?.plans ?? response.data?.data ?? response.data;
+        if (active) setPlans(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        if (active) setError(true);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => { active = false; };
+  }, []);
 
   function handleSelectPlan(plan) {
     navigate('/payment', { state: { plan } });
@@ -24,12 +36,6 @@ export default function UpgradePage() {
 
   return (
     <div style={screenWrap}>
-      <header style={pageHeader}>
-        <button onClick={() => navigate(-1)} style={backBtn} aria-label="Go back">←</button>
-        <span style={pageTitle}>Upgrade Plan</span>
-        <div style={{ width: 44 }} />
-      </header>
-
       <main style={scrollContent}>
         <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', textAlign: 'center', marginBottom: 24 }}>
           Get full access to all past exams and detailed statistics.
@@ -37,6 +43,14 @@ export default function UpgradePage() {
 
         {loading ? (
           <div className="loader">Loading plans…</div>
+        ) : error ? (
+          <p style={{ font: 'var(--text-body)', color: 'var(--color-error)', textAlign: 'center' }}>
+            Plans are temporarily unavailable. Please try again later.
+          </p>
+        ) : plans.length === 0 ? (
+          <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', textAlign: 'center' }}>
+            No plans are available right now.
+          </p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--card-gap)' }}>
             {plans.map(plan => (
@@ -75,7 +89,6 @@ export default function UpgradePage() {
         <div style={{ height: 80 }} />
       </main>
 
-      <BottomTabBar />
     </div>
   );
 }
@@ -84,17 +97,6 @@ const screenWrap = {
   display: 'flex', flexDirection: 'column',
   minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
   background: 'var(--color-bg)',
-};
-const pageHeader = {
-  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-  height: 56, padding: '0 var(--screen-pad)',
-  background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', flexShrink: 0,
-};
-const pageTitle = { font: 'var(--text-card-title)', fontSize: 17, color: 'var(--color-text-primary)' };
-const backBtn = {
-  background: 'none', border: 'none', fontSize: 22,
-  color: 'var(--color-accent)', cursor: 'pointer', minHeight: 44, minWidth: 44,
-  display: 'flex', alignItems: 'center',
 };
 const scrollContent = {
   flex: 1, overflowY: 'auto', padding: 'var(--space-4) var(--screen-pad)',

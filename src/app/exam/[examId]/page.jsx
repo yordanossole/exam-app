@@ -1,7 +1,8 @@
-import ExamPage from '../../../screens/ExamPage';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default function Page() {
-  return <ExamPage />;
+export default async function Page({ params }) {
+  const { examId } = await params;
+  redirect(`/practice/exam/${examId}`);
 }

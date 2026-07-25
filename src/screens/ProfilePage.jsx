@@ -4,7 +4,6 @@ import { useNavigate } from '../lib/navigation';
 import { useAppContext } from '../context/AppContext';
 import Card from '../components/Card';
 import Avatar from '../components/Avatar';
-import { MOCK_STATS } from '../data/quizData';
 
 const SETTINGS_ITEMS = [
   { icon: '🔔', label: 'Notifications',  path: '/notifications' },
@@ -17,18 +16,12 @@ const SETTINGS_ITEMS = [
 export default function ProfilePage() {
   const { state } = useAppContext();
   const { user } = state;
-  const stats = state.stats ?? MOCK_STATS;
+  const stats = state.stats;
   const navigate = useNavigate();
   const streak = stats?.streak ?? 0;
 
   return (
     <div style={screenWrap}>
-      <header style={pageHeader}>
-        <button onClick={() => navigate(-1)} style={backBtn} aria-label="Go back">←</button>
-        <span style={pageTitle}>Profile</span>
-        <div style={{ width: 44 }} />
-      </header>
-
       <main style={scrollContent}>
         {/* Avatar + name */}
         <div style={avatarSection}>
@@ -63,6 +56,7 @@ export default function ProfilePage() {
             </button>
           ))}
         </Card>
+        <div style={{ height: 80 }} />
       </main>
     </div>
   );
@@ -72,16 +66,6 @@ const screenWrap = {
   display: 'flex', flexDirection: 'column',
   minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
   background: 'var(--color-bg)',
-};
-const pageHeader = {
-  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-  height: 56, padding: '0 var(--screen-pad)',
-  background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', flexShrink: 0,
-};
-const pageTitle = { font: 'var(--text-card-title)', fontSize: 17, color: 'var(--color-text-primary)' };
-const backBtn = {
-  background: 'none', border: 'none', fontSize: 22, color: 'var(--color-accent)',
-  cursor: 'pointer', minHeight: 44, minWidth: 44, display: 'flex', alignItems: 'center',
 };
 const scrollContent = {
   flex: 1, overflowY: 'auto', padding: 'var(--space-4) var(--screen-pad)',

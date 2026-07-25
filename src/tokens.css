@@ -118,8 +118,9 @@
    ══════════════════════════════════════════════════ */
 :root {
   /* Font families */
-  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body:    'Manrope', system-ui, sans-serif;
+  --font-ethiopic: 'Manrope', 'Noto Sans Ethiopic', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Noto Sans Ethiopic', system-ui, sans-serif;
+  --font-body:    'Manrope', 'Noto Sans Ethiopic', system-ui, sans-serif;
 
   /* ── Type scale ─────────────────────────────── */
   /* Display — 96px / 160px — Plus Jakarta Sans 800 */

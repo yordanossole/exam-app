@@ -1,7 +1,7 @@
-import ExamListPage from '../../../screens/ExamListPage';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
 export default function Page() {
-  return <ExamListPage />;
+  redirect('/practice');
 }

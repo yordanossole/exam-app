@@ -4,8 +4,9 @@ import { useNavigate, useLocation } from '../lib/navigation';
 
 const TABS = [
   { path: '/',         label: 'Home',     icon: '⊞' },
-  { path: '/subjects', label: 'Subjects', icon: '📚' },
+  { path: '/practice', label: 'Exams',    icon: '📝' },
   { path: '/stats',    label: 'Progress', icon: '📊' },
+  { path: '/profile',  label: 'Profile',  icon: '👤' },
 ];
 
 export default function BottomTabBar() {

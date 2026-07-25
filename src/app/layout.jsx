@@ -1,5 +1,6 @@
 import '../index.css';
 import Providers from './providers';
+import AppShell from '../components/AppShell';
 
 export const metadata = {
   title: 'NT Exams',
@@ -10,7 +11,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <AppShell>{children}</AppShell>
+        </Providers>
       </body>
     </html>
   );

@@ -67,12 +67,6 @@ export default function PaymentPage() {
 
   return (
     <div style={screenWrap}>
-      <header style={pageHeader}>
-        <button onClick={() => navigate(-1)} style={backBtn} aria-label="Go back">←</button>
-        <span style={pageTitle}>Complete Payment</span>
-        <div style={{ width: 44 }} />
-      </header>
-
       <main style={scrollContent}>
 
         {/* Selected plan summary */}
@@ -151,7 +145,7 @@ export default function PaymentPage() {
           </form>
         </Card>
 
-        <div style={{ height: 24 }} />
+        <div style={{ height: 80 }} />
       </main>
     </div>
   );
@@ -161,17 +155,6 @@ const screenWrap = {
   display: 'flex', flexDirection: 'column',
   minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
   background: 'var(--color-bg)',
-};
-const pageHeader = {
-  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-  height: 56, padding: '0 var(--screen-pad)',
-  background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', flexShrink: 0,
-};
-const pageTitle = { font: 'var(--text-card-title)', fontSize: 17, color: 'var(--color-text-primary)' };
-const backBtn = {
-  background: 'none', border: 'none', fontSize: 22,
-  color: 'var(--color-accent)', cursor: 'pointer', minHeight: 44, minWidth: 44,
-  display: 'flex', alignItems: 'center',
 };
 const scrollContent = {
   flex: 1, overflowY: 'auto', padding: 'var(--space-4) var(--screen-pad)',

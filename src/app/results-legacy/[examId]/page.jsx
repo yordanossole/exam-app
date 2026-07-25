@@ -1,7 +1,7 @@
-import ResultsPage from '../../../screens/ResultsPage';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
 export default function Page() {
-  return <ResultsPage />;
+  redirect('/practice');
 }

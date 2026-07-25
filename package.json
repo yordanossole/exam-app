@@ -6,22 +6,29 @@
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
+    "db:import": "tsx scripts/import-exam-data.ts",
     "lint": "eslint .",
     "start": "next start -H 0.0.0.0"
   },
   "dependencies": {
     "axios": "^1.16.1",
+    "better-sqlite3": "^13.0.1",
     "next": "^16.2.12",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "xlsx": "^0.18.5",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^26.1.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.6.0",
+    "tsx": "^4.23.1",
     "typescript": "^5.9.0"
   }
 }

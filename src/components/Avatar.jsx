@@ -13,7 +13,8 @@ export default function Avatar({ src, name = '?', size = 40, ring = false, onCli
       onClick={onClick}
       onKeyDown={onClick ? e => e.key === 'Enter' && onClick() : undefined}
       style={{
-        width: size, height: size,
+        width: size, height: size, minWidth: size, minHeight: size,
+        aspectRatio: '1 / 1', boxSizing: 'border-box',
         borderRadius: '50%', flexShrink: 0, overflow: 'hidden',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: src ? 'transparent' : 'var(--color-primary-tint)',
@@ -27,7 +28,7 @@ export default function Avatar({ src, name = '?', size = 40, ring = false, onCli
       }}
     >
       {src
-        ? <img src={src} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ? <img src={src} alt={name} style={{ width: '100%', height: '100%', display: 'block', borderRadius: '50%', objectFit: 'cover' }} />
         : initial}
     </div>
   );

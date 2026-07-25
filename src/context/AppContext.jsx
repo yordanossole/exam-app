@@ -1,31 +1,22 @@
 'use client';
 
 import { createContext, useContext, useReducer, useEffect } from 'react';
+import { userApi } from '../services/api';
 
 const AppContext = createContext();
 
-// Mock user and stats — replace with real API data when auth is re-enabled
-const MOCK_USER = {
-  display_name: 'Test User',
-  role: 'Free',
-  avatar_url: null,
-  active_subscription: null,
-};
-
-const MOCK_STATS = {
-  // Fields used by HomeScreen streak strip
-  streak: 0,
-  points: 0,
-  accuracy: 0,
-  // Fields used by TopicStatsPage
-  overall_accuracy: 0,
-  subject_stats: [],
-};
-
 const initialState = {
   isAuthenticated: true,
-  user: MOCK_USER,
-  stats: MOCK_STATS,
+  user: {
+    display_name: 'Test User',
+    role: 'Paid',
+    avatar_url: null,
+    active_subscription: {
+      status: 'active',
+      grade: 6,
+    },
+  },
+  stats: null,
   recentActivity: [],
   subjectProgress: [],
   currentSession: null, // { examId, subjectId, currentIndex, answers: {qId: optionId}, submitted: bool, questions: [] }
@@ -101,7 +92,6 @@ function appReducer(state, action) {
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Online/offline detection (auth disabled — using mock user)
   useEffect(() => {
     const handleOnline = () => dispatch({ type: 'SET_OFFLINE', payload: false });
     const handleOffline = () => dispatch({ type: 'SET_OFFLINE', payload: true });
@@ -115,6 +105,23 @@ export function AppProvider({ children }) {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
+  }, []);
+
+  useEffect(() => {
+    if (!localStorage.getItem('auth_token')) return undefined;
+
+    let active = true;
+    Promise.allSettled([userApi.getProfile(), userApi.getStats()]).then(([profile, stats]) => {
+      if (!active) return;
+      if (profile.status === 'fulfilled') {
+        dispatch({ type: 'SET_USER', payload: profile.value.data?.data ?? profile.value.data });
+      }
+      if (stats.status === 'fulfilled') {
+        dispatch({ type: 'SET_STATS', payload: stats.value.data?.data ?? stats.value.data });
+      }
+    });
+
+    return () => { active = false; };
   }, []);
 
   return <AppContext.Provider value={{ state, dispatch }}>{children}</AppContext.Provider>;

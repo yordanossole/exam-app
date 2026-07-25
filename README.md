@@ -1,200 +1,43 @@
-# Exam App — Next.js Architecture
+# NT Exams
 
-A mobile-first multiple-choice exam web application built with Next.js, React, and Context API.
+NT Exams is a Next.js App Router national-examination practice app for Grade 6, Grade 8, and Grade 12 learners.
 
----
+## Exam data
 
-## 1. Project Structure & Component Hierarchy
+All exam content is read from [`nt-exams.db`](nt-exams.db) through `better-sqlite3`. The database stores:
 
-```
-app/
-├── layout.jsx        # Root layout and global styles
-├── providers.jsx     # Client-side context providers
-├── page.jsx          # Home route
-├── quiz/             # Quiz routes
-├── subjects/         # Subject routes
-├── exam/             # Exam routes
-└── results/          # Results routes
-src/
-├── components/       # Reusable UI components (atomic design)
-│   ├── Button.jsx
-│   ├── ExplanationBlock.jsx
-│   ├── OptionItem.jsx
-│   ├── ProgressBar.jsx
-│   ├── Screen.jsx
-│   ├── StatCard.jsx
-│   ├── SubjectCard.jsx
-│   └── TabBar.jsx
-├── screens/          # Client screen components used by routes
-│   ├── HomePage.jsx
-│   ├── SubjectsPage.jsx
-│   ├── ExamListPage.jsx
-│   ├── ExamPage.jsx
-│   ├── ResultsPage.jsx
-│   └── ProfilePage.jsx
-├── context/          # Global state management
-│   └── AppContext.jsx
-├── hooks/            # Custom React hooks
-│   └── useExam.js
-├── data/             # Mock data (swap for API calls)
-│   └── mockData.js
-├── lib/
-│   └── navigation.js # Small adapter around next/navigation
-└── index.css         # Global styles
-```
+- exams, sections, passages, and media;
+- questions with variable content in the validated `questions.content` JSON column;
+- answer-key data used by server-side checking and topic scoring.
 
-**Component Breakdown:**
-- **Atomic Components**: Button, ProgressBar, StatCard, OptionItem, ExplanationBlock, SubjectCard
-- **Layout Components**: Screen (max-width container), TabBar (bottom navigation)
-- **Page Components**: HomePage, SubjectsPage, ExamListPage, ExamPage, ResultsPage, ProfilePage
+The app does not use local question-bank data for exams. The practice entry page reads the active user subscription and shows only its paid grade. Subjects and exam years are then loaded from the SQLite database.
 
----
+## Exam flow
 
-## 2. Routing Strategy
+`/practice` → paid grade subjects → exam year → practice or timed mode → results by topic.
 
-**User Flow:**
-```
-Home → Subjects → ExamList → Exam Session → Results
-                                ↓
-                          (Question Loop with inline Explanation)
-```
+Legacy `/subjects`, `/quiz`, and `/exam` URLs redirect into the database-backed practice flow. `/admin/review` lists questions that need content or answer-key review.
 
-**Routes (Next App Router):**
-- `/` — Home (stats, recent activity, CTA)
-- `/quiz/daily` — Daily quiz
-- `/quiz/category/[categoryId]` — Category quiz
-- `/subjects` — Subject selection (search, filter, list)
-- `/subjects/[subjectId]` — Exam list for a subject
-- `/exam/[examId]` — Exam session (question loop + explanation inline)
-- `/results/[examId]` — Quiz final score + per-question breakdown
-- `/results-legacy/[examId]` — Legacy exam results
-- `/profile` — User profile, progress, settings
-
-**Deep Linking & Refresh Handling:**
-- `currentSession` is persisted to `localStorage` on every state change.
-- If a user refreshes mid-exam, the session is restored from localStorage.
-- If the session is lost (e.g., cleared storage), the user is redirected to `/subjects`.
-
----
-
-## 3. State Management Strategy
-
-**Global State (Context API + useReducer):**
-- `user` — name, email, avatar
-- `stats` — examsCompleted, avgScore, streak, studyTime
-- `recentActivity` — list of completed exams
-- `subjectProgress` — per-subject progress percentages
-- `currentSession` — { examId, subjectId, currentIndex, answers: {qId: optionId}, submitted }
-
-**Local State:**
-- `showExplanation` (ExamPage) — toggles between question and explanation view
-- `query`, `category` (SubjectsPage) — search and filter state
-
-**Why Context + useReducer?**
-- App is small-to-medium size; no need for Redux.
-- Context provides global access to session state.
-- useReducer centralizes state transitions (START_EXAM, SET_ANSWER, NEXT_QUESTION, etc.).
-- localStorage integration is simple and effective for persistence.
-
----
-
-## 4. Data Structure & Mock Data
-
-**JSON Schema:**
-```js
-{
-  subjects: [
-    { id, name, icon, color, examCount, category }
-  ],
-  exams: {
-    [subjectId]: [
-      {
-        id, subjectId, title,
-        questions: [
-          {
-            id, text, image,
-            options: [{ id, text }],
-            correctId, explanation
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-**API Replacement:**
-- `fetchSubjects()`, `fetchExamsBySubject(subjectId)`, `fetchExam(examId)` are mock functions in `data/mockData.js`.
-- Replace these with real `fetch()` or `axios` calls to your backend.
-- The shape is intentionally identical to what an API would return.
-
----
-
-## 5. Asset Integration & Styling
-
-**Styling Approach:**
-- Inline styles using the design tokens from DESIGN.md.
-- No Tailwind or CSS-in-JS library — minimal dependencies.
-- Google Fonts (Inter + Newsreader) imported in `index.css`.
-
-**Design Tokens:**
-- Colors: `#0058bc` (primary), `#006e28` (success), `#bc000a` (error), `#fffde7` (explanation bg)
-- Typography: Inter (UI), Newsreader (questions)
-- Spacing: 8px base, 20px mobile margin, 12px gap between cards
-- Border radius: 0.5rem (cards), 0.75rem (modals), 9999px (pills)
-
-**Responsive:**
-- Mobile-first: max-width 420px container.
-- Tablet: same container (design is optimized for handheld).
-
----
-
-## 6. User Experience (UX) Logic
-
-**Question → Explanation → Next Question:**
-1. User selects an answer (radio button).
-2. User clicks "Check Answer" → `showExplanation` = true.
-3. Explanation block appears inline (yellow bg, blue left border).
-4. User clicks "Next" → `currentIndex++`, `showExplanation` = false.
-5. Repeat until last question → "Finish" → navigate to `/results`.
-
-**Progress Persistence (localStorage):**
-- `currentSession` is saved to localStorage on every state change.
-- If the user closes the tab and returns, the session is restored.
-- If the user navigates away (e.g., clicks "Exit"), the session is cleared.
-
-**Accessibility:**
-- Keyboard navigation: 1-4 keys select options, Enter submits, Arrow keys navigate.
-- ARIA labels: `role="radiogroup"`, `aria-checked`, `aria-label`, `aria-current`.
-- Focus management: buttons are keyboard-accessible.
-- Semantic HTML: `<nav>`, `<main>`, `<header>`, `<footer>`.
-
----
-
-## Installation & Usage
+## Importing workbook data
 
 ```bash
-cd exam-app
 npm install
+npm run db:import
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+The importer reads `exams/Exam_Data_Entry_Template.xlsx`, detects each sheet's real header row, imports passage text from `assets/passages/`, validates question JSON with Zod, and updates `nt-exams.db` idempotently.
 
----
+## Shared app chrome
 
-## Future Enhancements
+The root layout provides the uniform top app bar, subscription-grade badge, circular profile button, and bottom navigation across the application. The active exam screen keeps its question controls above the shared navigation.
 
-- Replace mock data with real API calls.
-- Add user authentication (login/signup).
-- Implement timer for timed exams.
-- Add analytics (track time per question, retry count).
-- Support for image-based questions.
-- Dark mode toggle.
-- Offline support (Service Worker + IndexedDB).
+## Routes
 
----
-
-## License
-
-MIT
+- `/` — home
+- `/practice` — subjects for the paid grade
+- `/practice/grade/[grade]/subject/[subject]` — exam years
+- `/practice/exam/[examId]` — mode selection
+- `/practice/exam/[examId]/[mode]` — question flow
+- `/practice/results` — topic score report
+- `/profile`, `/settings`, `/stats`, `/upgrade` — account and progress screens

@@ -2,163 +2,195 @@
 
 import { useNavigate } from '../lib/navigation';
 import { useAppContext } from '../context/AppContext';
-import { useTheme } from '../context/ThemeContext';
-import BottomTabBar from '../components/BottomTabBar';
+import { getPaidGrade } from '../lib/subscription';
 import Card from '../components/Card';
-import { Badge } from '../components/StatChip';
-import Avatar from '../components/Avatar';
-import ProgressBar from '../components/ProgressBar';
+import { Badge, StatChip } from '../components/StatChip';
 import Button from '../components/Button';
-import { MOCK_STATS, CATEGORIES, DAILY_QUIZ } from '../data/quizData';
+
+const SUBJECT_ICONS = {
+  mathematics: '📐',
+  english: '🌍',
+  amharic: '🇪🇹',
+  environmental_science: '🌱',
+  general_science: '🔬',
+  citizenship: '⚖️',
+  citizenship_and_moral_education: '⚖️',
+  afaan_oromo: '🗣️',
+};
 
 function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 18) return 'Good afternoon';
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 18) return 'Good afternoon';
   return 'Good evening';
 }
 
-export default function HomeScreen() {
+function subjectIcon(subject) {
+  return SUBJECT_ICONS[subject] ?? '📘';
+}
+
+export default function HomeScreen({ library = [] }) {
   const { state } = useAppContext();
-  const { theme } = useTheme();
-  const user  = state.user;
-  const stats = state.stats ?? MOCK_STATS;
   const navigate = useNavigate();
+  const user = state.user;
+  const paidGrade = getPaidGrade(user);
+  const gradeLibrary = library.find(item => item.grade === paidGrade);
   const firstName = user?.display_name?.split(' ')[0] ?? 'there';
-
-  const streak = stats?.streak ?? 0;
-
-  const logoSrc = theme === 'dark' ? '/@Logos/logo-white.png' : '/@Logos/logo-blue.png';
+  const stats = state.stats;
+  const hasProgress = Number.isFinite(stats?.overall_accuracy);
 
   return (
     <div style={screenWrap}>
-      {/* ── Header ─────────────────────────────────────────── */}
-      <header style={header}>
-        <img src={logoSrc} alt="NT Exams" style={{ height: 32 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {/* Grade badge */}
-          <span className="grade-badge">Grade 12</span>
-          <Avatar
-            src={user?.avatar_url}
-            name={user?.display_name ?? 'NT'}
-            size={36}
-            ring={streak > 0}
-            onClick={() => navigate('/profile')}
-            style={{ cursor: 'pointer' }}
-          />
-        </div>
-      </header>
-
       <main style={scrollContent}>
+        <section style={intro}>
+          <p style={greeting}>{getGreeting()}, {firstName}.</p>
+          <h1 style={headline}>Build confidence for exam day.</h1>
+          <p style={introCopy}>Practice official national examination papers, one subject at a time.</p>
+        </section>
 
-        {/* Greeting */}
-        <div style={{ marginBottom: 20 }}>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--color-text-secondary)', marginBottom: 4 }}>
-            {getGreeting()}, {firstName}.
-          </p>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: 'var(--color-text-strong)', lineHeight: 1.2 }}>
-            Ready to prepare for your national exam?
-          </h1>
-        </div>
-
-        {/* ── Mock Exam hero (Warm CTA — Spark Orange) ──── */}
-        <Card variant="default" style={{ marginBottom: 16, background: 'var(--color-bg)', border: '1.5px solid var(--color-accent)', overflow: 'hidden' }}>
-          {/* Orange top bar */}
-          <div style={{ height: 4, background: 'var(--gradient-ember)', borderRadius: '12px 12px 0 0', margin: '-20px -20px 16px' }} />
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
-            <div style={{
-              width: 44, height: 44, borderRadius: 10, flexShrink: 0,
-              background: 'var(--color-accent-tint)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22,
-            }}>
-              📝
-            </div>
-            <Badge text="Timed · Full Exam" variant="orange" />
+        <section style={heroCard}>
+          <div style={heroTop}>
+            <div style={heroIcon}>📝</div>
+            <Badge
+              text={paidGrade ? `Grade ${paidGrade} plan` : 'Plan required'}
+              variant={paidGrade ? 'orange' : 'neutral'}
+            />
           </div>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, color: 'var(--color-text-strong)', marginBottom: 4 }}>
-            Grade 12 Mock Exam
-          </h2>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--color-text-secondary)', marginBottom: 16 }}>
-            Mirrors the official national exam format. {DAILY_QUIZ.totalQuestions} questions, timed. Walk into exam day knowing you've already seen this.
+          <h2 style={heroTitle}>{paidGrade ? `Grade ${paidGrade} exam library` : 'Unlock your exam library'}</h2>
+          <p style={heroCopy}>
+            {gradeLibrary
+              ? 'Your paid-grade papers are ready. Choose a subject or jump into the full library.'
+              : 'Activate a grade plan to access the papers assigned to your preparation path.'}
           </p>
-          <Button variant="warm" full size="lg" onClick={() => navigate('/quiz/daily')}>
-            Start Mock Exam
+
+          {gradeLibrary && (
+            <div style={statGrid}>
+              <StatChip icon="📚" value={gradeLibrary.exam_count} label="Papers" variant="orange" />
+              <StatChip icon="📖" value={gradeLibrary.subject_count} label="Subjects" variant="blue" />
+              <StatChip icon="❓" value={gradeLibrary.question_count} label="Questions" variant="mint" />
+            </div>
+          )}
+
+          <Button variant="warm" full size="lg" onClick={() => navigate(paidGrade ? '/practice' : '/upgrade')}>
+            {paidGrade ? 'Open Exam Library' : 'View Plans'}
           </Button>
-        </Card>
+        </section>
 
-        {/* ── Practice by Subject (Nova Blue CTAs) ───────── */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: 'var(--color-text-strong)' }}>
-            Practice by Subject
-          </h3>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--color-text-secondary)' }}>
-            Aligned to the Grade 12 syllabus
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--card-gap)' }}>
-          {CATEGORIES.map(cat => {
-            return (
-              <Card key={cat.id} onPress={() => navigate(`/quiz/category/${cat.id}`)} padding="0">
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
-                  {/* Subject icon */}
-                  <div style={{
-                    width: 44, height: 44, borderRadius: 'var(--radius-icon)', flexShrink: 0,
-                    background: cat.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
-                  }}>
-                    {cat.icon}
-                  </div>
-
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                      <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: 'var(--color-text-strong)' }}>
-                        {cat.name}
-                      </span>
-
-                    </div>
-                    <ProgressBar value={cat.progress} />
-                    <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--color-text-muted)', marginTop: 4 }}>
-                      {cat.progress}% complete
-                    </p>
-                  </div>
-
-                  <span style={{ color: 'var(--color-text-muted)', fontSize: 18, flexShrink: 0 }}>›</span>
+        {gradeLibrary && (
+          <>
+            <section style={section}>
+              <div style={sectionHeader}>
+                <div>
+                  <p style={sectionEyebrow}>Your plan</p>
+                  <h2 style={sectionTitle}>Subjects to practice</h2>
                 </div>
-              </Card>
-            );
-          })}
-        </div>
+                <button type="button" onClick={() => navigate('/practice')} style={textButton}>See all</button>
+              </div>
+              <div style={subjectGrid}>
+                {gradeLibrary.subjects.slice(0, 6).map(subject => (
+                  <Card
+                    key={subject.subject}
+                    onPress={() => navigate(`/practice/grade/${paidGrade}/subject/${subject.subject}`)}
+                    padding="14px"
+                    style={subjectCard}
+                  >
+                    <span style={subjectIconStyle}>{subjectIcon(subject.subject)}</span>
+                    <span style={subjectName}>{subject.subject_display}</span>
+                    <span style={subjectMeta}>{subject.exam_count} {subject.exam_count === 1 ? 'paper' : 'papers'}</span>
+                  </Card>
+                ))}
+              </div>
+            </section>
 
-        {/* Evidence-based motivation */}
-        <Card variant="tinted" style={{ marginTop: 20, marginBottom: 8 }}>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
-            📈 Students who complete 6 or more practice exams improve their average national score by <strong style={{ color: 'var(--color-primary)' }}>18%</strong>. You've completed {stats?.subject_stats?.length ?? 0} so far.
-          </p>
-        </Card>
+            <section style={section}>
+              <div style={sectionHeader}>
+                <div>
+                  <p style={sectionEyebrow}>Recently added</p>
+                  <h2 style={sectionTitle}>Latest exam papers</h2>
+                </div>
+                <span style={sectionHint}>E.C. years</span>
+              </div>
+              <div style={paperList}>
+                {gradeLibrary.latest_exams.map((exam, index) => (
+                  <button
+                    key={exam.exam_id}
+                    type="button"
+                    onClick={() => navigate(`/practice/exam/${exam.exam_id}`)}
+                    style={{ ...paperRow, borderBottom: index === gradeLibrary.latest_exams.length - 1 ? 'none' : paperRow.borderBottom }}
+                  >
+                    <span style={yearBadge}>{exam.year_ec}</span>
+                    <span style={paperInfo}>
+                      <strong style={paperTitle}>{exam.subject_display}</strong>
+                      <span style={paperMeta}>{exam.total_questions} questions · {exam.total_sections} sections</span>
+                    </span>
+                    <span style={paperArrow}>›</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+          </>
+        )}
 
-        <div style={{ height: 80 }} />
+        <section style={progressCard}>
+          <div style={progressIcon}>📈</div>
+          <div style={{ flex: 1 }}>
+            <p style={sectionEyebrow}>Progress</p>
+            <h2 style={sectionTitle}>{hasProgress ? `${stats.overall_accuracy}% overall accuracy` : 'Your progress starts here'}</h2>
+            <p style={progressCopy}>
+              {hasProgress ? 'Keep practicing to strengthen your weakest topics.' : 'Complete an exam to see accuracy and topic insights.'}
+            </p>
+          </div>
+          <button type="button" onClick={() => navigate('/stats')} style={roundArrow} aria-label="View progress">›</button>
+        </section>
+
+        <section style={tipCard}>
+          <span style={tipIcon}>💡</span>
+          <div>
+            <p style={sectionEyebrow}>Study tip</p>
+            <p style={tipText}>Use Practice mode when learning. Check the hint first, then reveal the explanation only when you need it.</p>
+          </div>
+        </section>
+
+        <div style={{ height: 88 }} />
       </main>
-
-      <BottomTabBar />
     </div>
   );
 }
 
-const screenWrap = {
-  display: 'flex', flexDirection: 'column',
-  minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
-  background: 'var(--color-bg)',
-};
-const header = {
-  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-  padding: '12px var(--screen-pad)',
-  height: 60,
-  background: 'var(--color-surface)',
-  borderBottom: '1px solid var(--color-border)',
-  flexShrink: 0,
-};
-const scrollContent = {
-  flex: 1, overflowY: 'auto',
-  padding: 'var(--space-4) var(--screen-pad)',
-  WebkitOverflowScrolling: 'touch',
-};
+const screenWrap = { display: 'flex', flexDirection: 'column', minHeight: '100dvh', maxWidth: 480, margin: '0 auto', background: 'var(--color-bg)' };
+const scrollContent = { flex: 1, overflowY: 'auto', padding: 'var(--space-4) var(--screen-pad)', WebkitOverflowScrolling: 'touch' };
+const intro = { marginBottom: 20 };
+const greeting = { font: 'var(--text-body)', fontSize: 14, color: 'var(--color-text-secondary)', marginBottom: 6 };
+const headline = { font: 'var(--text-screen-title)', color: 'var(--color-text-strong)', lineHeight: 1.2, marginBottom: 8 };
+const introCopy = { font: 'var(--text-body)', fontSize: 14, lineHeight: 1.5, color: 'var(--color-text-secondary)' };
+const heroCard = { marginBottom: 24, padding: 20, background: 'var(--color-bg)', border: '1.5px solid var(--color-accent)', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)', overflow: 'hidden' };
+const heroTop = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 };
+const heroIcon = { width: 46, height: 46, borderRadius: 12, background: 'var(--color-accent-tint)', display: 'grid', placeItems: 'center', fontSize: 23 };
+const heroTitle = { font: 'var(--text-card-title)', fontSize: 19, color: 'var(--color-text-strong)', marginBottom: 6 };
+const heroCopy = { font: 'var(--text-body)', fontSize: 14, lineHeight: 1.5, color: 'var(--color-text-secondary)', marginBottom: 16 };
+const statGrid = { display: 'flex', gap: 8, marginBottom: 18 };
+const section = { marginBottom: 24 };
+const sectionHeader = { display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12, marginBottom: 12 };
+const sectionEyebrow = { font: 'var(--text-label)', letterSpacing: 'var(--ls-wide)', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 4 };
+const sectionTitle = { font: 'var(--text-card-title)', color: 'var(--color-text-strong)' };
+const textButton = { minHeight: 32, padding: '0 4px', color: 'var(--color-primary)', font: 'var(--text-btn)' };
+const sectionHint = { font: 'var(--text-caption)', color: 'var(--color-text-muted)' };
+const subjectGrid = { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10 };
+const subjectCard = { display: 'grid', gap: 5, minHeight: 118 };
+const subjectIconStyle = { fontSize: 23, lineHeight: 1, marginBottom: 4 };
+const subjectName = { font: 'var(--text-card-title)', fontSize: 14, color: 'var(--color-text-strong)', lineHeight: 1.25 };
+const subjectMeta = { font: 'var(--text-caption)', fontSize: 12, color: 'var(--color-text-secondary)' };
+const paperList = { overflow: 'hidden', borderRadius: 'var(--radius-card)', background: 'var(--color-surface)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-card)' };
+const paperRow = { display: 'flex', alignItems: 'center', gap: 12, width: '100%', minHeight: 68, padding: '10px 14px', background: 'var(--color-surface)', border: 'none', borderBottom: '1px solid var(--color-border)', textAlign: 'left' };
+const yearBadge = { display: 'grid', placeItems: 'center', width: 46, height: 38, flexShrink: 0, borderRadius: 9, background: 'var(--color-primary-tint)', color: 'var(--color-primary)', font: 'var(--text-label)' };
+const paperInfo = { display: 'grid', gap: 3, flex: 1, minWidth: 0 };
+const paperTitle = { font: 'var(--text-body-med)', color: 'var(--color-text-strong)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+const paperMeta = { font: 'var(--text-caption)', fontSize: 12, color: 'var(--color-text-secondary)' };
+const paperArrow = { color: 'var(--color-text-muted)', fontSize: 24 };
+const progressCard = { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, padding: 16, borderRadius: 'var(--radius-card)', background: 'var(--color-surface-alt)', border: '1px solid var(--color-border)' };
+const progressIcon = { display: 'grid', placeItems: 'center', width: 42, height: 42, flexShrink: 0, borderRadius: 11, background: 'var(--color-info-tint)', fontSize: 21 };
+const progressCopy = { font: 'var(--text-body)', fontSize: 13, lineHeight: 1.4, color: 'var(--color-text-secondary)', marginTop: 5 };
+const roundArrow = { width: 34, height: 34, minHeight: 34, flexShrink: 0, borderRadius: '50%', background: 'var(--color-surface)', color: 'var(--color-primary)', border: '1px solid var(--color-border)', fontSize: 22 };
+const tipCard = { display: 'flex', alignItems: 'flex-start', gap: 12, padding: 16, borderRadius: 'var(--radius-card)', background: 'var(--color-success-tint)', border: '1px solid var(--color-border)' };
+const tipIcon = { fontSize: 22, lineHeight: 1 };
+const tipText = { font: 'var(--text-body)', fontSize: 13, lineHeight: 1.5, color: 'var(--color-text-secondary)' };

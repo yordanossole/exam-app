@@ -1,29 +1,19 @@
 'use client';
 
-import { useNavigate } from '../lib/navigation';
 import { useAppContext } from '../context/AppContext';
-import BottomTabBar from '../components/BottomTabBar';
 import Card from '../components/Card';
 import CircularRing from '../components/CircularRing';
 import ProgressBar from '../components/ProgressBar';
-import { MOCK_STATS } from '../data/quizData';
 
 export default function TopicStatsPage() {
   const { state } = useAppContext();
-  const navigate = useNavigate();
-  const stats = state.stats ?? MOCK_STATS;
+  const stats = state.stats;
 
   const overall  = stats?.overall_accuracy ?? stats?.accuracy ?? 0;
   const subjects = stats?.subject_stats ?? [];
 
   return (
     <div style={screenWrap}>
-      <header style={pageHeader}>
-        <button onClick={() => navigate(-1)} style={backBtn} aria-label="Go back">←</button>
-        <span style={pageTitle}>Performance</span>
-        <div style={{ width: 44 }} />
-      </header>
-
       <main style={scrollContent}>
 
         {/* Overall accuracy ring */}
@@ -94,7 +84,6 @@ export default function TopicStatsPage() {
         <div style={{ height: 80 }} />
       </main>
 
-      <BottomTabBar />
     </div>
   );
 }
@@ -103,17 +92,6 @@ const screenWrap = {
   display: 'flex', flexDirection: 'column',
   minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
   background: 'var(--color-bg)',
-};
-const pageHeader = {
-  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-  height: 56, padding: '0 var(--screen-pad)',
-  background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', flexShrink: 0,
-};
-const pageTitle = { font: 'var(--text-card-title)', fontSize: 17, color: 'var(--color-text-primary)' };
-const backBtn = {
-  background: 'none', border: 'none', fontSize: 22,
-  color: 'var(--color-accent)', cursor: 'pointer', minHeight: 44, minWidth: 44,
-  display: 'flex', alignItems: 'center',
 };
 const scrollContent = {
   flex: 1, overflowY: 'auto', padding: 'var(--space-4) var(--screen-pad)',

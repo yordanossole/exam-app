@@ -31,12 +31,6 @@ export const authApi = {
   loginWithTelegram: (initData) => api.post('/auth/telegram', { init_data: initData }),
 };
 
-export const examApi = {
-  listExams: (params) => api.get('/exams/', { params }),
-  getExamDetail: (examId) => api.get(`/exams/${examId}`),
-  syncAttempt: (data) => api.post('/attempts/sync', data),
-};
-
 export const userApi = {
   getProfile: () => api.get('/users/me'),
   getStats: () => api.get('/users/me/stats'),
