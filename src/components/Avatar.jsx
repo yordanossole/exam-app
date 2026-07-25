@@ -2,12 +2,16 @@
  * NT Exams Avatar
  * Circular with optional Nova Blue ring (active streak / online indicator).
  */
-export default function Avatar({ src, name = '?', size = 40, ring = false, style: extra }) {
+export default function Avatar({ src, name = '?', size = 40, ring = false, onClick, style: extra }) {
   const initial = String(name).charAt(0).toUpperCase();
 
   return (
     <div
       aria-label={name}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={onClick ? e => e.key === 'Enter' && onClick() : undefined}
       style={{
         width: size, height: size,
         borderRadius: '50%', flexShrink: 0, overflow: 'hidden',

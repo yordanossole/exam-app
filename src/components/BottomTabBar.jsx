@@ -1,10 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const TABS = [
-  { path: '/',        label: 'Home',     icon: '⊞' },
+  { path: '/',         label: 'Home',     icon: '⊞' },
   { path: '/subjects', label: 'Subjects', icon: '📚' },
-  { path: '/stats',   label: 'Progress', icon: '📊' },
-  { path: '/profile', label: 'Profile',  icon: '👤' },
+  { path: '/stats',    label: 'Progress', icon: '📊' },
 ];
 
 export default function BottomTabBar() {

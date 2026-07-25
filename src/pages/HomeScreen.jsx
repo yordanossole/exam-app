@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import { useTheme } from '../context/ThemeContext';
 import BottomTabBar from '../components/BottomTabBar';
 import Card from '../components/Card';
-import { StatChip, Badge } from '../components/StatChip';
+import { Badge } from '../components/StatChip';
 import Avatar from '../components/Avatar';
 import ProgressBar from '../components/ProgressBar';
 import Button from '../components/Button';
@@ -24,9 +24,7 @@ export default function HomeScreen() {
   const navigate = useNavigate();
   const firstName = user?.display_name?.split(' ')[0] ?? 'there';
 
-  const streak   = stats?.streak   ?? 0;
-  const points   = stats?.points   ?? 0;
-  const accuracy = stats?.accuracy ?? stats?.overall_accuracy ?? 0;
+  const streak = stats?.streak ?? 0;
 
   const logoSrc = theme === 'dark' ? '/@Logos/logo-white.png' : '/@Logos/logo-blue.png';
 
@@ -43,6 +41,8 @@ export default function HomeScreen() {
             name={user?.display_name ?? 'NT'}
             size={36}
             ring={streak > 0}
+            onClick={() => navigate('/profile')}
+            style={{ cursor: 'pointer' }}
           />
         </div>
       </header>
@@ -57,13 +57,6 @@ export default function HomeScreen() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: 'var(--color-text-strong)', lineHeight: 1.2 }}>
             Ready to prepare for your national exam?
           </h1>
-        </div>
-
-        {/* Stat strip */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
-          <StatChip value={streak}                  label="Day streak"  variant="orange" />
-          <StatChip value={points.toLocaleString()} label="Points"      variant="blue"   />
-          <StatChip value={`${accuracy}%`}          label="Accuracy"    variant="mint"   />
         </div>
 
         {/* ── Mock Exam hero (Warm CTA — Spark Orange) ──── */}
