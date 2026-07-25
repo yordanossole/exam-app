@@ -1,14 +1,24 @@
 import { createContext, useContext, useReducer, useEffect } from 'react';
-import { authApi, userApi } from '../services/api';
 
 const AppContext = createContext();
 
-const STORAGE_KEY = 'exam-app-state';
+// Mock user and stats — replace with real API data when auth is re-enabled
+const MOCK_USER = {
+  display_name: 'Test User',
+  role: 'Free',
+  avatar_url: null,
+  active_subscription: null,
+};
+
+const MOCK_STATS = {
+  overall_accuracy: 0,
+  subject_stats: [],
+};
 
 const initialState = {
-  isAuthenticated: !!localStorage.getItem('auth_token'),
-  user: null, // From backend
-  stats: null, // From backend
+  isAuthenticated: true,
+  user: MOCK_USER,
+  stats: MOCK_STATS,
   recentActivity: [],
   subjectProgress: [],
   currentSession: null, // { examId, subjectId, currentIndex, answers: {qId: optionId}, submitted: bool, questions: [] }
@@ -84,41 +94,8 @@ function appReducer(state, action) {
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Initialize Telegram & Auth
+  // Online/offline detection (auth disabled — using mock user)
   useEffect(() => {
-    const initTelegram = async () => {
-      const tg = window.Telegram?.WebApp;
-      if (tg) {
-        tg.ready();
-        tg.expand();
-
-        const initData = tg.initData;
-        if (initData) {
-          try {
-            const res = await authApi.loginWithTelegram(initData);
-            localStorage.setItem('auth_token', res.data.access_token);
-            dispatch({ type: 'LOGIN_SUCCESS', payload: res.data.user });
-            fetchProfile();
-          } catch (err) {
-            console.error('Telegram Login Failed', err);
-          }
-        }
-      }
-    };
-
-    const fetchProfile = async () => {
-      try {
-        const res = await userApi.getProfile();
-        dispatch({ type: 'SET_USER', payload: res.data });
-        const statsRes = await userApi.getStats();
-        dispatch({ type: 'SET_STATS', payload: statsRes.data });
-      } catch (err) {
-        console.error('Fetch Profile Failed', err);
-      }
-    };
-
-    initTelegram();
-
     const handleOnline = () => dispatch({ type: 'SET_OFFLINE', payload: false });
     const handleOffline = () => dispatch({ type: 'SET_OFFLINE', payload: true });
 

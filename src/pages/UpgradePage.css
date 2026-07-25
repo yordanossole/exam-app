@@ -1,3 +1,4 @@
+/* ── UpgradePage — mobile-first ─────────────────────────────── */
 .upgrade-container {
   min-height: 100vh;
   background: #f1f3fe;
@@ -8,16 +9,20 @@
 .upgrade-header {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  height: 56px;
+  padding: 0 clamp(16px, 4vw, 24px);
   background: #fff;
   border-bottom: 1px solid #e0e2ed;
+  flex-shrink: 0;
 }
 
 .upgrade-header h1 {
   flex: 1;
   text-align: center;
-  font-size: 18px;
-  margin-right: 32px;
+  font-size: clamp(16px, 4vw, 20px);
+  font-weight: 600;
+  /* offset the back button so title stays centred */
+  margin-right: 44px;
 }
 
 .back-btn {
@@ -26,55 +31,78 @@
   font-size: 24px;
   color: #0058bc;
   cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
 }
 
 .upgrade-content {
-  padding: 24px 20px;
+  padding: clamp(20px, 5vw, 32px) clamp(16px, 4vw, 24px);
+  flex: 1;
 }
 
 .upgrade-subtitle {
   text-align: center;
   color: #717786;
-  margin-bottom: 32px;
+  font-size: clamp(14px, 3.5vw, 15px);
+  margin-bottom: clamp(20px, 5vw, 32px);
 }
 
+/* Mobile: single column stack */
 .plans-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(14px, 3vw, 20px);
+}
+
+/* Tablet: 2-column side-by-side */
+@media (min-width: 600px) {
+  .plans-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Desktop: all three in a row */
+@media (min-width: 900px) {
+  .plans-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .plan-card {
   background: #fff;
   border: 2px solid #e0e2ed;
   border-radius: 16px;
-  padding: 24px;
+  padding: clamp(20px, 4vw, 28px);
   text-align: center;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .plan-card:hover {
   border-color: #0058bc;
+  box-shadow: 0 4px 16px rgba(0, 88, 188, 0.1);
 }
 
 .plan-card h3 {
   margin: 0;
   color: #181c23;
-  font-size: 20px;
+  font-size: clamp(17px, 4vw, 20px);
 }
 
 .plan-price {
-  margin: 16px 0;
+  margin: clamp(12px, 3vw, 16px) 0;
 }
 
 .plan-price .currency {
-  font-size: 16px;
+  font-size: 15px;
   color: #717786;
   margin-right: 4px;
+  vertical-align: super;
 }
 
 .plan-price .amount {
-  font-size: 32px;
+  font-size: clamp(28px, 7vw, 36px);
   font-weight: 700;
   color: #181c23;
 }
@@ -83,21 +111,30 @@
   font-weight: 600;
   color: #0058bc;
   margin-bottom: 8px;
+  font-size: 14px;
 }
 
 .plan-desc {
   color: #717786;
-  font-size: 14px;
-  margin-bottom: 24px;
+  font-size: 13px;
+  margin-bottom: clamp(16px, 4vw, 24px);
 }
 
 .select-plan-btn {
   width: 100%;
-  padding: 12px;
+  padding: 13px;
   background: #0058bc;
   color: #fff;
   border: none;
   border-radius: 8px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
+  font-family: Inter, sans-serif;
+  min-height: 44px;
+  transition: background 0.15s;
+}
+
+.select-plan-btn:hover {
+  background: #0047a0;
 }

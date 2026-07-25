@@ -29,25 +29,19 @@ export default function ExamPage() {
     if (!loading && exam && !session) {
       dispatch({
         type: 'START_EXAM',
-        payload: {
-          examId,
-          subjectId: exam.subject,
-          questions // Storing for offline access
-        }
+        payload: { examId, subjectId: exam.subject, questions },
       });
     }
   }, [loading, exam, session, dispatch, examId, questions]);
 
   useEffect(() => {
-    if (error?.response?.status === 403) {
-      navigate('/upgrade');
-    }
+    if (error?.response?.status === 403) navigate('/upgrade');
   }, [error, navigate]);
 
   useEffect(() => { setShowExplanation(false); }, [session?.currentIndex]);
 
-  const handleKeyDown = useCallback((e) => {
-    // ... (Keyboard handling)
+  const handleKeyDown = useCallback(() => {
+    // keyboard handling placeholder
   }, [questions, session, showExplanation]);
 
   if (loading || !exam || !session || questions.length === 0) {
@@ -56,7 +50,6 @@ export default function ExamPage() {
 
   const { currentIndex, answers } = session;
   const question = questions[currentIndex];
-  // Note: Backend might send answer in q.answer.correct_option
   const selectedAnswer = answers[question.question_id]?.option;
   const isLast = currentIndex === questions.length - 1;
 
@@ -65,12 +58,7 @@ export default function ExamPage() {
     const isCorrect = optionId === question.answer?.correct_option;
     dispatch({
       type: 'SET_ANSWER',
-      payload: {
-        question_id: question.question_id,
-        optionId,
-        isCorrect,
-        timeSpent: 0 // TODO: timer
-      }
+      payload: { question_id: question.question_id, optionId, isCorrect, timeSpent: 0 },
     });
   }
 
@@ -88,58 +76,87 @@ export default function ExamPage() {
       <ProgressBar value={currentIndex + (showExplanation ? 1 : 0)} max={questions.length} />
 
       <header style={navStyle}>
-        <button onClick={() => navigate('/')} style={iconBtn}>✕</button>
-        <span>Question {currentIndex + 1} of {questions.length}</span>
-        <div style={{ width: 24 }} />
+        <button onClick={() => navigate('/')} style={iconBtn} aria-label="Exit exam">✕</button>
+        <span style={{ fontSize: 'clamp(13px, 3.5vw, 15px)', color: '#414755', fontWeight: 500 }}>
+          Question {currentIndex + 1} of {questions.length}
+        </span>
+        <div style={{ width: 44 }} />
       </header>
 
-      <main style={{ flex: 1, padding: 20, overflowY: 'auto' }}>
+      <main style={{ flex: 1, padding: 'clamp(16px, 4vw, 24px)', overflowY: 'auto' }}>
         {question.passage && (
-          <div className="passage-block" style={passageStyle}>
-            <h4>{question.passage.title}</h4>
-            <p>{question.passage.text}</p>
+          <div style={passageStyle}>
+            <h4 style={{ marginBottom: 8, fontSize: 14, fontWeight: 600 }}>{question.passage.title}</h4>
+            <p style={{ fontSize: 14, lineHeight: 1.6 }}>{question.passage.text}</p>
           </div>
         )}
 
-        <div className="question-content">
-          <p className="question-text" style={qTextStyle}>{question.text}</p>
+        <div>
+          <p style={qTextStyle}>{question.text}</p>
 
-          {question.media?.map(m => (
-            m.type !== 'table' && <img key={m.id} src={m.url} alt={m.alt} style={{ maxWidth: '100%', marginBottom: 16 }} />
-          ))}
+          {question.media?.map(m =>
+            m.type !== 'table' && (
+              <img
+                key={m.id}
+                src={m.url}
+                alt={m.alt}
+                style={{ maxWidth: '100%', height: 'auto', marginBottom: 16, borderRadius: 8 }}
+              />
+            )
+          )}
 
-          <div style={optionsGrid}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {Object.entries(question.options).map(([key, val]) => (
               <div
                 key={key}
-                className={`option-btn ${selectedAnswer === key ? 'selected' : ''}`}
                 onClick={() => handleSelect(key)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={e => e.key === 'Enter' && handleSelect(key)}
+                aria-pressed={selectedAnswer === key}
                 style={{
-                  padding: '12px 16px',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 12,
+                  padding: 'clamp(12px, 3vw, 16px)',
                   borderRadius: 8,
-                  border: '1px solid #e0e2ed',
-                  marginBottom: 8,
-                  background: selectedAnswer === key ? '#0058bc' : '#fff',
-                  color: selectedAnswer === key ? '#fff' : '#181c23',
+                  border: '1.5px solid',
+                  borderColor: selectedAnswer === key ? '#0058bc' : '#e0e2ed',
+                  background: selectedAnswer === key ? '#eef4ff' : '#fff',
+                  cursor: showExplanation ? 'default' : 'pointer',
+                  fontSize: 'clamp(14px, 3.5vw, 16px)',
+                  color: '#181c23',
+                  lineHeight: 1.5,
+                  transition: 'border-color 0.15s, background 0.15s',
                 }}
               >
-                <span style={{ fontWeight: 'bold', marginRight: 12 }}>{key.toUpperCase()}.</span>
-                {val}
+                <span style={{ fontWeight: 700, color: '#0058bc', flexShrink: 0 }}>
+                  {key.toUpperCase()}.
+                </span>
+                <span>{val}</span>
               </div>
             ))}
           </div>
         </div>
 
         {showExplanation && question.answer?.explanation && (
-          <div style={{ marginTop: 20, padding: 16, background: '#f8f9ff', borderRadius: 8 }}>
-            <strong>Explanation:</strong>
-            <p>{question.answer.explanation}</p>
+          <div style={explanationStyle}>
+            <strong style={{ display: 'block', marginBottom: 8, color: '#0058bc' }}>Explanation</strong>
+            <p style={{ fontSize: 'clamp(14px, 3.5vw, 15px)', lineHeight: 1.6, color: '#181c23' }}>
+              {question.answer.explanation}
+            </p>
           </div>
         )}
       </main>
 
       <footer style={footerStyle}>
-        <Button variant="ghost" onClick={() => dispatch({ type: 'PREV_QUESTION' })} disabled={currentIndex === 0}>Back</Button>
+        <Button
+          variant="ghost"
+          onClick={() => dispatch({ type: 'PREV_QUESTION' })}
+          disabled={currentIndex === 0}
+        >
+          Back
+        </Button>
         {!showExplanation
           ? <Button onClick={() => setShowExplanation(true)} disabled={!selectedAnswer}>Check</Button>
           : <Button onClick={handleNext}>{isLast ? 'Finish' : 'Next'}</Button>
@@ -149,9 +166,56 @@ export default function ExamPage() {
   );
 }
 
-const navStyle = { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', borderBottom: '1px solid #e0e2ed' };
-const iconBtn = { background: 'none', border: 'none', fontSize: 20, cursor: 'pointer' };
-const qTextStyle = { fontSize: 20, fontWeight: 500, color: '#181c23', marginBottom: 20 };
-const optionsGrid = { display: 'flex', flexDirection: 'column', gap: 8 };
-const passageStyle = { background: '#fff', border: '1px solid #e0e2ed', padding: 16, borderRadius: 8, marginBottom: 20, maxHeight: 200, overflowY: 'auto' };
-const footerStyle = { padding: '16px 20px', borderTop: '1px solid #e0e2ed', display: 'flex', justifyContent: 'space-between', background: '#fff' };
+const navStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  padding: '0 clamp(14px, 4vw, 20px)',
+  height: 52,
+  borderBottom: '1px solid #e0e2ed',
+  flexShrink: 0,
+};
+const iconBtn = {
+  background: 'none',
+  border: 'none',
+  fontSize: 20,
+  cursor: 'pointer',
+  color: '#414755',
+  minHeight: 44,
+  minWidth: 44,
+  display: 'flex',
+  alignItems: 'center',
+};
+const qTextStyle = {
+  fontSize: 'clamp(17px, 4.5vw, 21px)',
+  fontWeight: 500,
+  color: '#181c23',
+  marginBottom: 20,
+  lineHeight: 1.55,
+  fontFamily: 'Newsreader, serif',
+};
+const passageStyle = {
+  background: '#fff',
+  border: '1px solid #e0e2ed',
+  padding: 'clamp(12px, 3vw, 16px)',
+  borderRadius: 8,
+  marginBottom: 20,
+  maxHeight: 200,
+  overflowY: 'auto',
+};
+const explanationStyle = {
+  marginTop: 20,
+  padding: 'clamp(12px, 3vw, 16px)',
+  background: '#fffde7',
+  borderLeft: '4px solid #0058bc',
+  borderRadius: 8,
+};
+const footerStyle = {
+  padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)',
+  borderTop: '1px solid #e0e2ed',
+  display: 'flex',
+  justifyContent: 'space-between',
+  background: '#fff',
+  gap: 12,
+  flexShrink: 0,
+};
