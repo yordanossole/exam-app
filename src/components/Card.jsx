@@ -1,21 +1,40 @@
 import { useState } from 'react';
 
 /**
- * Card
- * Rounded rectangle with surface background, border, and soft shadow.
- * Pass `onPress` to make it tappable (gets scale-down press animation).
- * Pass `hero` to apply an accent-green border highlight (Daily Quiz card).
+ * NT Exams Card
+ * Three archetypes via `variant`:
+ *   'default' — standard surface card (exam/subject cards)
+ *   'tinted'  — surface-alt background (hint / info panels)
+ *   'primary' — Nova Blue border highlight (active/hero card)
  */
 export default function Card({
   children,
   onPress,
-  hero = false,
+  variant = 'default',
   style: extra,
   padding,
   ...rest
 }) {
   const [pressed, setPressed] = useState(false);
   const isClickable = !!onPress;
+
+  const variantStyles = {
+    default: {
+      background: 'var(--color-surface)',
+      border: '1px solid var(--color-border)',
+      boxShadow: 'var(--shadow-card)',
+    },
+    tinted: {
+      background: 'var(--color-surface-alt)',
+      border: '1px solid var(--color-border)',
+      boxShadow: 'none',
+    },
+    primary: {
+      background: 'var(--color-surface)',
+      border: '2px solid var(--color-primary)',
+      boxShadow: 'var(--shadow-raised)',
+    },
+  };
 
   return (
     <div
@@ -27,12 +46,7 @@ export default function Card({
       onPointerUp={isClickable ? () => setPressed(false) : undefined}
       onPointerLeave={isClickable ? () => setPressed(false) : undefined}
       style={{
-        background: 'var(--color-surface)',
         borderRadius: 'var(--radius-card)',
-        border: hero
-          ? '2px solid var(--color-accent)'
-          : '1px solid var(--color-border)',
-        boxShadow: hero ? 'none' : 'var(--shadow-card)',
         padding: padding ?? 'var(--card-padding)',
         cursor: isClickable ? 'pointer' : 'default',
         transform: pressed && isClickable ? 'scale(0.98)' : 'scale(1)',
@@ -43,6 +57,7 @@ export default function Card({
         `,
         userSelect: 'none',
         WebkitTapHighlightColor: 'transparent',
+        ...variantStyles[variant],
         ...extra,
       }}
       {...rest}

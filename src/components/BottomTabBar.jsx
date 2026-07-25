@@ -1,9 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const TABS = [
-  { path: '/',        label: 'Home',     icon: '🏠' },
-  { path: '/subjects', label: 'Practice', icon: '📋' },
-  { path: '/stats',   label: 'Progress', icon: '📈' },
+  { path: '/',        label: 'Home',     icon: '⊞' },
+  { path: '/subjects', label: 'Subjects', icon: '📚' },
+  { path: '/stats',   label: 'Progress', icon: '📊' },
   { path: '/profile', label: 'Profile',  icon: '👤' },
 ];
 
@@ -39,9 +39,10 @@ export default function BottomTabBar() {
                 alignItems: 'center', justifyContent: 'center', gap: 3,
                 padding: '8px 0', minHeight: 56,
                 background: 'none', border: 'none', cursor: 'pointer',
-                color: active ? 'var(--color-accent)' : 'var(--color-text-secondary)',
-                fontSize: 10, fontWeight: active ? 700 : 500,
-                letterSpacing: 'var(--ls-label)', textTransform: 'uppercase',
+                color: active ? 'var(--color-primary)' : 'var(--color-text-muted)',
+                fontFamily: 'var(--font-display)',
+                fontSize: 10, fontWeight: active ? 700 : 600,
+                letterSpacing: 'var(--ls-wide)', textTransform: 'uppercase',
                 WebkitTapHighlightColor: 'transparent',
                 transition: 'color var(--duration-theme) ease',
                 position: 'relative',
@@ -53,9 +54,9 @@ export default function BottomTabBar() {
               {tab.label}
               {active && (
                 <span style={{
-                  position: 'absolute', bottom: 5,
+                  position: 'absolute', bottom: 4,
                   width: 4, height: 4, borderRadius: '50%',
-                  background: 'var(--color-accent)',
+                  background: 'var(--color-primary)',
                 }} />
               )}
             </button>

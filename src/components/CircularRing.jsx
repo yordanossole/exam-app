@@ -1,13 +1,7 @@
 /**
- * CircularRing
- * SVG arc that shows a percentage / progress value.
- * Used for: score ring on ResultsScreen, countdown timer on QuizScreen.
- *
- * size:        total diameter in px (default 120)
- * strokeWidth: arc thickness (default 10)
- * value:       0–100 (fill amount)
- * color:       CSS color string (defaults to accent green)
- * children:    content rendered in the center (number, icon, etc.)
+ * NT Exams CircularRing
+ * SVG arc for score ring and countdown timer.
+ * Defaults to Nova Blue fill on a neutral track.
  */
 export default function CircularRing({
   size = 120,
@@ -23,38 +17,23 @@ export default function CircularRing({
   const offset = circumference * (1 - clamped / 100);
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: size,
-        height: size,
-        flexShrink: 0,
-        ...extra,
-      }}
-    >
+    <div style={{ position: 'relative', width: size, height: size, flexShrink: 0, ...extra }}>
       <svg
-        width={size}
-        height={size}
+        width={size} height={size}
         viewBox={`0 0 ${size} ${size}`}
         style={{ transform: 'rotate(-90deg)' }}
         aria-hidden="true"
       >
         {/* Track */}
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="var(--color-track)"
-          strokeWidth={strokeWidth}
+          cx={size / 2} cy={size / 2} r={radius}
+          fill="none" stroke="var(--color-track)" strokeWidth={strokeWidth}
         />
         {/* Fill arc */}
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
+          cx={size / 2} cy={size / 2} r={radius}
           fill="none"
-          stroke={color ?? 'var(--color-accent)'}
+          stroke={color ?? 'var(--color-primary)'}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -62,16 +41,11 @@ export default function CircularRing({
           style={{ transition: 'stroke-dashoffset 0.6s var(--ease-out)' }}
         />
       </svg>
-      {/* Center content */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      {/* Center */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
         {children}
       </div>
     </div>

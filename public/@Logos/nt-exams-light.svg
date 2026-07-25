@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" role="img" aria-label="NT Exams">
+  <defs>
+    <linearGradient id="nova-spectrum" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2E6AFC"/>
+      <stop offset="50%" stop-color="#464BEF"/>
+      <stop offset="100%" stop-color="#0A2AA8"/>
+    </linearGradient>
+  </defs>
+  <!-- NT mark -->
+  <rect x="0" y="4" width="32" height="32" rx="8" fill="url(#nova-spectrum)"/>
+  <text x="16" y="26" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800"
+        font-size="16" fill="#FFFFFF" text-anchor="middle" dominant-baseline="auto">NT</text>
+  <!-- Wordmark -->
+  <text x="42" y="28" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800"
+        font-size="20" fill="#2E6AFC">Exams</text>
+</svg>

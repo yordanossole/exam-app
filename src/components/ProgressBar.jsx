@@ -1,9 +1,10 @@
 /**
- * ProgressBar
- * Thin (7px) fully-rounded bar, accent-green fill, smooth width transition.
- * value: 0–100 (percentage) OR pass value + max to auto-calculate.
+ * NT Exams ProgressBar
+ * Thin (6px default), fully-rounded, Nova Blue fill.
+ * Pass value + max to auto-calculate percent, or value as 0-100.
+ * color prop overrides the fill (e.g. use --color-accent for mock exam)
  */
-export default function ProgressBar({ value = 0, max, height = 7, style: extra }) {
+export default function ProgressBar({ value = 0, max, height = 6, color, style: extra }) {
   const pct = max != null ? Math.min(100, (value / max) * 100) : Math.min(100, value);
 
   return (
@@ -22,15 +23,13 @@ export default function ProgressBar({ value = 0, max, height = 7, style: extra }
         ...extra,
       }}
     >
-      <div
-        style={{
-          height: '100%',
-          width: `${pct}%`,
-          borderRadius: 999,
-          background: 'var(--color-accent)',
-          transition: 'width 0.3s var(--ease-out)',
-        }}
-      />
+      <div style={{
+        height: '100%',
+        width: `${pct}%`,
+        borderRadius: 999,
+        background: color ?? 'var(--color-primary)',
+        transition: 'width 0.35s var(--ease-out)',
+      }} />
     </div>
   );
 }

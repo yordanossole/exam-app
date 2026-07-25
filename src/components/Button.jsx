@@ -1,10 +1,17 @@
 import { useState } from 'react';
 
 /**
- * Button
- * variant: 'primary' | 'secondary' | 'ghost' | 'danger'
- * size:    'md' (default) | 'lg' | 'sm'
- * full:    stretch to 100% width
+ * NT Exams Button
+ *
+ * variant:
+ *   'primary'  — Nova Blue fill  → "Submit Answer", "Start Practice Exam", "Next Question"
+ *   'warm'     — Spark Orange fill → "Start Mock Exam", "Retake Full Exam"
+ *   'secondary'— Outlined blue  → "Skip Question", "Review Explanation"
+ *   'ghost'    — Text only      → "Learn More", "View Full Report"
+ *   'danger'   — Outlined red   → destructive actions
+ *
+ * size: 'sm' | 'md' (default) | 'lg'
+ * full: stretch to 100% width
  */
 export default function Button({
   children,
@@ -28,8 +35,14 @@ export default function Button({
     borderRadius: 'var(--radius-btn)',
     cursor: disabled ? 'not-allowed' : 'pointer',
     font: 'var(--text-btn)',
-    fontFamily: 'var(--font-family)',
+    fontFamily: 'var(--font-display)',
     letterSpacing: 0,
+    transform: pressed && !disabled ? 'scale(0.97)' : 'scale(1)',
+    opacity: disabled ? 0.4 : 1,
+    width: full ? '100%' : undefined,
+    userSelect: 'none',
+    WebkitTapHighlightColor: 'transparent',
+    minHeight: 44,
     transition: `
       background-color var(--duration-theme) ease,
       border-color     var(--duration-theme) ease,
@@ -37,34 +50,31 @@ export default function Button({
       transform        var(--duration-tap)   ease,
       opacity          var(--duration-tap)   ease
     `,
-    transform: pressed && !disabled ? 'scale(0.97)' : 'scale(1)',
-    opacity: disabled ? 0.45 : 1,
-    width: full ? '100%' : undefined,
-    userSelect: 'none',
-    WebkitTapHighlightColor: 'transparent',
-    minHeight: 44,
   };
 
   const sizes = {
-    sm: { padding: '8px 16px',  fontSize: 13 },
+    sm: { padding: '8px 16px',  fontSize: 13, borderRadius: 8 },
     md: { padding: '12px 24px', fontSize: 15 },
-    lg: { padding: '15px 28px', fontSize: 16, borderRadius: 14 },
+    lg: { padding: '15px 28px', fontSize: 16, borderRadius: 'var(--radius-btn-lg)' },
   };
 
   const variants = {
     primary: {
+      background: 'var(--color-primary)',
+      color: '#fff',
+    },
+    warm: {
       background: 'var(--color-accent)',
       color: '#fff',
     },
     secondary: {
       background: 'transparent',
-      color: 'var(--color-accent)',
-      border: '1.5px solid var(--color-accent)',
+      color: 'var(--color-primary)',
+      border: '1.5px solid var(--color-primary)',
     },
     ghost: {
       background: 'transparent',
-      color: 'var(--color-text-secondary)',
-      border: '1.5px solid var(--color-border)',
+      color: 'var(--color-primary)',
     },
     danger: {
       background: 'transparent',

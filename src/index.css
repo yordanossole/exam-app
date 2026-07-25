@@ -1,5 +1,8 @@
-/* Import Chess.com-style design tokens (all CSS custom properties + base reset) */
-@import './tokens.css';
+/* ── NT Exams — NovaTutor Brand Fonts ───────────────────────────
+   Plus Jakarta Sans: headings, labels, CTAs, wordmark
+   Manrope:           body copy, captions, question text, inputs
+   ──────────────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;600;700;800&family=Manrope:wght@300;400;500&display=swap');
 
-/* Google Fonts — Inter for UI */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* ── Brand design tokens (colors, type scale, spacing, motion) ── */
+@import './tokens.css';

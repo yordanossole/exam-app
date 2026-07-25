@@ -1,80 +1,186 @@
-/* ── Chess.com-style design tokens ──────────────────────────────────────────
-   All colors, typography, spacing, radius, shadow, and motion values live here
-   as CSS custom properties. Light-mode values are set on :root; dark-mode
-   values override them inside [data-theme="dark"].
-   The body gains a smooth crossfade transition on color/background-color so
-   theme switches never hard-cut.
-   ─────────────────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   NT EXAMS — NovaTutor Brand Identity Tokens
+   Light mode on :root · Dark mode on [data-theme="dark"]
+   Fonts: Plus Jakarta Sans (headings/labels/CTAs) · Manrope (body/captions)
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Light mode (default) ─────────────────────────────────────── */
+/* ── Google Fonts are imported in index.css ───────────────────── */
+
+/* ══════════════════════════════════════════════════
+   LIGHT MODE (default)
+   ══════════════════════════════════════════════════ */
 :root {
-  /* Surfaces */
-  --color-bg:           #FAFAF8;   /* warm off-white app background */
-  --color-surface:      #FFFFFF;   /* card / tab bar surface */
-  --color-border:       #E7E5E1;   /* hairline dividers */
+  /* ── Brand palette ──────────────────────────── */
+  --nt-blue:          #2E6AFC;   /* Nova Blue — primary */
+  --nt-orange:        #DB743A;   /* Spark Orange — warm/mock CTA */
+  --nt-cyan:          #52C9FE;   /* Nova Cyan — info / timer */
+  --nt-violet:        #79287A;
+  --nt-indigo:        #464BEF;
+  --nt-navy:          #0A2AA8;
+  --nt-mint:          #6CDDAA;   /* success */
+  --nt-error:         #E24C4C;
 
-  /* Text */
-  --color-text-primary:   #211E1C; /* near-black warm charcoal */
-  --color-text-secondary: #8A8783; /* muted labels / timestamps */
+  /* ── Gradients ──────────────────────────────── */
+  --gradient-spectrum: linear-gradient(135deg, #2E6AFC 0%, #464BEF 50%, #0A2AA8 100%);
+  --gradient-horizon:  linear-gradient(65deg,  #2E6AFC 0%, #52C9FE 100%);
+  --gradient-ember:    linear-gradient(-65deg, #DB743A 0%, #F59D68 100%);
+  --gradient-aurora:   linear-gradient(-65deg, #6CDDAA 0%, #52C9FE 100%);
 
-  /* Brand green */
-  --color-accent:         #7FA650; /* primary actions, active states */
-  --color-accent-press:   #6B8F3F; /* pressed / hover */
-  --color-accent-tint:    #EEF4E4; /* selected chips, correct-answer wash */
+  /* ── Surface tokens ─────────────────────────── */
+  --color-bg:              #F7F8FC;   /* N100 — app background */
+  --color-surface:         #FFFFFF;   /* White — cards, exam card */
+  --color-surface-alt:     #EDF1FA;   /* N200 — tinted panels, selected answer */
+  --color-border:          #DCE3F2;   /* N300 */
 
-  /* Semantic */
-  --color-error:          #C6444B;
-  --color-error-tint:     #FBEBEC;
-  --color-gold:           #E8A33D;  /* streak / badge */
+  /* ── Text tokens ────────────────────────────── */
+  --color-text-primary:    #1C2434;   /* N700 */
+  --color-text-strong:     #0B1020;   /* N900 */
+  --color-text-secondary:  #5A657D;   /* mid-range readable */
+  --color-text-muted:      #8C96A8;   /* captions/timestamps */
 
-  /* Shadow — barely-there elevation */
-  --shadow-card: 0 2px 8px rgba(30, 28, 25, 0.06);
-  --shadow-tab:  0 -1px 0 var(--color-border);
+  /* ── Semantic tokens ────────────────────────── */
+  --color-primary:         #2E6AFC;   /* Nova Blue */
+  --color-primary-hover:   #2558D6;
+  --color-primary-tint:    #EAF0FF;   /* blue wash behind selected answer */
+  --color-accent:          #DB743A;   /* Spark Orange */
+  --color-accent-hover:    #C2622A;
+  --color-accent-tint:     #FDF0E8;
+  --color-info:            #52C9FE;
+  --color-info-tint:       #E8F8FF;
+  --color-success:         #6CDDAA;
+  --color-success-tint:    #E8FBF3;
+  --color-error:           #E24C4C;
+  --color-error-tint:      #FDE8E8;
 
-  /* Progress / ring track */
-  --color-track:  #E7E5E1;
+  /* ── Progress ring track ────────────────────── */
+  --color-track:           #DCE3F2;
+
+  /* ── Shadows ────────────────────────────────── */
+  --shadow-card:   0 2px 12px rgba(11, 16, 32, 0.07);
+  --shadow-raised: 0 4px 20px rgba(46, 106, 252, 0.12);
+
+  /* ── Subject tag palette (rotating) ────────── */
+  --tag-math:    #EAF0FF;
+  --tag-science: #E8F8FF;
+  --tag-english: #F3E8FF;
+  --tag-social:  #E8FBF3;
+  --tag-civics:  #FFF3E8;
+  --tag-bio:     #E8FBF3;
+  --tag-chem:    #FFF9E0;
+  --tag-phys:    #F0E8FF;
 }
 
-/* ── Dark mode ────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   DARK MODE
+   ══════════════════════════════════════════════════ */
 [data-theme="dark"] {
-  --color-bg:           #262421;   /* warm charcoal, faint olive undertone */
-  --color-surface:      #302E2B;   /* cards float above background */
-  --color-border:       #3D3A36;
+  --color-bg:              #0B1020;   /* N900 */
+  --color-surface:         #1C2434;   /* N700 */
+  --color-surface-alt:     #232B40;
+  --color-border:          #33405A;
 
-  --color-text-primary:   #F1EFEC;
-  --color-text-secondary: #9B9792;
+  --color-text-primary:    #EDF1FA;   /* N200 */
+  --color-text-strong:     #FFFFFF;
+  --color-text-secondary:  #8C96A8;
+  --color-text-muted:      #5A657D;
 
-  --color-accent:         #8FBB5C; /* brighter so it pops on dark bg */
-  --color-accent-press:   #7CA84A;
-  --color-accent-tint:    #33402A; /* dark olive-green wash */
+  --color-primary:         #4C7DFF;
+  --color-primary-hover:   #6B92FF;
+  --color-primary-tint:    #162045;
+  --color-accent:          #E8925C;
+  --color-accent-hover:    #F0A870;
+  --color-accent-tint:     #2E1A0A;
+  --color-info:            #6ED4FE;
+  --color-info-tint:       #0A1E2E;
+  --color-success:         #7EE6B8;
+  --color-success-tint:    #0A2518;
+  --color-error:           #F07070;
+  --color-error-tint:      #2A0E0E;
 
-  --color-error:          #D8666C;
-  --color-error-tint:     #3D2528;
-  --color-gold:           #EDB25A;
+  --color-track:           #33405A;
 
-  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.35);
-  --shadow-tab:  0 -1px 0 var(--color-border);
+  --shadow-card:   0 2px 12px rgba(0, 0, 0, 0.4);
+  --shadow-raised: 0 4px 20px rgba(0, 0, 0, 0.5);
 
-  --color-track:  #3D3A36;
+  /* Subject tags — darkened */
+  --tag-math:    #162045;
+  --tag-science: #0A1E2E;
+  --tag-english: #1E0E30;
+  --tag-social:  #0A2518;
+  --tag-civics:  #2E1A0A;
+  --tag-bio:     #0A2518;
+  --tag-chem:    #1E1A00;
+  --tag-phys:    #1A0E30;
 }
 
-/* ── Typography scale ─────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   TYPOGRAPHY — Plus Jakarta Sans + Manrope
+   ══════════════════════════════════════════════════ */
 :root {
-  --font-family:   -apple-system, "SF Pro Display", "Inter", system-ui, sans-serif;
+  /* Font families */
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body:    'Manrope', system-ui, sans-serif;
 
-  --text-screen-title: 700 23px/1.2 var(--font-family);  /* 22-24px */
-  --text-card-title:   600 16px/1.3 var(--font-family);  /* 16-17px */
-  --text-body:         400 14px/1.5 var(--font-family);
-  --text-body-med:     500 15px/1.5 var(--font-family);
-  --text-stat:         800 24px/1.1 var(--font-family);  /* stat numbers */
-  --text-btn:          600 15px/1 var(--font-family);
+  /* ── Type scale ─────────────────────────────── */
+  /* Display — 96px / 160px — Plus Jakarta Sans 800 */
+  --text-display: 800 96px/160px var(--font-display);
 
-  /* Letter-spacing */
+  /* H1 — 48px / 80px — Plus Jakarta Sans 800 */
+  --text-h1: 800 48px/80px var(--font-display);
+
+  /* H2 — 32px / 48px — Plus Jakarta Sans 700 */
+  --text-h2: 700 32px/48px var(--font-display);
+
+  /* H3 — 24px / 32px — Plus Jakarta Sans 700 */
+  --text-h3: 700 24px/32px var(--font-display);
+
+  /* Screen title — 22px — Plus Jakarta Sans 700 (nav headers) */
+  --text-screen-title: 700 22px/28px var(--font-display);
+
+  /* Card title / UI label — 16px — Plus Jakarta Sans 600 */
+  --text-card-title: 600 16px/22px var(--font-display);
+
+  /* Button — 15px — Plus Jakarta Sans 600 */
+  --text-btn: 600 15px/1 var(--font-display);
+
+  /* Nav label — 11px — Plus Jakarta Sans 600 */
+  --text-nav: 600 11px/12px var(--font-display);
+
+  /* ── Manrope body scale ─────────────────────── */
+  /* Body XL — 20px / 24px — Manrope 400 */
+  --text-body-xl: 400 20px/24px var(--font-body);
+
+  /* Body — 16px / 18px — Manrope 400 */
+  --text-body: 400 16px/18px var(--font-body);
+
+  /* Body medium — Manrope 500 */
+  --text-body-med: 500 15px/22px var(--font-body);
+
+  /* Caption / label — Manrope 300 */
+  --text-caption: 300 13px/18px var(--font-body);
+
+  /* Stat number — Plus Jakarta Sans 800 (large score numerals) */
+  --text-stat: 800 28px/1.1 var(--font-display);
+
+  /* Label — 10px / 12px — Plus Jakarta Sans 600 */
+  --text-label: 600 10px/12px var(--font-display);
+
+  /* ── Letter spacing ─────────────────────────── */
+  --ls-tight:  -0.02em;   /* stat numbers */
+  --ls-normal:  0em;
+  --ls-wide:   +0.04em;   /* all-caps labels */
+  --ls-wider:  +0.08em;   /* grade badge chips */
+
+  /* keep legacy vars working across old components */
   --ls-number: -0.02em;
   --ls-label:  +0.04em;
+  --font-family: var(--font-display);
+  --text-stat-legacy: 800 24px/1.1 var(--font-display);
 }
 
-/* ── Spacing ──────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   SPACING
+   ══════════════════════════════════════════════════ */
 :root {
   --space-1:  4px;
   --space-2:  8px;
@@ -82,52 +188,62 @@
   --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
+  --space-8: 32px;
 
-  --card-gap:     12px;  /* vertical gap between cards */
-  --card-padding: 16px;  /* internal card padding */
-  --screen-pad:   16px;  /* left/right screen margin */
+  --card-gap:     12px;
+  --card-padding: 20px;
+  --screen-pad:   16px;
 }
 
-/* ── Border radius ────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   BORDER RADIUS
+   ══════════════════════════════════════════════════ */
 :root {
-  --radius-card:   18px;  /* large cards */
-  --radius-btn:    12px;  /* primary buttons */
-  --radius-chip:   999px; /* pills */
-  --radius-option: 12px;  /* answer option buttons */
+  --radius-card:    16px;
+  --radius-btn:     10px;
+  --radius-btn-lg:  12px;
+  --radius-chip:   999px;
+  --radius-option:  12px;
+  --radius-tag:     6px;
+  --radius-icon:    10px;
 }
 
-/* ── Motion ───────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   MOTION
+   ══════════════════════════════════════════════════ */
 :root {
   --duration-theme:  180ms;
   --duration-tap:    100ms;
-  --duration-flash:  200ms;
+  --duration-flash:  220ms;
   --duration-count:  500ms;
   --ease-out:        cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Global resets & base ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   GLOBAL RESET & BASE
+   ══════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
-  /* enable theme crossfade */
   color-scheme: light dark;
 }
 
 body {
   font: var(--text-body);
+  font-family: var(--font-body);
   background: var(--color-bg);
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  /* crossfade ALL color transitions when theme switches */
   transition:
     background-color var(--duration-theme) ease,
     color            var(--duration-theme) ease;
 }
 
-/* Every element inherits the crossfade so there's no hard-cut */
+/* Theme crossfade on all elements */
 *, *::before, *::after {
   transition:
     background-color var(--duration-theme) ease,
@@ -136,13 +252,12 @@ body {
     fill             var(--duration-theme) ease;
 }
 
-/* Buttons: don't inherit slow theme transition on press */
+/* Buttons reset */
 button {
-  font-family: var(--font-family);
+  font-family: var(--font-display);
   cursor: pointer;
   border: none;
   background: none;
-  /* keep only the crossfade, add tap animation on top */
   transition:
     background-color var(--duration-theme) ease,
     border-color     var(--duration-theme) ease,
@@ -151,10 +266,10 @@ button {
     opacity          var(--duration-tap)   ease;
 }
 
-/* Minimum touch target */
+/* Minimum tap targets */
 button, a, [role="button"] { min-height: 44px; }
 
-/* ── Utility classes ──────────────────────────────────────────── */
+/* ── Utility ───────────────────────────────────── */
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
@@ -162,5 +277,29 @@ button, a, [role="button"] { min-height: 44px; }
 
 .loader {
   display: flex; align-items: center; justify-content: center;
-  min-height: 200px; font: var(--text-body); color: var(--color-text-secondary);
+  min-height: 200px;
+  font: var(--text-body); font-family: var(--font-body);
+  color: var(--color-text-muted);
+}
+
+/* Grade badge chip */
+.grade-badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-chip);
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
+  font: var(--text-label);
+  letter-spacing: var(--ls-wider);
+  text-transform: uppercase;
+}
+
+/* Nova Mark Pattern — 12° tilt, use only on premium/results screens */
+.nova-mark-bg {
+  background-image: url('/public/@Logos/nt-exams-light.svg');
+  background-size: 80px;
+  background-repeat: repeat;
+  transform: rotate(12deg) scale(1.2);
+  opacity: 0.08;
+  pointer-events: none;
 }

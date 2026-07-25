@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext();
 
-const STORAGE_KEY = 'chessquiz-theme';
+const STORAGE_KEY = 'nt-exams-theme';
 
 function getInitialTheme() {
   // 1. Respect manual override stored in localStorage
