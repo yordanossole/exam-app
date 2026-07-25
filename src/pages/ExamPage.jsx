@@ -1,11 +1,9 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { useExam } from '../hooks/useExam';
-import Screen from '../components/Screen';
 import ProgressBar from '../components/ProgressBar';
-import OptionItem from '../components/OptionItem';
-import ExplanationBlock from '../components/ExplanationBlock';
+import Card from '../components/Card';
 import Button from '../components/Button';
 
 export default function ExamPage() {
@@ -17,9 +15,8 @@ export default function ExamPage() {
   const session = state.currentSession;
   const [showExplanation, setShowExplanation] = useState(false);
 
-  // Flatten questions from sections
   const questions = useMemo(() => {
-    if (!exam || !exam.content || !exam.content.sections) return [];
+    if (!exam?.content?.sections) return [];
     return exam.content.sections.flatMap(s =>
       s.questions.map(q => ({ ...q, passage: s.passage, sectionTitle: s.title }))
     );
@@ -27,10 +24,7 @@ export default function ExamPage() {
 
   useEffect(() => {
     if (!loading && exam && !session) {
-      dispatch({
-        type: 'START_EXAM',
-        payload: { examId, subjectId: exam.subject, questions },
-      });
+      dispatch({ type: 'START_EXAM', payload: { examId, subjectId: exam.subject, questions } });
     }
   }, [loading, exam, session, dispatch, examId, questions]);
 
@@ -40,26 +34,23 @@ export default function ExamPage() {
 
   useEffect(() => { setShowExplanation(false); }, [session?.currentIndex]);
 
-  const handleKeyDown = useCallback(() => {
-    // keyboard handling placeholder
-  }, [questions, session, showExplanation]);
-
   if (loading || !exam || !session || questions.length === 0) {
-    return <Screen><div className="loader">Loading exam...</div></Screen>;
+    return (
+      <div style={{ ...screenWrap, alignItems: 'center', justifyContent: 'center' }}>
+        <div className="loader">Loading exam…</div>
+      </div>
+    );
   }
 
   const { currentIndex, answers } = session;
-  const question = questions[currentIndex];
+  const question       = questions[currentIndex];
   const selectedAnswer = answers[question.question_id]?.option;
-  const isLast = currentIndex === questions.length - 1;
+  const isLast         = currentIndex === questions.length - 1;
 
-  function handleSelect(optionId) {
+  function handleSelect(key) {
     if (showExplanation) return;
-    const isCorrect = optionId === question.answer?.correct_option;
-    dispatch({
-      type: 'SET_ANSWER',
-      payload: { question_id: question.question_id, optionId, isCorrect, timeSpent: 0 },
-    });
+    const isCorrect = key === question.answer?.correct_option;
+    dispatch({ type: 'SET_ANSWER', payload: { question_id: question.question_id, optionId: key, isCorrect, timeSpent: 0 } });
   }
 
   function handleNext() {
@@ -72,150 +63,134 @@ export default function ExamPage() {
   }
 
   return (
-    <Screen>
-      <ProgressBar value={currentIndex + (showExplanation ? 1 : 0)} max={questions.length} />
+    <div style={screenWrap}>
+      {/* Top progress bar */}
+      <ProgressBar value={currentIndex + (showExplanation ? 1 : 0)} max={questions.length} style={{ borderRadius: 0 }} />
 
-      <header style={navStyle}>
-        <button onClick={() => navigate('/')} style={iconBtn} aria-label="Exit exam">✕</button>
-        <span style={{ fontSize: 'clamp(13px, 3.5vw, 15px)', color: '#414755', fontWeight: 500 }}>
+      {/* Header */}
+      <header style={pageHeader}>
+        <button onClick={() => navigate('/')} style={exitBtn} aria-label="Exit exam">✕</button>
+        <span style={{ font: 'var(--text-body)', fontSize: 13, color: 'var(--color-text-secondary)', fontWeight: 600 }}>
           Question {currentIndex + 1} of {questions.length}
         </span>
         <div style={{ width: 44 }} />
       </header>
 
-      <main style={{ flex: 1, padding: 'clamp(16px, 4vw, 24px)', overflowY: 'auto' }}>
+      {/* Body */}
+      <main style={scrollContent}>
+
+        {/* Passage */}
         {question.passage && (
-          <div style={passageStyle}>
-            <h4 style={{ marginBottom: 8, fontSize: 14, fontWeight: 600 }}>{question.passage.title}</h4>
-            <p style={{ fontSize: 14, lineHeight: 1.6 }}>{question.passage.text}</p>
-          </div>
+          <Card style={{ marginBottom: 16, maxHeight: 200, overflowY: 'auto' }}>
+            <p style={{ font: 'var(--text-body)', fontSize: 12, fontWeight: 700, letterSpacing: 'var(--ls-label)', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 6 }}>
+              Passage
+            </p>
+            <p style={{ font: 'var(--text-body-med)', color: 'var(--color-text-primary)', lineHeight: 1.6 }}>
+              {question.passage.text}
+            </p>
+          </Card>
         )}
 
-        <div>
-          <p style={qTextStyle}>{question.text}</p>
+        {/* Question */}
+        <Card style={{ marginBottom: 20 }}>
+          <p style={{ font: 'var(--text-body)', fontSize: 11, fontWeight: 700, letterSpacing: 'var(--ls-label)', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 12 }}>
+            Question {currentIndex + 1}
+          </p>
+          <p style={{ fontSize: 19, fontWeight: 600, color: 'var(--color-text-primary)', lineHeight: 1.55, fontFamily: 'var(--font-family)' }}>
+            {question.text}
+          </p>
+        </Card>
 
-          {question.media?.map(m =>
-            m.type !== 'table' && (
-              <img
-                key={m.id}
-                src={m.url}
-                alt={m.alt}
-                style={{ maxWidth: '100%', height: 'auto', marginBottom: 16, borderRadius: 8 }}
-              />
-            )
-          )}
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {Object.entries(question.options).map(([key, val]) => (
-              <div
+        {/* Options */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
+          {Object.entries(question.options).map(([key, val]) => {
+            const isSelected = selectedAnswer === key;
+            let bg = 'var(--color-surface)', border = 'var(--color-border)', color = 'var(--color-text-primary)';
+            if (isSelected) { bg = 'var(--color-accent-tint)'; border = 'var(--color-accent)'; color = 'var(--color-accent)'; }
+            return (
+              <button
                 key={key}
                 onClick={() => handleSelect(key)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={e => e.key === 'Enter' && handleSelect(key)}
-                aria-pressed={selectedAnswer === key}
+                disabled={showExplanation}
+                aria-pressed={isSelected}
                 style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 12,
-                  padding: 'clamp(12px, 3vw, 16px)',
-                  borderRadius: 8,
-                  border: '1.5px solid',
-                  borderColor: selectedAnswer === key ? '#0058bc' : '#e0e2ed',
-                  background: selectedAnswer === key ? '#eef4ff' : '#fff',
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '14px 16px', borderRadius: 'var(--radius-option)',
+                  border: `1.5px solid ${border}`, background: bg, color,
+                  fontSize: 15, fontWeight: isSelected ? 600 : 400,
+                  fontFamily: 'var(--font-family)', textAlign: 'left',
                   cursor: showExplanation ? 'default' : 'pointer',
-                  fontSize: 'clamp(14px, 3.5vw, 16px)',
-                  color: '#181c23',
-                  lineHeight: 1.5,
-                  transition: 'border-color 0.15s, background 0.15s',
+                  width: '100%', minHeight: 52,
+                  transition: 'background var(--duration-tap) ease, border-color var(--duration-tap) ease',
+                  WebkitTapHighlightColor: 'transparent',
                 }}
               >
-                <span style={{ fontWeight: 700, color: '#0058bc', flexShrink: 0 }}>
-                  {key.toUpperCase()}.
+                <span style={{
+                  width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+                  background: isSelected ? 'currentColor' : 'var(--color-track)',
+                  color: isSelected ? bg : 'var(--color-text-secondary)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 12, fontWeight: 700,
+                }}>
+                  {key}
                 </span>
-                <span>{val}</span>
-              </div>
-            ))}
-          </div>
+                <span style={{ flex: 1, lineHeight: 1.4 }}>{val}</span>
+              </button>
+            );
+          })}
         </div>
 
+        {/* Explanation */}
         {showExplanation && question.answer?.explanation && (
-          <div style={explanationStyle}>
-            <strong style={{ display: 'block', marginBottom: 8, color: '#0058bc' }}>Explanation</strong>
-            <p style={{ fontSize: 'clamp(14px, 3.5vw, 15px)', lineHeight: 1.6, color: '#181c23' }}>
+          <Card style={{ background: 'var(--color-accent-tint)', borderColor: 'var(--color-accent)', marginBottom: 20 }}>
+            <p style={{ font: 'var(--text-body)', fontSize: 11, fontWeight: 700, letterSpacing: 'var(--ls-label)', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 8 }}>
+              Explanation
+            </p>
+            <p style={{ font: 'var(--text-body-med)', color: 'var(--color-text-primary)', lineHeight: 1.6 }}>
               {question.answer.explanation}
             </p>
-          </div>
+          </Card>
         )}
+
+        <div style={{ height: 16 }} />
       </main>
 
-      <footer style={footerStyle}>
-        <Button
-          variant="ghost"
-          onClick={() => dispatch({ type: 'PREV_QUESTION' })}
-          disabled={currentIndex === 0}
-        >
+      {/* Footer */}
+      <footer style={footerBar}>
+        <Button variant="ghost" onClick={() => dispatch({ type: 'PREV_QUESTION' })} disabled={currentIndex === 0}>
           Back
         </Button>
         {!showExplanation
-          ? <Button onClick={() => setShowExplanation(true)} disabled={!selectedAnswer}>Check</Button>
+          ? <Button disabled={!selectedAnswer} onClick={() => setShowExplanation(true)}>Check</Button>
           : <Button onClick={handleNext}>{isLast ? 'Finish' : 'Next'}</Button>
         }
       </footer>
-    </Screen>
+    </div>
   );
 }
 
-const navStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '0 clamp(14px, 4vw, 20px)',
-  height: 52,
-  borderBottom: '1px solid #e0e2ed',
-  flexShrink: 0,
+const screenWrap = {
+  display: 'flex', flexDirection: 'column',
+  minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
+  background: 'var(--color-bg)',
 };
-const iconBtn = {
-  background: 'none',
-  border: 'none',
-  fontSize: 20,
-  cursor: 'pointer',
-  color: '#414755',
-  minHeight: 44,
-  minWidth: 44,
-  display: 'flex',
-  alignItems: 'center',
+const pageHeader = {
+  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+  height: 52, padding: '0 var(--screen-pad)',
+  background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', flexShrink: 0,
 };
-const qTextStyle = {
-  fontSize: 'clamp(17px, 4.5vw, 21px)',
-  fontWeight: 500,
-  color: '#181c23',
-  marginBottom: 20,
-  lineHeight: 1.55,
-  fontFamily: 'Newsreader, serif',
+const exitBtn = {
+  background: 'none', border: 'none', fontSize: 18, cursor: 'pointer',
+  color: 'var(--color-text-secondary)', minHeight: 44, minWidth: 44,
+  display: 'flex', alignItems: 'center',
 };
-const passageStyle = {
-  background: '#fff',
-  border: '1px solid #e0e2ed',
-  padding: 'clamp(12px, 3vw, 16px)',
-  borderRadius: 8,
-  marginBottom: 20,
-  maxHeight: 200,
-  overflowY: 'auto',
+const scrollContent = {
+  flex: 1, overflowY: 'auto', padding: 'var(--space-4) var(--screen-pad)',
+  WebkitOverflowScrolling: 'touch',
 };
-const explanationStyle = {
-  marginTop: 20,
-  padding: 'clamp(12px, 3vw, 16px)',
-  background: '#fffde7',
-  borderLeft: '4px solid #0058bc',
-  borderRadius: 8,
-};
-const footerStyle = {
-  padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 20px)',
-  borderTop: '1px solid #e0e2ed',
-  display: 'flex',
-  justifyContent: 'space-between',
-  background: '#fff',
-  gap: 12,
-  flexShrink: 0,
+const footerBar = {
+  display: 'flex', justifyContent: 'space-between', gap: 12,
+  padding: '12px var(--screen-pad)',
+  paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+  background: 'var(--color-surface)', borderTop: '1px solid var(--color-border)', flexShrink: 0,
 };

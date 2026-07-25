@@ -1,100 +1,119 @@
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import Screen from '../components/Screen';
-import TabBar from '../components/TabBar';
+import BottomTabBar from '../components/BottomTabBar';
+import Card from '../components/Card';
+import CircularRing from '../components/CircularRing';
+import ProgressBar from '../components/ProgressBar';
+import { MOCK_STATS } from '../data/quizData';
 
 export default function TopicStatsPage() {
   const { state } = useAppContext();
-  const { stats } = state;
   const navigate = useNavigate();
+  const stats = state.stats ?? MOCK_STATS;
 
-  if (!stats) {
-    return <Screen><div className="loader">Loading stats...</div></Screen>;
-  }
+  const overall  = stats?.overall_accuracy ?? stats?.accuracy ?? 0;
+  const subjects = stats?.subject_stats ?? [];
 
   return (
-    <Screen style={{ background: '#f1f3fe', paddingBottom: 70 }}>
-      <header style={navHeader}>
+    <div style={screenWrap}>
+      <header style={pageHeader}>
         <button onClick={() => navigate(-1)} style={backBtn} aria-label="Go back">←</button>
-        <span style={titleStyle}>Detailed Performance</span>
+        <span style={pageTitle}>Performance</span>
         <div style={{ width: 44 }} />
       </header>
 
-      <main style={{ padding: 'clamp(16px, 4vw, 24px)', overflowY: 'auto' }}>
+      <main style={scrollContent}>
 
-        {/* Summary card */}
-        <div style={summaryCard}>
-          <div style={{ fontSize: 'clamp(36px, 10vw, 52px)', fontWeight: 700, color: '#0058bc', lineHeight: 1 }}>
-            {stats.overall_accuracy}%
-          </div>
-          <div style={{ color: '#717786', fontSize: 'clamp(13px, 3.5vw, 15px)', marginTop: 6 }}>
+        {/* Overall accuracy ring */}
+        <Card style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '28px 20px', marginBottom: 20 }}>
+          <CircularRing size={140} strokeWidth={12} value={overall}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ font: 'var(--text-stat)', fontSize: 34, letterSpacing: 'var(--ls-number)', color: 'var(--color-accent)' }}>
+                {overall}%
+              </div>
+              <div style={{ font: 'var(--text-body)', fontSize: 11, color: 'var(--color-text-secondary)' }}>
+                overall
+              </div>
+            </div>
+          </CircularRing>
+          <p style={{ font: 'var(--text-card-title)', color: 'var(--color-text-primary)', marginTop: 16 }}>
             Overall Accuracy
-          </div>
-        </div>
+          </p>
+        </Card>
 
-        <h3 style={{ fontSize: 'clamp(15px, 4vw, 17px)', fontWeight: 600, color: '#181c23', marginBottom: 16 }}>
+        {/* Breakdown */}
+        <h3 style={{ font: 'var(--text-card-title)', color: 'var(--color-text-primary)', marginBottom: 12 }}>
           Breakdown by Topic
         </h3>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {stats.subject_stats.map((stat, i) => (
-            <div key={i} style={statRow}>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={subjectLabel}>{stat.subject}</div>
-                <div style={topicLabel}>{stat.topic}</div>
-              </div>
-              <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                <div style={{ ...accLabel, color: stat.accuracy > 70 ? '#006e28' : '#bc000a' }}>
-                  {stat.accuracy}%
-                </div>
-                <div style={countLabel}>{stat.correct_count}/{stat.total_count} correct</div>
-              </div>
+        {subjects.length === 0 ? (
+          <Card>
+            <div style={{ textAlign: 'center', padding: '24px 0' }}>
+              <span style={{ fontSize: 36 }}>📈</span>
+              <p style={{ font: 'var(--text-card-title)', color: 'var(--color-text-primary)', marginTop: 12, marginBottom: 6 }}>
+                No data yet
+              </p>
+              <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)' }}>
+                Complete a quiz to see your topic breakdown.
+              </p>
             </div>
-          ))}
-          {stats.subject_stats.length === 0 && (
-            <div style={{ textAlign: 'center', color: '#717786', padding: 24, fontSize: 15 }}>
-              No data yet. Complete an exam to see your stats.
-            </div>
-          )}
-        </div>
+          </Card>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--card-gap)' }}>
+            {subjects.map((stat, i) => {
+              const good = stat.accuracy > 70;
+              return (
+                <Card key={i}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ font: 'var(--text-body)', fontSize: 11, fontWeight: 700, letterSpacing: 'var(--ls-label)', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: 3 }}>
+                        {stat.subject}
+                      </p>
+                      <p style={{ font: 'var(--text-card-title)', color: 'var(--color-text-primary)' }}>
+                        {stat.topic}
+                      </p>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 12 }}>
+                      <div style={{ font: 'var(--text-stat)', fontSize: 22, letterSpacing: 'var(--ls-number)', color: good ? 'var(--color-accent)' : 'var(--color-error)' }}>
+                        {stat.accuracy}%
+                      </div>
+                      <div style={{ font: 'var(--text-body)', fontSize: 12, color: 'var(--color-text-secondary)' }}>
+                        {stat.correct_count}/{stat.total_count} correct
+                      </div>
+                    </div>
+                  </div>
+                  <ProgressBar value={stat.accuracy} />
+                </Card>
+              );
+            })}
+          </div>
+        )}
+
+        <div style={{ height: 80 }} />
       </main>
 
-      <TabBar />
-    </Screen>
+      <BottomTabBar />
+    </div>
   );
 }
 
-const navHeader  = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  height: 56,
-  padding: '0 clamp(16px, 4vw, 24px)',
-  background: '#fff',
-  borderBottom: '1px solid #e0e2ed',
-  flexShrink: 0,
+const screenWrap = {
+  display: 'flex', flexDirection: 'column',
+  minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
+  background: 'var(--color-bg)',
 };
-const backBtn    = { background: 'none', border: 'none', fontSize: 24, color: '#0058bc', cursor: 'pointer', minHeight: 44 };
-const titleStyle = { fontSize: 17, fontWeight: 600, color: '#181c23' };
-const summaryCard = {
-  background: '#fff',
-  borderRadius: '1rem',
-  padding: 'clamp(20px, 5vw, 32px)',
-  textAlign: 'center',
-  border: '1px solid #e0e2ed',
-  marginBottom: 24,
+const pageHeader = {
+  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+  height: 56, padding: '0 var(--screen-pad)',
+  background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', flexShrink: 0,
 };
-const statRow    = {
-  background: '#fff',
-  borderRadius: 12,
-  padding: 'clamp(12px, 3vw, 16px)',
-  border: '1px solid #e0e2ed',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: 12,
+const pageTitle = { font: 'var(--text-card-title)', fontSize: 17, color: 'var(--color-text-primary)' };
+const backBtn = {
+  background: 'none', border: 'none', fontSize: 22,
+  color: 'var(--color-accent)', cursor: 'pointer', minHeight: 44, minWidth: 44,
+  display: 'flex', alignItems: 'center',
 };
-const subjectLabel = { fontSize: 12, fontWeight: 600, color: '#0058bc', textTransform: 'uppercase', marginBottom: 2 };
-const topicLabel   = { fontSize: 'clamp(14px, 3.5vw, 16px)', fontWeight: 500, color: '#181c23' };
-const accLabel     = { fontSize: 'clamp(16px, 4.5vw, 20px)', fontWeight: 700 };
-const countLabel   = { fontSize: 12, color: '#717786' };
+const scrollContent = {
+  flex: 1, overflowY: 'auto', padding: 'var(--space-4) var(--screen-pad)',
+  WebkitOverflowScrolling: 'touch',
+};

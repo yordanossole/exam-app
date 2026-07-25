@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { examApi } from '../services/api';
 import { useAppContext } from '../context/AppContext';
-import Screen from '../components/Screen';
-import TabBar from '../components/TabBar';
+import BottomTabBar from '../components/BottomTabBar';
+import Card from '../components/Card';
 import Button from '../components/Button';
 
 export default function ExamListPage() {
@@ -14,17 +14,10 @@ export default function ExamListPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchExams = async () => {
-      try {
-        const res = await examApi.listExams({ subject: subjectId });
-        setExams(res.data);
-      } catch (err) {
-        console.error('Failed to fetch exams', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchExams();
+    examApi.listExams({ subject: subjectId })
+      .then(res => setExams(res.data))
+      .catch(err => console.error('Failed to fetch exams', err))
+      .finally(() => setLoading(false));
   }, [subjectId]);
 
   function startExam(exam) {
@@ -33,75 +26,85 @@ export default function ExamListPage() {
   }
 
   return (
-    <Screen style={{ background: '#f1f3fe', paddingBottom: 70 }}>
-      <header style={navStyle}>
-        <button aria-label="Go back" onClick={() => navigate(-1)} style={iconBtn}>←</button>
-        <span style={navTitle}>Exams</span>
+    <div style={screenWrap}>
+      <header style={pageHeader}>
+        <button aria-label="Go back" onClick={() => navigate(-1)} style={backBtn}>←</button>
+        <span style={pageTitle}>Exams</span>
         <span style={{ width: 44 }} />
       </header>
 
-      <main style={{ flex: 1, padding: 'clamp(16px, 4vw, 24px)', overflowY: 'auto' }}>
+      <main style={scrollContent}>
         {loading ? (
-          <div className="loader">Loading exams...</div>
+          <div className="loader">Loading exams…</div>
         ) : exams.length === 0 ? (
-          <div style={{ textAlign: 'center', marginTop: 40, color: '#717786', fontSize: 15 }}>
-            No exams found for this subject.
+          <div style={emptyState}>
+            <span style={{ fontSize: 40, marginBottom: 12 }}>📋</span>
+            <p style={{ font: 'var(--text-card-title)', color: 'var(--color-text-primary)', marginBottom: 6 }}>
+              No exams yet
+            </p>
+            <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)' }}>
+              No exams found for this subject.
+            </p>
           </div>
         ) : (
-          <div style={{ background: '#ffffff', borderRadius: '0.75rem', overflow: 'hidden', border: '1px solid #e0e2ed' }}>
+          <Card padding="0" style={{ overflow: 'hidden' }}>
             {exams.map((exam, i) => (
               <div
                 key={exam.exam_id}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: 'clamp(12px, 3vw, 18px) clamp(14px, 4vw, 20px)',
-                  borderBottom: i < exams.length - 1 ? '0.5px solid #e0e2ed' : 'none',
-                  gap: 12,
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  gap: 12, padding: '14px 16px',
+                  borderBottom: i < exams.length - 1 ? '1px solid var(--color-border)' : 'none',
                 }}
               >
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 'clamp(14px, 3.5vw, 16px)', fontWeight: 500, color: '#181c23' }}>
+                  <div style={{ font: 'var(--text-card-title)', color: 'var(--color-text-primary)' }}>
                     {exam.subject_display} {exam.year_ec} (EC)
                   </div>
                   <div style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    letterSpacing: '0.05em',
-                    color: '#717786',
-                    textTransform: 'uppercase',
-                    marginTop: 2,
+                    font: 'var(--text-body)', fontSize: 12, fontWeight: 600,
+                    letterSpacing: 'var(--ls-label)', color: 'var(--color-text-secondary)',
+                    textTransform: 'uppercase', marginTop: 2,
                   }}>
-                    {exam.question_count} Questions • {exam.region_variant}
+                    {exam.question_count} Questions · {exam.region_variant}
                   </div>
                 </div>
-                <Button
-                  onClick={() => startExam(exam)}
-                  style={{ padding: '8px 18px', fontSize: 14, flexShrink: 0 }}
-                >
+                <Button onClick={() => startExam(exam)} size="sm" style={{ flexShrink: 0 }}>
                   Start
                 </Button>
               </div>
             ))}
-          </div>
+          </Card>
         )}
+        <div style={{ height: 80 }} />
       </main>
 
-      <TabBar />
-    </Screen>
+      <BottomTabBar />
+    </div>
   );
 }
 
-const navStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '0 clamp(16px, 4vw, 24px)',
-  height: 56,
-  background: '#ffffff',
-  borderBottom: '1px solid #e0e2ed',
-  flexShrink: 0,
+const screenWrap = {
+  display: 'flex', flexDirection: 'column',
+  minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
+  background: 'var(--color-bg)',
 };
-const navTitle = { fontSize: 17, fontWeight: 600, color: '#181c23', fontFamily: 'Inter, sans-serif' };
-const iconBtn  = { background: 'none', border: 'none', fontSize: 20, color: '#0058bc', cursor: 'pointer', minHeight: 44 };
+const pageHeader = {
+  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+  height: 56, padding: '0 var(--screen-pad)',
+  background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', flexShrink: 0,
+};
+const pageTitle = { font: 'var(--text-card-title)', fontSize: 17, color: 'var(--color-text-primary)' };
+const backBtn = {
+  background: 'none', border: 'none', fontSize: 22,
+  color: 'var(--color-accent)', cursor: 'pointer', minHeight: 44, minWidth: 44,
+  display: 'flex', alignItems: 'center',
+};
+const scrollContent = {
+  flex: 1, overflowY: 'auto', padding: 'var(--space-4) var(--screen-pad)',
+  WebkitOverflowScrolling: 'touch',
+};
+const emptyState = {
+  display: 'flex', flexDirection: 'column', alignItems: 'center',
+  justifyContent: 'center', padding: '60px 24px', textAlign: 'center',
+};

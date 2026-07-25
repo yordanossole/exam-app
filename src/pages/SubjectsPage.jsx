@@ -1,64 +1,81 @@
 import { useNavigate } from 'react-router-dom';
-import Screen from '../components/Screen';
-import TabBar from '../components/TabBar';
-import SubjectCard from '../components/SubjectCard';
+import BottomTabBar from '../components/BottomTabBar';
+import Card from '../components/Card';
 
-// Real subjects expected in the backend
-const REAL_SUBJECTS = [
-  { id: 'mathematics', name: 'Mathematics', category: 'Math',     icon: '📐', color: '#fff3e0' },
-  { id: 'english',     name: 'English',     category: 'Language', icon: '🌍', color: '#e3f2fd' },
-  { id: 'amharic',     name: 'Amharic',     category: 'Language', icon: '🇪🇹', color: '#e8f5e9' },
-  { id: 'physics',     name: 'Physics',     category: 'Science',  icon: '⚛️', color: '#f3e5f5' },
-  { id: 'biology',     name: 'Biology',     category: 'Science',  icon: '🧬', color: '#e8f5e9' },
-  { id: 'chemistry',   name: 'Chemistry',   category: 'Science',  icon: '🧪', color: '#fff3e0' },
-  { id: 'civics',      name: 'Civics',      category: 'Social',   icon: '⚖️', color: '#e3f2fd' },
+const SUBJECTS = [
+  { id: 'mathematics', name: 'Mathematics', category: 'Math',     icon: '📐', color: '#FFF3E0' },
+  { id: 'english',     name: 'English',     category: 'Language', icon: '🌍', color: '#E3F2FD' },
+  { id: 'amharic',     name: 'Amharic',     category: 'Language', icon: '🇪🇹', color: '#E8F5E9' },
+  { id: 'physics',     name: 'Physics',     category: 'Science',  icon: '⚛️', color: '#F3E5F5' },
+  { id: 'biology',     name: 'Biology',     category: 'Science',  icon: '🧬', color: '#E8F5E9' },
+  { id: 'chemistry',   name: 'Chemistry',   category: 'Science',  icon: '🧪', color: '#FFF9E0' },
+  { id: 'civics',      name: 'Civics',      category: 'Social',   icon: '⚖️', color: '#EDE7F6' },
 ];
 
 export default function SubjectsPage() {
   const navigate = useNavigate();
 
   return (
-    <Screen style={{ background: '#f1f3fe', paddingBottom: 70 }}>
-      <header style={navStyle}>
-        <button onClick={() => navigate(-1)} style={iconBtn} aria-label="Go back">←</button>
-        <span style={navTitle}>Select Subject</span>
+    <div style={screenWrap}>
+      <header style={pageHeader}>
+        <button onClick={() => navigate(-1)} style={backBtn} aria-label="Go back">←</button>
+        <span style={pageTitle}>Select Subject</span>
         <div style={{ width: 44 }} />
       </header>
 
-      <main style={{ flex: 1, padding: 'clamp(16px, 4vw, 24px)', overflowY: 'auto' }}>
-        {/*
-          Mobile:  1 column (grid-2-col class handles the breakpoint upgrade)
-          Tablet+: 2 columns  (via .grid-2-col in index.css)
-          Desktop: 3 columns
-        */}
-        <div
-          className="grid-2-col"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr',
-            gap: 'clamp(8px, 2vw, 12px)',
-          }}
-        >
-          {REAL_SUBJECTS.map(s => (
-            <SubjectCard key={s.id} subject={s} onClick={() => navigate(`/subjects/${s.id}`)} />
+      <main style={scrollContent}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--card-gap)' }}>
+          {SUBJECTS.map(s => (
+            <Card key={s.id} onPress={() => navigate(`/quiz/category/${s.id}`)} padding="0">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
+                <div style={{
+                  width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+                  background: s.color,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 22,
+                }}>
+                  {s.icon}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ font: 'var(--text-card-title)', color: 'var(--color-text-primary)' }}>
+                    {s.name}
+                  </div>
+                  <div style={{ font: 'var(--text-body)', fontSize: 12, color: 'var(--color-text-secondary)', marginTop: 2 }}>
+                    {s.category}
+                  </div>
+                </div>
+                <span style={{ color: 'var(--color-text-secondary)', fontSize: 18, flexShrink: 0 }}>›</span>
+              </div>
+            </Card>
           ))}
         </div>
+        <div style={{ height: 80 }} />
       </main>
 
-      <TabBar activeTab="exams" />
-    </Screen>
+      <BottomTabBar />
+    </div>
   );
 }
 
-const navStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '0 clamp(16px, 4vw, 24px)',
-  height: 56,
-  background: '#ffffff',
-  borderBottom: '1px solid #e0e2ed',
+const screenWrap = {
+  display: 'flex', flexDirection: 'column',
+  minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
+  background: 'var(--color-bg)',
+};
+const pageHeader = {
+  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+  height: 56, padding: '0 var(--screen-pad)',
+  background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)',
   flexShrink: 0,
 };
-const navTitle = { fontSize: 17, fontWeight: 600, color: '#181c23' };
-const iconBtn  = { background: 'none', border: 'none', fontSize: 24, color: '#0058bc', cursor: 'pointer', minHeight: 44 };
+const pageTitle = { font: 'var(--text-card-title)', fontSize: 17, color: 'var(--color-text-primary)' };
+const backBtn = {
+  background: 'none', border: 'none', fontSize: 22,
+  color: 'var(--color-accent)', cursor: 'pointer', minHeight: 44, minWidth: 44,
+  display: 'flex', alignItems: 'center',
+};
+const scrollContent = {
+  flex: 1, overflowY: 'auto',
+  padding: 'var(--space-4) var(--screen-pad)',
+  WebkitOverflowScrolling: 'touch',
+};

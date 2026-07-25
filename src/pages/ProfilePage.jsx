@@ -1,131 +1,137 @@
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
-import Screen from '../components/Screen';
-import TabBar from '../components/TabBar';
+import BottomTabBar from '../components/BottomTabBar';
+import Card from '../components/Card';
+import Avatar from '../components/Avatar';
 import Button from '../components/Button';
+import { MOCK_STATS } from '../data/quizData';
+import { StatChip } from '../components/StatChip';
+
+const MENU_ITEMS = [
+  { icon: '🔔', label: 'Notifications' },
+  { icon: '⚙️',  label: 'Settings' },
+  { icon: '❓', label: 'Help & Support' },
+  { icon: '📊', label: 'Detailed Stats', path: '/stats' },
+  { icon: '⬆️', label: 'Upgrade Plan',  path: '/upgrade' },
+];
 
 export default function ProfilePage() {
   const { state } = useAppContext();
   const { user } = state;
+  const stats = state.stats ?? MOCK_STATS;
   const navigate = useNavigate();
 
-  const sub = user?.active_subscription;
+  const sub      = user?.active_subscription;
+  const streak   = stats?.streak   ?? 0;
+  const points   = stats?.points   ?? 0;
+  const accuracy = stats?.accuracy ?? stats?.overall_accuracy ?? 0;
 
   return (
-    <Screen style={{ background: '#f1f3fe', paddingBottom: 70 }}>
-      <header style={navStyle}>
-        <span style={navTitle}>Profile</span>
+    <div style={screenWrap}>
+      <header style={pageHeader}>
+        <span style={pageTitle}>Profile</span>
         <div style={{ width: 44 }} />
       </header>
 
-      <main style={{ flex: 1, padding: 'clamp(16px, 4vw, 24px)', overflowY: 'auto' }}>
+      <main style={scrollContent}>
 
-        {/* Avatar + name — centred, scales up on wide screens */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: 'clamp(20px, 5vw, 32px) 0',
-          marginBottom: 24,
-        }}>
-          <div style={{
-            width: 'clamp(64px, 18vw, 96px)',
-            height: 'clamp(64px, 18vw, 96px)',
-            borderRadius: '50%',
-            background: '#0058bc',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 'clamp(26px, 7vw, 38px)',
-            color: '#ffffff',
-            fontWeight: 600,
-            marginBottom: 12,
-            overflow: 'hidden',
-            flexShrink: 0,
-          }}>
-            {user?.avatar_url
-              ? <img src={user.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              : user?.display_name?.charAt(0) ?? '?'}
+        {/* Avatar section */}
+        <div style={avatarSection}>
+          <Avatar
+            src={user?.avatar_url}
+            name={user?.display_name ?? 'U'}
+            size={80}
+            ring={streak > 0}
+          />
+          <div style={{ font: 'var(--text-screen-title)', fontSize: 20, color: 'var(--color-text-primary)', marginTop: 14, marginBottom: 4 }}>
+            {user?.display_name ?? 'Guest'}
           </div>
-          <div style={{ fontSize: 'clamp(17px, 4.5vw, 22px)', fontWeight: 600, color: '#181c23', marginBottom: 4 }}>
-            {user?.display_name}
+          <div style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)' }}>
+            {user?.role ?? 'Free'} Member
           </div>
-          <div style={{ fontSize: 'clamp(13px, 3.5vw, 15px)', color: '#717786' }}>
-            {user?.role} Member
-          </div>
+        </div>
+
+        {/* Stats strip */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          <StatChip icon="🔥" value={streak}                  label="Streak"   variant="gold"    />
+          <StatChip icon="⭐" value={points.toLocaleString()} label="Points"   variant="green"   />
+          <StatChip icon="🎯" value={`${accuracy}%`}          label="Accuracy" variant="neutral" />
         </div>
 
         {/* Subscription card */}
-        <div style={card}>
-          <div style={sectionLabel}>Your Subscription</div>
+        <Card style={{ marginBottom: 16 }}>
+          <p style={sectionLabel}>Subscription</p>
           {sub ? (
-            <div>
-              <div style={{ fontSize: 'clamp(15px, 4vw, 17px)', fontWeight: 600, color: '#181c23' }}>
+            <>
+              <p style={{ font: 'var(--text-card-title)', fontSize: 17, color: 'var(--color-text-primary)' }}>
                 {sub.plan_name}
-              </div>
-              <div style={{ fontSize: 14, color: '#006e28', fontWeight: 500, marginTop: 4 }}>
+              </p>
+              <p style={{ font: 'var(--text-body)', color: 'var(--color-accent)', fontWeight: 600, marginTop: 4 }}>
                 Active until {new Date(sub.expires_at).toLocaleDateString()}
-              </div>
-            </div>
+              </p>
+            </>
           ) : (
-            <div>
-              <div style={{ fontSize: 15, color: '#181c23' }}>No active subscription.</div>
-              <Button
-                onClick={() => navigate('/upgrade')}
-                style={{ marginTop: 12, padding: '8px 16px', fontSize: 14 }}
-              >
-                View Plans
-              </Button>
-            </div>
+            <>
+              <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', marginBottom: 12 }}>
+                No active subscription.
+              </p>
+              <Button size="sm" onClick={() => navigate('/upgrade')}>View Plans</Button>
+            </>
           )}
-        </div>
+        </Card>
 
         {/* Menu items */}
-        <div style={{ ...card, padding: 0, overflow: 'hidden', marginBottom: 24 }}>
-          {[
-            { icon: '🔔', label: 'Notifications' },
-            { icon: '⚙️', label: 'Settings' },
-            { icon: '❓', label: 'Help & Support' },
-          ].map(item => (
-            <button key={item.label} style={menuItem}>
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
-              <span style={{ marginLeft: 'auto', color: '#c1c6d7' }}>›</span>
+        <Card padding="0" style={{ overflow: 'hidden', marginBottom: 24 }}>
+          {MENU_ITEMS.map((item, i) => (
+            <button
+              key={item.label}
+              onClick={() => item.path && navigate(item.path)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '0 16px', width: '100%', minHeight: 52,
+                background: 'none', border: 'none', cursor: 'pointer',
+                borderBottom: i < MENU_ITEMS.length - 1 ? '1px solid var(--color-border)' : 'none',
+                textAlign: 'left',
+              }}
+            >
+              <span style={{ fontSize: 20, width: 28, textAlign: 'center' }}>{item.icon}</span>
+              <span style={{ font: 'var(--text-body-med)', color: 'var(--color-text-primary)', flex: 1 }}>
+                {item.label}
+              </span>
+              <span style={{ color: 'var(--color-text-secondary)', fontSize: 18 }}>›</span>
             </button>
           ))}
-        </div>
+        </Card>
+
+        <div style={{ height: 80 }} />
       </main>
 
-      <TabBar activeTab="profile" />
-    </Screen>
+      <BottomTabBar />
+    </div>
   );
 }
 
-const navStyle = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  height: 56,
-  padding: '0 clamp(16px, 4vw, 24px)',
-  background: '#ffffff',
-  borderBottom: '1px solid #e0e2ed',
-  flexShrink: 0,
+const screenWrap = {
+  display: 'flex', flexDirection: 'column',
+  minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
+  background: 'var(--color-bg)',
 };
-const navTitle  = { fontSize: 17, fontWeight: 600, color: '#181c23', fontFamily: 'Inter, sans-serif' };
-const card      = { background: '#ffffff', border: '1px solid #e0e2ed', borderRadius: '0.75rem', padding: 20, marginBottom: 16 };
-const sectionLabel = { fontSize: 13, fontWeight: 600, color: '#717786', textTransform: 'uppercase', marginBottom: 12 };
-const menuItem  = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 12,
-  padding: '0 16px',
-  width: '100%',
-  background: 'none',
-  border: 'none',
-  borderBottom: '0.5px solid #e0e2ed',
-  cursor: 'pointer',
-  textAlign: 'left',
-  fontSize: 15,
-  color: '#181c23',
-  minHeight: 52,
+const pageHeader = {
+  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+  height: 56, padding: '0 var(--screen-pad)',
+  background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', flexShrink: 0,
+};
+const pageTitle    = { font: 'var(--text-card-title)', fontSize: 17, color: 'var(--color-text-primary)' };
+const scrollContent = {
+  flex: 1, overflowY: 'auto', padding: 'var(--space-4) var(--screen-pad)',
+  WebkitOverflowScrolling: 'touch',
+};
+const avatarSection = {
+  display: 'flex', flexDirection: 'column', alignItems: 'center',
+  paddingTop: 24, paddingBottom: 24, marginBottom: 20,
+};
+const sectionLabel = {
+  font: 'var(--text-body)', fontSize: 12, fontWeight: 700,
+  letterSpacing: 'var(--ls-label)', textTransform: 'uppercase',
+  color: 'var(--color-text-secondary)', marginBottom: 10,
 };

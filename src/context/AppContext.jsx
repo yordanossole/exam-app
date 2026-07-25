@@ -11,6 +11,11 @@ const MOCK_USER = {
 };
 
 const MOCK_STATS = {
+  // Fields used by HomeScreen streak strip
+  streak: 0,
+  points: 0,
+  accuracy: 0,
+  // Fields used by TopicStatsPage
   overall_accuracy: 0,
   subject_stats: [],
 };

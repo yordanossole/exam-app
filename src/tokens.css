@@ -1,0 +1,166 @@
+/* ── Chess.com-style design tokens ──────────────────────────────────────────
+   All colors, typography, spacing, radius, shadow, and motion values live here
+   as CSS custom properties. Light-mode values are set on :root; dark-mode
+   values override them inside [data-theme="dark"].
+   The body gains a smooth crossfade transition on color/background-color so
+   theme switches never hard-cut.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Light mode (default) ─────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --color-bg:           #FAFAF8;   /* warm off-white app background */
+  --color-surface:      #FFFFFF;   /* card / tab bar surface */
+  --color-border:       #E7E5E1;   /* hairline dividers */
+
+  /* Text */
+  --color-text-primary:   #211E1C; /* near-black warm charcoal */
+  --color-text-secondary: #8A8783; /* muted labels / timestamps */
+
+  /* Brand green */
+  --color-accent:         #7FA650; /* primary actions, active states */
+  --color-accent-press:   #6B8F3F; /* pressed / hover */
+  --color-accent-tint:    #EEF4E4; /* selected chips, correct-answer wash */
+
+  /* Semantic */
+  --color-error:          #C6444B;
+  --color-error-tint:     #FBEBEC;
+  --color-gold:           #E8A33D;  /* streak / badge */
+
+  /* Shadow — barely-there elevation */
+  --shadow-card: 0 2px 8px rgba(30, 28, 25, 0.06);
+  --shadow-tab:  0 -1px 0 var(--color-border);
+
+  /* Progress / ring track */
+  --color-track:  #E7E5E1;
+}
+
+/* ── Dark mode ────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --color-bg:           #262421;   /* warm charcoal, faint olive undertone */
+  --color-surface:      #302E2B;   /* cards float above background */
+  --color-border:       #3D3A36;
+
+  --color-text-primary:   #F1EFEC;
+  --color-text-secondary: #9B9792;
+
+  --color-accent:         #8FBB5C; /* brighter so it pops on dark bg */
+  --color-accent-press:   #7CA84A;
+  --color-accent-tint:    #33402A; /* dark olive-green wash */
+
+  --color-error:          #D8666C;
+  --color-error-tint:     #3D2528;
+  --color-gold:           #EDB25A;
+
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.35);
+  --shadow-tab:  0 -1px 0 var(--color-border);
+
+  --color-track:  #3D3A36;
+}
+
+/* ── Typography scale ─────────────────────────────────────────── */
+:root {
+  --font-family:   -apple-system, "SF Pro Display", "Inter", system-ui, sans-serif;
+
+  --text-screen-title: 700 23px/1.2 var(--font-family);  /* 22-24px */
+  --text-card-title:   600 16px/1.3 var(--font-family);  /* 16-17px */
+  --text-body:         400 14px/1.5 var(--font-family);
+  --text-body-med:     500 15px/1.5 var(--font-family);
+  --text-stat:         800 24px/1.1 var(--font-family);  /* stat numbers */
+  --text-btn:          600 15px/1 var(--font-family);
+
+  /* Letter-spacing */
+  --ls-number: -0.02em;
+  --ls-label:  +0.04em;
+}
+
+/* ── Spacing ──────────────────────────────────────────────────── */
+:root {
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+
+  --card-gap:     12px;  /* vertical gap between cards */
+  --card-padding: 16px;  /* internal card padding */
+  --screen-pad:   16px;  /* left/right screen margin */
+}
+
+/* ── Border radius ────────────────────────────────────────────── */
+:root {
+  --radius-card:   18px;  /* large cards */
+  --radius-btn:    12px;  /* primary buttons */
+  --radius-chip:   999px; /* pills */
+  --radius-option: 12px;  /* answer option buttons */
+}
+
+/* ── Motion ───────────────────────────────────────────────────── */
+:root {
+  --duration-theme:  180ms;
+  --duration-tap:    100ms;
+  --duration-flash:  200ms;
+  --duration-count:  500ms;
+  --ease-out:        cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Global resets & base ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  /* enable theme crossfade */
+  color-scheme: light dark;
+}
+
+body {
+  font: var(--text-body);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  /* crossfade ALL color transitions when theme switches */
+  transition:
+    background-color var(--duration-theme) ease,
+    color            var(--duration-theme) ease;
+}
+
+/* Every element inherits the crossfade so there's no hard-cut */
+*, *::before, *::after {
+  transition:
+    background-color var(--duration-theme) ease,
+    border-color     var(--duration-theme) ease,
+    color            var(--duration-theme) ease,
+    fill             var(--duration-theme) ease;
+}
+
+/* Buttons: don't inherit slow theme transition on press */
+button {
+  font-family: var(--font-family);
+  cursor: pointer;
+  border: none;
+  background: none;
+  /* keep only the crossfade, add tap animation on top */
+  transition:
+    background-color var(--duration-theme) ease,
+    border-color     var(--duration-theme) ease,
+    color            var(--duration-theme) ease,
+    transform        var(--duration-tap)   ease,
+    opacity          var(--duration-tap)   ease;
+}
+
+/* Minimum touch target */
+button, a, [role="button"] { min-height: 44px; }
+
+/* ── Utility classes ──────────────────────────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+.loader {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 200px; font: var(--text-body); color: var(--color-text-secondary);
+}
