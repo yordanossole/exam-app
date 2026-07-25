@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, useReducer, useEffect } from 'react';
 
 const AppContext = createContext();
@@ -27,7 +29,7 @@ const initialState = {
   recentActivity: [],
   subjectProgress: [],
   currentSession: null, // { examId, subjectId, currentIndex, answers: {qId: optionId}, submitted: bool, questions: [] }
-  isOffline: !navigator.onLine,
+  isOffline: false,
 };
 
 function appReducer(state, action) {
@@ -103,6 +105,8 @@ export function AppProvider({ children }) {
   useEffect(() => {
     const handleOnline = () => dispatch({ type: 'SET_OFFLINE', payload: false });
     const handleOffline = () => dispatch({ type: 'SET_OFFLINE', payload: true });
+
+    dispatch({ type: 'SET_OFFLINE', payload: !navigator.onLine });
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);

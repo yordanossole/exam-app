@@ -1,4 +1,6 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+'use client';
+
+import { useNavigate, useLocation } from '../lib/navigation';
 
 const TABS = [
   { path: '/',         label: 'Home',     icon: '⊞' },

@@ -1,4 +1,6 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+'use client';
+
+import { useNavigate, useLocation } from '../lib/navigation';
 
 const tabs = [
   { label: 'Home',    icon: '🏠', path: '/' },
@@ -6,7 +8,7 @@ const tabs = [
   { label: 'Profile', icon: '👤', path: '/profile' },
 ];
 
-export default function TabBar({ activeTab }) {
+export default function TabBar() {
   const navigate = useNavigate();
   const location = useLocation();
 

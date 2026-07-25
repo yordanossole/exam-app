@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext();
@@ -5,6 +7,8 @@ const ThemeContext = createContext();
 const STORAGE_KEY = 'nt-exams-theme';
 
 function getInitialTheme() {
+  if (typeof window === 'undefined') return 'light';
+
   // 1. Respect manual override stored in localStorage
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored === 'light' || stored === 'dark') return stored;

@@ -1,12 +1,20 @@
-# Exam App — React Architecture
+# Exam App — Next.js Architecture
 
-A mobile-first multiple-choice exam web application built with React, React Router, and Context API.
+A mobile-first multiple-choice exam web application built with Next.js, React, and Context API.
 
 ---
 
 ## 1. Project Structure & Component Hierarchy
 
 ```
+app/
+├── layout.jsx        # Root layout and global styles
+├── providers.jsx     # Client-side context providers
+├── page.jsx          # Home route
+├── quiz/             # Quiz routes
+├── subjects/         # Subject routes
+├── exam/             # Exam routes
+└── results/          # Results routes
 src/
 ├── components/       # Reusable UI components (atomic design)
 │   ├── Button.jsx
@@ -17,7 +25,7 @@ src/
 │   ├── StatCard.jsx
 │   ├── SubjectCard.jsx
 │   └── TabBar.jsx
-├── pages/            # Page-level components (route targets)
+├── screens/          # Client screen components used by routes
 │   ├── HomePage.jsx
 │   ├── SubjectsPage.jsx
 │   ├── ExamListPage.jsx
@@ -30,8 +38,8 @@ src/
 │   └── useExam.js
 ├── data/             # Mock data (swap for API calls)
 │   └── mockData.js
-├── App.jsx           # Router setup
-├── main.jsx          # Entry point
+├── lib/
+│   └── navigation.js # Small adapter around next/navigation
 └── index.css         # Global styles
 ```
 
@@ -51,12 +59,15 @@ Home → Subjects → ExamList → Exam Session → Results
                           (Question Loop with inline Explanation)
 ```
 
-**Routes (React Router DOM):**
+**Routes (Next App Router):**
 - `/` — Home (stats, recent activity, CTA)
+- `/quiz/daily` — Daily quiz
+- `/quiz/category/[categoryId]` — Category quiz
 - `/subjects` — Subject selection (search, filter, list)
-- `/subjects/:subjectId` — Exam list for a subject
-- `/exam/:examId` — Exam session (question loop + explanation inline)
-- `/results/:examId` — Final score + per-question breakdown
+- `/subjects/[subjectId]` — Exam list for a subject
+- `/exam/[examId]` — Exam session (question loop + explanation inline)
+- `/results/[examId]` — Quiz final score + per-question breakdown
+- `/results-legacy/[examId]` — Legacy exam results
 - `/profile` — User profile, progress, settings
 
 **Deep Linking & Refresh Handling:**
@@ -168,7 +179,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 

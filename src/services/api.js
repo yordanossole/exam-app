@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://stan-care-discrete-camcorders.trycloudflare.com';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://stan-care-discrete-camcorders.trycloudflare.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -8,7 +8,7 @@ const api = axios.create({
 
 // Add a request interceptor to attach the JWT token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token');
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && typeof window !== 'undefined') {
       // Clear token and potentially redirect or re-auth
       localStorage.removeItem('auth_token');
     }
