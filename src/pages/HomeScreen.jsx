@@ -16,16 +16,6 @@ function getGreeting() {
   return 'Good evening';
 }
 
-// Subject tag colors rotate through the secondary palette
-const TAG_COLORS = {
-  mathematics: { bg: 'var(--tag-math)',    color: 'var(--nt-navy)'   },
-  physics:     { bg: 'var(--tag-phys)',    color: 'var(--nt-violet)' },
-  chemistry:   { bg: 'var(--tag-chem)',    color: '#7A6000'          },
-  english:     { bg: 'var(--tag-english)', color: 'var(--nt-violet)' },
-  biology:     { bg: 'var(--tag-bio)',     color: '#1A6040'          },
-  civics:      { bg: 'var(--tag-civics)',  color: 'var(--nt-indigo)' },
-};
-
 export default function HomeScreen() {
   const { state } = useAppContext();
   const { theme } = useTheme();
@@ -38,15 +28,13 @@ export default function HomeScreen() {
   const points   = stats?.points   ?? 0;
   const accuracy = stats?.accuracy ?? stats?.overall_accuracy ?? 0;
 
-  const logoSrc = theme === 'dark'
-    ? '/@Logos/nt-exams-dark.svg'
-    : '/@Logos/nt-exams-light.svg';
+  const logoSrc = theme === 'dark' ? '/@Logos/logo-white.png' : '/@Logos/logo-blue.png';
 
   return (
     <div style={screenWrap}>
       {/* ── Header ─────────────────────────────────────────── */}
       <header style={header}>
-        <img src={logoSrc} alt="NT Exams" style={{ height: 28 }} />
+        <img src={logoSrc} alt="NT Exams" style={{ height: 32 }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {/* Grade badge */}
           <span className="grade-badge">Grade 12</span>
@@ -115,7 +103,6 @@ export default function HomeScreen() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--card-gap)' }}>
           {CATEGORIES.map(cat => {
-            const tag = TAG_COLORS[cat.id] ?? { bg: 'var(--color-surface-alt)', color: 'var(--color-text-secondary)' };
             return (
               <Card key={cat.id} onPress={() => navigate(`/quiz/category/${cat.id}`)} padding="0">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px' }}>
@@ -132,15 +119,7 @@ export default function HomeScreen() {
                       <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 15, color: 'var(--color-text-strong)' }}>
                         {cat.name}
                       </span>
-                      {/* Subject tag chip */}
-                      <span style={{
-                        padding: '2px 8px', borderRadius: 'var(--radius-tag)',
-                        background: tag.bg, color: tag.color,
-                        fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 10,
-                        letterSpacing: 'var(--ls-wide)', textTransform: 'uppercase',
-                      }}>
-                        {cat.category ?? 'Grade 12'}
-                      </span>
+
                     </div>
                     <ProgressBar value={cat.progress} />
                     <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'var(--color-text-muted)', marginTop: 4 }}>

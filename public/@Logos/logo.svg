@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none">
+  <!-- Graduation cap icon -->
+  <g transform="translate(2, 4)">
+    <!-- Cap base (mortarboard flat top) -->
+    <polygon points="16,6 30,12 16,18 2,12" fill="#2E6AFC"/>
+    <!-- Cap brim -->
+    <rect x="11" y="17" width="10" height="2" rx="1" fill="#2E6AFC"/>
+    <!-- Tassel string -->
+    <line x1="30" y1="12" x2="30" y2="20" stroke="#DB743A" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="30" cy="21" r="1.5" fill="#DB743A"/>
+  </g>
+
+  <!-- "NT" wordmark -->
+  <text x="38" y="28"
+    font-family="'Plus Jakarta Sans', system-ui, sans-serif"
+    font-weight="800"
+    font-size="22"
+    fill="#2E6AFC"
+    letter-spacing="-0.5">NT</text>
+
+  <!-- "EXAMS" label -->
+  <text x="68" y="28"
+    font-family="'Plus Jakarta Sans', system-ui, sans-serif"
+    font-weight="600"
+    font-size="22"
+    fill="#1C2434"
+    letter-spacing="-0.3">EXAMS</text>
+
+  <!-- Accent dot between NT and EXAMS -->
+  <circle cx="64" cy="23" r="2.5" fill="#DB743A"/>
+</svg>

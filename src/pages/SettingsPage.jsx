@@ -174,7 +174,7 @@ export default function SettingsPage() {
       <Card padding="0" style={{ overflow: 'hidden', marginBottom: 20 }}>
         <SettingsRow icon="📚" label="Default Subject"   value="All"  onPress={() => {}} />
         <SettingsRow icon="🎯" label="Difficulty"        value="Auto" onPress={() => {}} />
-        <SettingsRow icon="⏱"  label="Timer per Question" value="30s" onPress={() => {}} last />
+        <SettingsRow icon="⏱"  label="Exam Timer" value="2 hrs" onPress={() => {}} last />
       </Card>
 
       {/* Danger zone */}
