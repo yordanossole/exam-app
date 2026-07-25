@@ -8,9 +8,9 @@ import { MOCK_STATS } from '../data/quizData';
 import { StatChip } from '../components/StatChip';
 
 const MENU_ITEMS = [
-  { icon: '🔔', label: 'Notifications' },
-  { icon: '⚙️',  label: 'Settings' },
-  { icon: '❓', label: 'Help & Support' },
+  { icon: '🔔', label: 'Notifications',  path: '/notifications' },
+  { icon: '⚙️',  label: 'Settings',       path: '/settings' },
+  { icon: '❓', label: 'Help & Support', path: '/help' },
   { icon: '📊', label: 'Detailed Stats', path: '/stats' },
   { icon: '⬆️', label: 'Upgrade Plan',  path: '/upgrade' },
 ];

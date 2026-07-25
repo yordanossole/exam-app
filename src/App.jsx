@@ -15,7 +15,10 @@ import ResultsPage     from './pages/ResultsPage';
 import ProfilePage     from './pages/ProfilePage';
 import UpgradePage     from './pages/UpgradePage';
 import PaymentPage     from './pages/PaymentPage';
-import TopicStatsPage  from './pages/TopicStatsPage';
+import TopicStatsPage    from './pages/TopicStatsPage';
+import NotificationsPage from './pages/NotificationsPage';
+import SettingsPage      from './pages/SettingsPage';
+import HelpSupportPage   from './pages/HelpSupportPage';
 
 export default function App() {
   return (
@@ -38,6 +41,9 @@ export default function App() {
             <Route path="/upgrade"                  element={<UpgradePage />} />
             <Route path="/payment"                  element={<PaymentPage />} />
             <Route path="/stats"                    element={<TopicStatsPage />} />
+            <Route path="/notifications"            element={<NotificationsPage />} />
+            <Route path="/settings"                 element={<SettingsPage />} />
+            <Route path="/help"                     element={<HelpSupportPage />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
