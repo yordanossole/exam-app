@@ -11,23 +11,15 @@ const FAQS = [
   },
   {
     q: 'Can I resume an exam I left mid-way?',
-    a: 'Yes. Your progress is saved automatically. Reopen the same exam to continue where you left off.',
+    a: 'You can reopen the same exam from Exams and start another attempt at any time.',
   },
   {
     q: 'How is my accuracy calculated?',
     a: 'Accuracy = (correct answers ÷ total answered) × 100, updated after each submitted exam.',
   },
   {
-    q: 'What is a streak?',
-    a: 'A streak counts consecutive days you complete at least one exam. Missing a day resets it to zero.',
-  },
-  {
     q: 'How do I upgrade my plan?',
     a: 'Tap "Upgrade Plan" on your Profile page to view available subscription tiers.',
-  },
-  {
-    q: 'How do I reset my progress?',
-    a: 'Go to Settings → Account Actions → Clear Progress Data. This action cannot be undone.',
   },
 ];
 

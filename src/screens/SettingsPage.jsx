@@ -178,8 +178,7 @@ export default function SettingsPage() {
       {/* Danger zone */}
       <SectionLabel>Account Actions</SectionLabel>
       <Card padding="0" style={{ overflow: 'hidden', marginBottom: 32 }}>
-        <SettingsRow icon="🗑️" label="Clear Progress Data" onPress={() => {}} danger />
-        <SettingsRow icon="🚪" label="Sign Out"            onPress={() => {}} danger last />
+        <SettingsRow icon="🚪" label="Sign Out" onPress={() => {}} danger last />
       </Card>
 
       <div style={{ height: 80 }} />

@@ -9,23 +9,20 @@ const SETTINGS_ITEMS = [
   { icon: '🔔', label: 'Notifications',  path: '/notifications' },
   { icon: '⚙️',  label: 'Settings',       path: '/settings' },
   { icon: '❓', label: 'Help & Support', path: '/help' },
-  { icon: '📊', label: 'Detailed Stats', path: '/stats' },
   { icon: '⬆️', label: 'Upgrade Plan',  path: '/upgrade' },
 ];
 
 export default function ProfilePage() {
   const { state } = useAppContext();
   const { user } = state;
-  const stats = state.stats;
   const navigate = useNavigate();
-  const streak = stats?.streak ?? 0;
 
   return (
     <div style={screenWrap}>
       <main style={scrollContent}>
         {/* Avatar + name */}
         <div style={avatarSection}>
-          <Avatar src={user?.avatar_url} name={user?.display_name ?? 'U'} size={72} ring={streak > 0} />
+          <Avatar src={user?.avatar_url} name={user?.display_name ?? 'U'} size={72} />
           <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--color-text-primary)', marginTop: 12 }}>
             {user?.display_name ?? 'Guest'}
           </p>

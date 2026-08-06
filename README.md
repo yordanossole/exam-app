@@ -30,7 +30,7 @@ The importer reads `exams/Exam_Data_Entry_Template.xlsx`, detects each sheet's r
 
 ## Shared app chrome
 
-The root layout provides the uniform top app bar, subscription-grade badge, circular profile button, and bottom navigation across the application. The active exam screen keeps its question controls above the shared navigation.
+The root layout provides the uniform top app bar, logo, subscription-grade badge, and bottom navigation across the application. The active exam screen keeps its question controls above the shared navigation.
 
 ## Routes
 
@@ -40,4 +40,4 @@ The root layout provides the uniform top app bar, subscription-grade badge, circ
 - `/practice/exam/[examId]` — mode selection
 - `/practice/exam/[examId]/[mode]` — question flow
 - `/practice/results` — topic score report
-- `/profile`, `/settings`, `/stats`, `/upgrade` — account and progress screens
+- `/profile`, `/settings`, `/upgrade` — account and subscription screens

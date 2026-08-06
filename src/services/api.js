@@ -33,7 +33,6 @@ export const authApi = {
 
 export const userApi = {
   getProfile: () => api.get('/users/me'),
-  getStats: () => api.get('/users/me/stats'),
 };
 
 export const paymentApi = {

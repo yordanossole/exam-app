@@ -78,10 +78,7 @@ function SectionLabel({ children }) {
 export default function NotificationsPage() {
   const [prefs, setPrefs] = useState({
     dailyReminder:   true,
-    streakAlert:     true,
     newExams:        true,
-    weeklyReport:    false,
-    achievements:    true,
     correctAnswer:   false,
     subscriptionExp: true,
     promotions:      false,
@@ -118,12 +115,7 @@ export default function NotificationsPage() {
           <NotifRow
             icon="🌅" label="Daily Reminder"
             description="Get reminded to complete your daily quiz"
-            checked={prefs.dailyReminder} onChange={() => toggle('dailyReminder')}
-          />
-          <NotifRow
-            icon="🔥" label="Streak Alert"
-            description="Don't let your streak break!"
-            checked={prefs.streakAlert} onChange={() => toggle('streakAlert')} last
+            checked={prefs.dailyReminder} onChange={() => toggle('dailyReminder')} last
           />
         </Card>
 
@@ -133,23 +125,13 @@ export default function NotificationsPage() {
           <NotifRow
             icon="📋" label="New Exams Added"
             description="When new exams are available for your subjects"
-            checked={prefs.newExams} onChange={() => toggle('newExams')}
-          />
-          <NotifRow
-            icon="📊" label="Weekly Report"
-            description="A summary of your weekly performance"
-            checked={prefs.weeklyReport} onChange={() => toggle('weeklyReport')} last
+            checked={prefs.newExams} onChange={() => toggle('newExams')} last
           />
         </Card>
 
-        {/* Achievements */}
-        <SectionLabel>Achievements</SectionLabel>
+        {/* Learning */}
+        <SectionLabel>Learning</SectionLabel>
         <Card padding="0" style={{ overflow: 'hidden', marginBottom: 20 }}>
-          <NotifRow
-            icon="🏆" label="Achievements"
-            description="When you unlock a new badge or milestone"
-            checked={prefs.achievements} onChange={() => toggle('achievements')}
-          />
           <NotifRow
             icon="✅" label="Answer Insights"
             description="Tips when you get a question wrong"

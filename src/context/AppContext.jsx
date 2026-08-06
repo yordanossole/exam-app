@@ -16,9 +16,6 @@ const initialState = {
       grade: 6,
     },
   },
-  stats: null,
-  recentActivity: [],
-  subjectProgress: [],
   currentSession: null, // { examId, subjectId, currentIndex, answers: {qId: optionId}, submitted: bool, questions: [] }
   isOffline: false,
 };
@@ -28,11 +25,9 @@ function appReducer(state, action) {
     case 'LOGIN_SUCCESS':
       return { ...state, isAuthenticated: true, user: action.payload };
     case 'LOGOUT':
-      return { ...state, isAuthenticated: false, user: null, stats: null };
+      return { ...state, isAuthenticated: false, user: null };
     case 'SET_USER':
       return { ...state, user: action.payload };
-    case 'SET_STATS':
-      return { ...state, stats: action.payload };
     case 'START_EXAM':
       return {
         ...state,
@@ -111,15 +106,13 @@ export function AppProvider({ children }) {
     if (!localStorage.getItem('auth_token')) return undefined;
 
     let active = true;
-    Promise.allSettled([userApi.getProfile(), userApi.getStats()]).then(([profile, stats]) => {
-      if (!active) return;
-      if (profile.status === 'fulfilled') {
-        dispatch({ type: 'SET_USER', payload: profile.value.data?.data ?? profile.value.data });
-      }
-      if (stats.status === 'fulfilled') {
-        dispatch({ type: 'SET_STATS', payload: stats.value.data?.data ?? stats.value.data });
-      }
-    });
+    userApi.getProfile()
+      .then(profile => {
+        if (active) {
+          dispatch({ type: 'SET_USER', payload: profile.data?.data ?? profile.data });
+        }
+      })
+      .catch(() => {});
 
     return () => { active = false; };
   }, []);

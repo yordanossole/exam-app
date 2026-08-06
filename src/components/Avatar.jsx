@@ -1,8 +1,8 @@
 /**
  * NT Exams Avatar
- * Circular with optional Nova Blue ring (active streak / online indicator).
+ * Circular user avatar with an optional image.
  */
-export default function Avatar({ src, name = '?', size = 40, ring = false, onClick, style: extra }) {
+export default function Avatar({ src, name = '?', size = 40, onClick, style: extra }) {
   const initial = String(name).charAt(0).toUpperCase();
 
   return (
@@ -21,8 +21,6 @@ export default function Avatar({ src, name = '?', size = 40, ring = false, onCli
         color: 'var(--color-primary)',
         fontFamily: 'var(--font-display)',
         fontWeight: 700, fontSize: size * 0.38,
-        outline: ring ? '2.5px solid var(--color-primary)' : 'none',
-        outlineOffset: 2,
         userSelect: 'none',
         ...extra,
       }}

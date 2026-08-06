@@ -18,7 +18,11 @@ function getInitialTheme() {
 }
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(getInitialTheme);
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    setTheme(getInitialTheme());
+  }, []);
 
   // Apply theme attribute to <html> so CSS tokens activate immediately
   useEffect(() => {
@@ -28,7 +32,6 @@ export function ThemeProvider({ children }) {
     } else {
       root.removeAttribute('data-theme');
     }
-    localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 
   // Listen for OS-level preference changes (only when user hasn't manually overridden)
@@ -45,7 +48,11 @@ export function ThemeProvider({ children }) {
   }, []);
 
   const toggleTheme = () =>
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme(prev => {
+      const nextTheme = prev === 'dark' ? 'light' : 'dark';
+      localStorage.setItem(STORAGE_KEY, nextTheme);
+      return nextTheme;
+    });
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

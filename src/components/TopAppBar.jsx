@@ -39,7 +39,6 @@ function getPageTitle(pathname) {
   if (pathname.startsWith('/settings')) return 'Settings';
   if (pathname.startsWith('/notifications')) return 'Notifications';
   if (pathname.startsWith('/help')) return 'Help & Support';
-  if (pathname.startsWith('/stats')) return 'Performance';
   if (pathname.startsWith('/upgrade')) return 'Upgrade Plan';
   if (pathname.startsWith('/payment')) return 'Complete Payment';
   if (pathname.startsWith('/admin')) return 'Content Review';

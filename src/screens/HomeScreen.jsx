@@ -36,8 +36,6 @@ export default function HomeScreen({ library = [] }) {
   const paidGrade = getPaidGrade(user);
   const gradeLibrary = library.find(item => item.grade === paidGrade);
   const firstName = user?.display_name?.split(' ')[0] ?? 'there';
-  const stats = state.stats;
-  const hasProgress = Number.isFinite(stats?.overall_accuracy);
 
   return (
     <div style={screenWrap}>
@@ -131,18 +129,6 @@ export default function HomeScreen({ library = [] }) {
           </>
         )}
 
-        <section style={progressCard}>
-          <div style={progressIcon}>📈</div>
-          <div style={{ flex: 1 }}>
-            <p style={sectionEyebrow}>Progress</p>
-            <h2 style={sectionTitle}>{hasProgress ? `${stats.overall_accuracy}% overall accuracy` : 'Your progress starts here'}</h2>
-            <p style={progressCopy}>
-              {hasProgress ? 'Keep practicing to strengthen your weakest topics.' : 'Complete an exam to see accuracy and topic insights.'}
-            </p>
-          </div>
-          <button type="button" onClick={() => navigate('/stats')} style={roundArrow} aria-label="View progress">›</button>
-        </section>
-
         <section style={tipCard}>
           <span style={tipIcon}>💡</span>
           <div>
@@ -187,10 +173,6 @@ const paperInfo = { display: 'grid', gap: 3, flex: 1, minWidth: 0 };
 const paperTitle = { font: 'var(--text-body-med)', color: 'var(--color-text-strong)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
 const paperMeta = { font: 'var(--text-caption)', fontSize: 12, color: 'var(--color-text-secondary)' };
 const paperArrow = { color: 'var(--color-text-muted)', fontSize: 24 };
-const progressCard = { display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, padding: 16, borderRadius: 'var(--radius-card)', background: 'var(--color-surface-alt)', border: '1px solid var(--color-border)' };
-const progressIcon = { display: 'grid', placeItems: 'center', width: 42, height: 42, flexShrink: 0, borderRadius: 11, background: 'var(--color-info-tint)', fontSize: 21 };
-const progressCopy = { font: 'var(--text-body)', fontSize: 13, lineHeight: 1.4, color: 'var(--color-text-secondary)', marginTop: 5 };
-const roundArrow = { width: 34, height: 34, minHeight: 34, flexShrink: 0, borderRadius: '50%', background: 'var(--color-surface)', color: 'var(--color-primary)', border: '1px solid var(--color-border)', fontSize: 22 };
 const tipCard = { display: 'flex', alignItems: 'flex-start', gap: 12, padding: 16, borderRadius: 'var(--radius-card)', background: 'var(--color-success-tint)', border: '1px solid var(--color-border)' };
 const tipIcon = { fontSize: 22, lineHeight: 1 };
 const tipText = { font: 'var(--text-body)', fontSize: 13, lineHeight: 1.5, color: 'var(--color-text-secondary)' };
