@@ -6,10 +6,12 @@ import { paymentApi } from '../services/api';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function PaymentPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const plan = location.state?.plan;
 
   const [loading,   setLoading]   = useState(false);
@@ -19,18 +21,18 @@ export default function PaymentPage() {
   if (!plan) {
     return (
       <div style={{ ...screenWrap, alignItems: 'center', justifyContent: 'center' }}>
-        <BackButton fallback="/upgrade" label="Back to Plans" />
+        <BackButton fallback="/upgrade" label={t('payment.backToPlans')} />
         <p style={{ font: 'var(--text-body)', color: 'var(--color-error)', padding: 24 }}>
-          No plan selected. Please go back and choose a plan.
+          {t('payment.noPlan')}
         </p>
-        <Button onClick={() => navigate('/upgrade')}>View Plans</Button>
+        <Button onClick={() => navigate('/upgrade')}>{t('common.viewPlans')}</Button>
       </div>
     );
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!file) return alert('Please upload payment proof');
+    if (!file) return alert(t('payment.proofRequired'));
     setLoading(true);
     try {
       const res = await paymentApi.submitPayment({ plan_id: plan.id, amount_etb: plan.price });
@@ -39,7 +41,7 @@ export default function PaymentPage() {
       setSubmitted(true);
     } catch (err) {
       console.error('Payment failed', err);
-      alert('Error submitting payment. Please try again.');
+      alert(t('payment.error'));
     } finally {
       setLoading(false);
     }
@@ -48,7 +50,7 @@ export default function PaymentPage() {
   if (submitted) {
     return (
       <div style={{ ...screenWrap, alignItems: 'center', justifyContent: 'center', padding: '40px var(--screen-pad)' }}>
-        <BackButton fallback="/upgrade" label="Back to Plans" />
+        <BackButton fallback="/upgrade" label={t('payment.backToPlans')} />
         <div style={{
           width: 80, height: 80, borderRadius: '50%',
           background: 'var(--color-accent-tint)', border: '2px solid var(--color-accent)',
@@ -58,30 +60,30 @@ export default function PaymentPage() {
           ✓
         </div>
         <h1 style={{ font: 'var(--text-screen-title)', color: 'var(--color-text-primary)', textAlign: 'center', marginBottom: 12 }}>
-          Payment Submitted!
+          {t('payment.submitted')}
         </h1>
         <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', textAlign: 'center', maxWidth: 300, marginBottom: 32 }}>
-          Our team is reviewing your payment. Your subscription will be activated shortly.
+          {t('payment.submittedBody')}
         </p>
-        <Button full onClick={() => navigate('/')}>Back to Home</Button>
+        <Button full onClick={() => navigate('/')}>{t('payment.backHome')}</Button>
       </div>
     );
   }
 
   return (
     <div style={screenWrap}>
-      <BackButton fallback="/upgrade" label="Back to Plans" />
+      <BackButton fallback="/upgrade" label={t('payment.backToPlans')} />
       <main style={scrollContent}>
 
         {/* Selected plan summary */}
         <Card style={{ marginBottom: 16 }}>
-          <p style={labelStyle}>Selected Plan</p>
+          <p style={labelStyle}>{t('payment.selectedPlan')}</p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
             <span style={{ font: 'var(--text-card-title)', fontSize: 18, color: 'var(--color-text-primary)' }}>
               {plan.name}
             </span>
             <span style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', marginLeft: 4 }}>
-              · {plan.duration_days} days
+              · {t('payment.days', { days: plan.duration_days })}
             </span>
           </div>
           <div style={{ font: 'var(--text-stat)', fontSize: 28, letterSpacing: 'var(--ls-number)', color: 'var(--color-accent)', marginTop: 6 }}>
@@ -91,18 +93,18 @@ export default function PaymentPage() {
 
         {/* Bank details */}
         <Card style={{ marginBottom: 16 }}>
-          <p style={labelStyle}>Bank Transfer Details</p>
+          <p style={labelStyle}>{t('payment.bankDetails')}</p>
           <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', marginBottom: 12 }}>
-            Transfer <strong style={{ color: 'var(--color-text-primary)' }}>ETB {plan.price}</strong> to:
+            {t('payment.transferTo', { amount: plan.price })}
           </p>
           <div style={{
             background: 'var(--color-bg)', borderRadius: 10,
             padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 6,
           }}>
             {[
-              ['Bank', 'CBE (Commercial Bank of Ethiopia)'],
-              ['Account Name', 'Exam Platform LLC'],
-              ['Account Number', '1000123456789'],
+              [t('payment.bank'), 'CBE (Commercial Bank of Ethiopia)'],
+              [t('payment.accountName'), 'Exam Platform LLC'],
+              [t('payment.accountNumber'), '1000123456789'],
             ].map(([k, v]) => (
               <div key={k} style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
                 <span style={{ font: 'var(--text-body)', fontSize: 13, color: 'var(--color-text-secondary)' }}>{k}</span>
@@ -115,9 +117,9 @@ export default function PaymentPage() {
         {/* Upload form */}
         <Card style={{ marginBottom: 24 }}>
           <form onSubmit={handleSubmit}>
-            <p style={labelStyle}>Upload Proof of Payment</p>
+            <p style={labelStyle}>{t('payment.uploadTitle')}</p>
             <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', marginBottom: 16 }}>
-              Upload a screenshot of the transfer confirmation.
+              {t('payment.uploadDescription')}
             </p>
 
             {/* File picker */}
@@ -140,11 +142,11 @@ export default function PaymentPage() {
                 required
                 style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }}
               />
-              {file ? `✓ ${file.name}` : '📎 Tap to choose file'}
+              {file ? `✓ ${file.name}` : t('payment.chooseFile')}
             </label>
 
             <Button full size="lg" type="submit" disabled={loading}>
-              {loading ? 'Submitting…' : 'Submit Proof'}
+              {loading ? t('payment.submitting') : t('payment.submitProof')}
             </Button>
           </form>
         </Card>

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getExamsByGradeAndSubject } from '../../../../../../lib/db';
 import PaidGradeGate from '../../../../../../screens/practice/PaidGradeGate';
+import TranslatedText from '../../../../../../components/TranslatedText';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,14 +18,14 @@ export default async function Page({ params }: { params: Promise<{ grade: string
     <PaidGradeGate grade={gradeNumber}>
       <main style={shell}>
         <h1 style={title}>{subjectName}</h1>
-        <p style={subtitle}>Choose an exam year to begin.</p>
+        <TranslatedText as="p" id="practice.chooseYear" style={subtitle} />
 
         <section style={grid}>
           {exams.map(exam => (
             <Link key={exam.exam_id} href={`/practice/exam/${exam.exam_id}/exam`} style={card}>
               <span style={cardTitle}>{exam.year_ec} E.C.</span>
-              <span style={meta}>{exam.total_questions} questions · {exam.total_sections} sections</span>
-              {!exam.verified && <span style={reviewBadge}>Unverified</span>}
+              <TranslatedText id="home.paperMeta" params={{ questions: exam.total_questions, sections: exam.total_sections }} style={meta} />
+              {!exam.verified && <TranslatedText id="practice.unverified" style={reviewBadge} />}
               <span style={arrow}>›</span>
             </Link>
           ))}

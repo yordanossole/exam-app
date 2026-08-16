@@ -1,14 +1,16 @@
 import { useEffect, useRef } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function QuestionNavigator({ questions, currentIndex, answers, statuses, onSelect }) {
   const currentButtonRef = useRef(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     currentButtonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }, [currentIndex]);
 
   return (
-    <nav aria-label="Question navigation" style={nav}>
+    <nav aria-label={t('question.navigation')} style={nav}>
       <div style={scrollRow}>
         {questions.map((question, questionIndex) => {
           const isCurrent = questionIndex === currentIndex;
@@ -26,7 +28,7 @@ export default function QuestionNavigator({ questions, currentIndex, answers, st
               ref={isCurrent ? currentButtonRef : null}
               type="button"
               aria-current={isCurrent ? 'step' : undefined}
-              aria-label={`Question ${question.q_number}, ${status}`}
+              aria-label={t('question.navigationLabel', { number: question.q_number, status: t(`question.${status}`) })}
               onClick={() => onSelect(questionIndex)}
               style={{
                 ...questionButton,

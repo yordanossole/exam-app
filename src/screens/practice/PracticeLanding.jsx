@@ -4,31 +4,33 @@ import Link from 'next/link';
 import { useAppContext } from '../../context/AppContext';
 import { getPaidGrade } from '../../lib/subscription';
 import Button from '../../components/Button';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function PracticeLanding({ catalog }) {
   const { state } = useAppContext();
+  const { t } = useLanguage();
   const paidGrade = getPaidGrade(state.user);
   const gradeCatalog = catalog.find(item => item.grade === paidGrade);
 
   return (
     <main style={shell}>
-      <p style={eyebrow}>Exams</p>
-      <h1 style={title}>Practice your national exams.</h1>
+      <p style={eyebrow}>{t('nav.exams')}</p>
+      <h1 style={title}>{t('practice.title')}</h1>
 
       {!paidGrade ? (
         <section style={notice}>
-          <h2 style={cardTitle}>No active grade plan</h2>
-          <p style={body}>Your exam subjects become available after a grade plan is activated.</p>
-          <Button onClick={() => window.location.assign('/upgrade')}>View Plans</Button>
+          <h2 style={cardTitle}>{t('practice.noPlan')}</h2>
+          <p style={body}>{t('practice.noPlanBody')}</p>
+          <Button onClick={() => window.location.assign('/upgrade')}>{t('common.viewPlans')}</Button>
         </section>
       ) : !gradeCatalog ? (
         <section style={notice}>
-          <h2 style={cardTitle}>Grade {paidGrade} exams are coming soon</h2>
-          <p style={body}>There are no Grade {paidGrade} exams in nt-exams.db yet.</p>
+          <h2 style={cardTitle}>{t('practice.comingSoon', { grade: paidGrade })}</h2>
+          <p style={body}>{t('practice.noExams', { grade: paidGrade })}</p>
         </section>
       ) : (
         <>
-          <p style={subtitle}>Grade {paidGrade} · Subjects from nt-exams.db</p>
+          <p style={subtitle}>{t('practice.gradeSubjects', { grade: paidGrade })}</p>
           <section style={grid}>
             {gradeCatalog.subjects.map(subject => (
               <Link
@@ -37,7 +39,7 @@ export default function PracticeLanding({ catalog }) {
                 style={card}
               >
                 <span style={cardTitle}>{subject.subject_display}</span>
-                <span style={body}>{subject.exam_count} exams available</span>
+                <span style={body}>{t('common.examsAvailable', { count: subject.exam_count })}</span>
                 <span style={arrow}>›</span>
               </Link>
             ))}

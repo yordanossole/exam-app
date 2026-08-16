@@ -5,12 +5,14 @@ import { useNavigate } from '../lib/navigation';
 import { usePathname } from 'next/navigation';
 import { useAppContext } from '../context/AppContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { getPaidGrade } from '../lib/subscription';
 
 export default function TopAppBar() {
   const navigate = useNavigate();
   const { state } = useAppContext();
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const pathname = usePathname();
   const paidGrade = getPaidGrade(state.user);
   const logoSrc = theme === 'dark' ? '/@Logos/logo-white.png' : '/@Logos/logo-blue.png';
@@ -19,7 +21,7 @@ export default function TopAppBar() {
   const isResults = pathname === '/practice/results';
   const isYearChoosing = pathname.startsWith('/practice/grade/') && pathname.includes('/subject/');
   const isQuestionFlow = isExam && pathname.split('/').length > 4;
-  const title = getPageTitle(pathname);
+  const title = getPageTitle(pathname, t);
 
   function goBackFromExam() {
     if (typeof window !== 'undefined' && window.history.length > 1) {
@@ -35,7 +37,7 @@ export default function TopAppBar() {
       <div style={inner}>
         {isExam || isResults || isYearChoosing ? (
           <>
-            <button type="button" onClick={goBackFromExam} aria-label="Go back" style={examBackButton}>
+            <button type="button" onClick={goBackFromExam} aria-label={t('nav.goBack')} style={examBackButton}>
               <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none">
                 <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -44,12 +46,12 @@ export default function TopAppBar() {
           </>
         ) : (
           <>
-            <button type="button" onClick={() => navigate('/')} aria-label="Go to home" style={brandButton}>
+            <button type="button" onClick={() => navigate('/')} aria-label={t('nav.goHome')} style={brandButton}>
               <img src={logoSrc} alt="NT Exams" style={logo} />
             </button>
             {!isHome && <span style={pageTitle}>{title}</span>}
             <div style={actions}>
-              <span className="grade-badge">{paidGrade ? `Grade ${paidGrade}` : '—'}</span>
+              <span className="grade-badge">{paidGrade ? t('common.grade', { grade: paidGrade }) : '—'}</span>
             </div>
           </>
         )}
@@ -59,6 +61,7 @@ export default function TopAppBar() {
 }
 
 function ExamTimer() {
+  const { t } = useLanguage();
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   useEffect(() => {
@@ -77,7 +80,7 @@ function ExamTimer() {
     : [minutes, seconds].map(value => String(value).padStart(2, '0')).join(':');
 
   return (
-    <div role="timer" aria-label={`Elapsed time ${time}`} style={timer}>
+    <div role="timer" aria-label={t('nav.elapsedTime', { time })} style={timer}>
       <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none">
         <circle cx="12" cy="13" r="8" stroke="currentColor" strokeWidth="1.8" />
         <path d="M12 9v4l2.5 1.5M9 3h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -87,17 +90,17 @@ function ExamTimer() {
   );
 }
 
-function getPageTitle(pathname) {
-  if (pathname.startsWith('/practice/exam/')) return 'Exam';
-  if (pathname.startsWith('/practice/grade/')) return pathname.includes('/subject/') ? 'Exam Years' : 'Subjects';
-  if (pathname.startsWith('/practice')) return 'Exams';
-  if (pathname.startsWith('/profile')) return 'Profile';
-  if (pathname.startsWith('/settings')) return 'Settings';
-  if (pathname.startsWith('/notifications')) return 'Notifications';
-  if (pathname.startsWith('/help')) return 'Help & Support';
-  if (pathname.startsWith('/upgrade')) return 'Upgrade Plan';
-  if (pathname.startsWith('/payment')) return 'Complete Payment';
-  if (pathname.startsWith('/admin')) return 'Content Review';
+function getPageTitle(pathname, t) {
+  if (pathname.startsWith('/practice/exam/')) return t('nav.exam');
+  if (pathname.startsWith('/practice/grade/')) return pathname.includes('/subject/') ? t('nav.examYears') : t('nav.subjects');
+  if (pathname.startsWith('/practice')) return t('nav.exams');
+  if (pathname.startsWith('/profile')) return t('nav.profile');
+  if (pathname.startsWith('/settings')) return t('nav.settings');
+  if (pathname.startsWith('/notifications')) return t('nav.notifications');
+  if (pathname.startsWith('/help')) return t('nav.help');
+  if (pathname.startsWith('/upgrade')) return t('nav.upgrade');
+  if (pathname.startsWith('/payment')) return t('nav.payment');
+  if (pathname.startsWith('/admin')) return t('nav.review');
   return 'NT Exams';
 }
 

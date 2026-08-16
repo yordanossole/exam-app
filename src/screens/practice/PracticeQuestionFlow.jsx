@@ -6,6 +6,7 @@ import { useAppContext } from '../../context/AppContext';
 import { getPaidGrade } from '../../lib/subscription';
 import Button from '../../components/Button';
 import QuestionNavigator from '../../components/QuestionNavigator';
+import { useLanguage } from '../../context/LanguageContext';
 
 function parseTableRows(tableContent) {
   return String(tableContent || '')
@@ -49,6 +50,7 @@ function MediaBlock({ media }) {
 }
 
 function PassageBlock({ passage }) {
+  const { t } = useLanguage();
   const [expanded, setExpanded] = useState(false);
   const content = passage?.content || '';
   const canCollapse = content.length > 360 || content.split(/\r?\n/).length > 5;
@@ -66,7 +68,7 @@ function PassageBlock({ passage }) {
           onClick={() => setExpanded(current => !current)}
           style={passageToggle}
         >
-          {expanded ? 'Show less' : 'Show more'}
+          {expanded ? t('question.showLess') : t('question.showMore')}
         </button>
       )}
     </article>
@@ -88,6 +90,7 @@ function OptionContent({ value, media }) {
 export default function PracticeQuestionFlow({ exam, questions }) {
   const navigate = useNavigate();
   const { state } = useAppContext();
+  const { t } = useLanguage();
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState(null);
   const [answers, setAnswers] = useState({});
@@ -117,8 +120,8 @@ export default function PracticeQuestionFlow({ exam, questions }) {
     return (
       <main style={shell}>
         <section style={unavailableCard}>
-          <h1 style={questionText}>This exam is not included in your active grade plan.</h1>
-          <button onClick={() => navigate('/practice')} style={backButton}>Back to My Exams</button>
+          <h1 style={questionText}>{t('question.notIncluded')}</h1>
+          <button onClick={() => navigate('/practice')} style={backButton}>{t('common.backToMyExams')}</button>
         </section>
       </main>
     );
@@ -139,7 +142,7 @@ export default function PracticeQuestionFlow({ exam, questions }) {
   async function submitReport() {
     const message = reportText.trim();
     if (!message) {
-      setReportError('Please describe the issue before sending.');
+      setReportError(t('question.reportRequired'));
       return;
     }
 
@@ -155,7 +158,7 @@ export default function PracticeQuestionFlow({ exam, questions }) {
       setReportSubmitted(true);
       setReportText('');
     } catch {
-      setReportError('The report could not be sent. Please try again.');
+      setReportError(t('question.reportFailed'));
     } finally {
       setReportSubmitting(false);
     }
@@ -232,9 +235,9 @@ export default function PracticeQuestionFlow({ exam, questions }) {
 
         <article style={questionCard}>
           <div style={questionMeta}>
-            <span>Question {question.q_number}</span>
+            <span>{t('question.number', { number: question.q_number })}</span>
             {question.topic && <span>{question.topic}</span>}
-            {shouldShowReview && <span style={reviewBadge}>Review</span>}
+            {shouldShowReview && <span style={reviewBadge}>{t('question.review')}</span>}
           </div>
           <p style={questionText} dir="auto">{question.question_text}</p>
           {question.media.map(media => <MediaBlock key={media.media_id} media={media} />)}
@@ -269,47 +272,47 @@ export default function PracticeQuestionFlow({ exam, questions }) {
         <div style={{ display: 'grid', gap: 10 }}>
           {feedback?.hint && !feedback?.explanation && (
             <article style={hintCard} dir="auto">
-              <strong>Hint</strong>
-              <p>{feedback.hint || 'No hint is entered for this question yet.'}</p>
-              <Button full variant="secondary" onClick={() => checkAnswer(true)}>Show Explanation</Button>
+              <strong>{t('question.hint')}</strong>
+              <p>{feedback.hint || t('question.noHint')}</p>
+              <Button full variant="secondary" onClick={() => checkAnswer(true)}>{t('question.showExplanation')}</Button>
             </article>
           )}
           {feedback?.explanation != null && (
             <article style={feedback.is_correct ? correctCard : hintCard} dir="auto">
-              <strong>{feedback.is_correct ? 'Correct' : 'Explanation'}</strong>
-              <p>{feedback.explanation || 'No explanation is entered for this question yet.'}</p>
+              <strong>{feedback.is_correct ? t('question.correct') : t('question.explanation')}</strong>
+              <p>{feedback.explanation || t('question.noExplanation')}</p>
             </article>
           )}
           {feedback?.answer_key_available === false && (
             <article style={hintCard} dir="auto">
-              <strong>Answer key pending review</strong>
-              <p>This question is in the database, but its correct answer has not been entered yet.</p>
+              <strong>{t('question.answerPending')}</strong>
+              <p>{t('question.answerPendingBody')}</p>
             </article>
           )}
         </div>
 
         <section style={reportWrap}>
           <button type="button" onClick={() => setReportOpen(open => !open)} style={reportButton}>
-            <span aria-hidden="true">⚑</span> Report issue
+            <span aria-hidden="true">⚑</span> {t('question.report')}
           </button>
           {reportOpen && !reportSubmitted && (
             <div style={reportPanel}>
-              <p style={reportPrompt}>Found an incorrect question, answer, or explanation? Tell us what needs fixing.</p>
+              <p style={reportPrompt}>{t('question.reportPrompt')}</p>
               <textarea
                 value={reportText}
                 onChange={event => setReportText(event.target.value)}
-                placeholder="Describe the issue..."
-                aria-label="Describe the issue"
+                placeholder={t('question.reportPlaceholder')}
+                aria-label={t('question.reportPlaceholder')}
                 rows={4}
                 style={reportInput}
               />
               {reportError && <p style={reportErrorText}>{reportError}</p>}
               <Button size="sm" disabled={reportSubmitting} onClick={submitReport}>
-                {reportSubmitting ? 'Sending...' : 'Send report'}
+                {reportSubmitting ? t('question.reportSending') : t('question.reportSend')}
               </Button>
             </div>
           )}
-          {reportSubmitted && <p style={reportSuccess}>Thanks — your report was sent for review.</p>}
+          {reportSubmitted && <p style={reportSuccess}>{t('question.reportSuccess')}</p>}
         </section>
 
         <div style={{ height: 160 }} />
@@ -322,7 +325,7 @@ export default function PracticeQuestionFlow({ exam, questions }) {
           disabled={index === 0}
           onClick={() => jumpTo(index - 1)}
         >
-          Back
+          {t('common.back')}
         </Button>
         <Button
           variant="secondary"
@@ -330,9 +333,9 @@ export default function PracticeQuestionFlow({ exam, questions }) {
           disabled={!selectedLetter || checking}
           onClick={() => checkAnswer(false)}
         >
-          {checking ? 'Checking…' : 'Check'}
+          {checking ? t('question.checking') : t('question.check')}
         </Button>
-        <Button style={footerButton} disabled={submitting} onClick={next}>{isLast ? 'Submit' : 'Next'}</Button>
+        <Button style={footerButton} disabled={submitting} onClick={next}>{isLast ? t('question.submit') : t('question.next')}</Button>
       </footer>
     </main>
   );

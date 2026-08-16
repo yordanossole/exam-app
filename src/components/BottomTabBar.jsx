@@ -1,20 +1,22 @@
 'use client';
 
 import { useNavigate, useLocation } from '../lib/navigation';
+import { useLanguage } from '../context/LanguageContext';
 
 const TABS = [
-  { path: '/',         label: 'Home',     icon: '⊞' },
-  { path: '/practice', label: 'Exams',    icon: '📝' },
-  { path: '/profile',  label: 'Profile',  icon: '👤' },
+  { path: '/',         labelKey: 'nav.home',    icon: '⊞' },
+  { path: '/practice', labelKey: 'nav.exams',   icon: '📝' },
+  { path: '/profile',  labelKey: 'nav.profile', icon: '👤' },
 ];
 
 export default function BottomTabBar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
 
   return (
     <nav
-      aria-label="Main navigation"
+      aria-label={t('nav.main')}
       style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 200,
         background: 'var(--color-surface)',
@@ -24,6 +26,7 @@ export default function BottomTabBar() {
     >
       <div style={{ display: 'flex', maxWidth: 480, margin: '0 auto' }}>
         {TABS.map(tab => {
+          const label = t(tab.labelKey);
           const active =
             tab.path === '/'
               ? location.pathname === '/'
@@ -33,7 +36,7 @@ export default function BottomTabBar() {
             <button
               key={tab.path}
               onClick={() => navigate(tab.path)}
-              aria-label={tab.label}
+              aria-label={label}
               aria-current={active ? 'page' : undefined}
               style={{
                 flex: 1, display: 'flex', flexDirection: 'column',
@@ -52,7 +55,7 @@ export default function BottomTabBar() {
               <span style={{ fontSize: 22, lineHeight: 1 }} aria-hidden="true">
                 {tab.icon}
               </span>
-              {tab.label}
+              {label}
               {active && (
                 <span style={{
                   position: 'absolute', bottom: 4,

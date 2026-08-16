@@ -7,12 +7,14 @@ import Button from '../components/Button';
 import { Badge } from '../components/StatChip';
 import { paymentApi } from '../services/api';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function UpgradePage() {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -37,21 +39,21 @@ export default function UpgradePage() {
 
   return (
     <div style={screenWrap}>
-      <BackButton fallback="/profile" label="Back to Profile" />
+      <BackButton fallback="/profile" label={t('settings.backToProfile')} />
       <main style={scrollContent}>
         <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', textAlign: 'center', marginBottom: 24 }}>
-          Get full access to all past exams and detailed statistics.
+          {t('upgrade.intro')}
         </p>
 
         {loading ? (
-          <div className="loader">Loading plans…</div>
+          <div className="loader">{t('upgrade.loading')}</div>
         ) : error ? (
           <p style={{ font: 'var(--text-body)', color: 'var(--color-error)', textAlign: 'center' }}>
-            Plans are temporarily unavailable. Please try again later.
+            {t('upgrade.error')}
           </p>
         ) : plans.length === 0 ? (
           <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', textAlign: 'center' }}>
-            No plans are available right now.
+            {t('upgrade.empty')}
           </p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--card-gap)' }}>
@@ -76,12 +78,12 @@ export default function UpgradePage() {
                     {plan.price}
                   </span>
                   <span style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', marginBottom: 4 }}>
-                    / {plan.duration_days} days
+                    {t('upgrade.days', { days: plan.duration_days })}
                   </span>
                 </div>
 
                 <Button full onClick={() => handleSelectPlan(plan)}>
-                  Choose {plan.name}
+                  {t('upgrade.choose', { name: plan.name })}
                 </Button>
               </Card>
             ))}

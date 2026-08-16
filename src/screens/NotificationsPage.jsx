@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Card from '../components/Card';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 /* ── Toggle Switch ────────────────────────────────────────────── */
 function Toggle({ on, onChange }) {
@@ -76,6 +77,7 @@ function SectionLabel({ children }) {
 
 /* ── Page ─────────────────────────────────────────────────────── */
 export default function NotificationsPage() {
+  const { t } = useLanguage();
   const [prefs, setPrefs] = useState({
     dailyReminder:   true,
     newExams:        true,
@@ -90,17 +92,17 @@ export default function NotificationsPage() {
 
   return (
     <div style={screenWrap}>
-      <BackButton fallback="/profile" label="Back to Profile" />
+      <BackButton fallback="/profile" label={t('settings.backToProfile')} />
       <main style={scrollContent}>
 
         {/* Master switch */}
         <Card style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{ flex: 1 }}>
             <p style={{ font: 'var(--text-card-title)', color: 'var(--color-text-primary)', marginBottom: 4 }}>
-              All Notifications
+              {t('notifications.all')}
             </p>
             <p style={{ font: 'var(--text-body)', fontSize: 13, color: 'var(--color-text-secondary)' }}>
-              Enable or disable all notifications at once
+              {t('notifications.allDescription')}
             </p>
           </div>
           <Toggle
@@ -110,46 +112,46 @@ export default function NotificationsPage() {
         </Card>
 
         {/* Reminders */}
-        <SectionLabel>Reminders</SectionLabel>
+        <SectionLabel>{t('notifications.reminders')}</SectionLabel>
         <Card padding="0" style={{ overflow: 'hidden', marginBottom: 20 }}>
           <NotifRow
-            icon="🌅" label="Daily Reminder"
-            description="Get reminded to complete your daily quiz"
+            icon="🌅" label={t('notifications.daily')}
+            description={t('notifications.dailyDescription')}
             checked={prefs.dailyReminder} onChange={() => toggle('dailyReminder')} last
           />
         </Card>
 
         {/* Content */}
-        <SectionLabel>Content</SectionLabel>
+        <SectionLabel>{t('notifications.content')}</SectionLabel>
         <Card padding="0" style={{ overflow: 'hidden', marginBottom: 20 }}>
           <NotifRow
-            icon="📋" label="New Exams Added"
-            description="When new exams are available for your subjects"
+            icon="📋" label={t('notifications.newExams')}
+            description={t('notifications.newExamsDescription')}
             checked={prefs.newExams} onChange={() => toggle('newExams')} last
           />
         </Card>
 
         {/* Learning */}
-        <SectionLabel>Learning</SectionLabel>
+        <SectionLabel>{t('notifications.learning')}</SectionLabel>
         <Card padding="0" style={{ overflow: 'hidden', marginBottom: 20 }}>
           <NotifRow
-            icon="✅" label="Answer Insights"
-            description="Tips when you get a question wrong"
+            icon="✅" label={t('notifications.insights')}
+            description={t('notifications.insightsDescription')}
             checked={prefs.correctAnswer} onChange={() => toggle('correctAnswer')} last
           />
         </Card>
 
         {/* Account */}
-        <SectionLabel>Account</SectionLabel>
+        <SectionLabel>{t('notifications.account')}</SectionLabel>
         <Card padding="0" style={{ overflow: 'hidden', marginBottom: 32 }}>
           <NotifRow
-            icon="⏰" label="Subscription Expiring"
-            description="Reminder before your plan expires"
+            icon="⏰" label={t('notifications.expiring')}
+            description={t('notifications.expiringDescription')}
             checked={prefs.subscriptionExp} onChange={() => toggle('subscriptionExp')}
           />
           <NotifRow
-            icon="🎁" label="Promotions & Offers"
-            description="Special deals and discounts"
+            icon="🎁" label={t('notifications.promotions')}
+            description={t('notifications.promotionsDescription')}
             checked={prefs.promotions} onChange={() => toggle('promotions')} last
           />
         </Card>

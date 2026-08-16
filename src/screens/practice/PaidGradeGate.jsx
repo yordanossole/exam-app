@@ -4,19 +4,21 @@ import Link from 'next/link';
 import { useAppContext } from '../../context/AppContext';
 import { getPaidGrade } from '../../lib/subscription';
 import BackButton from '../../components/BackButton';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function PaidGradeGate({ grade, children }) {
   const { state } = useAppContext();
+  const { t } = useLanguage();
   const paidGrade = getPaidGrade(state.user);
 
   if (!paidGrade) {
     return (
       <main style={shell}>
-        <BackButton fallback="/practice" label="Back to Exams" />
+        <BackButton fallback="/practice" label={t('common.backToExams')} />
         <section style={card}>
-          <h1 style={title}>No active grade plan</h1>
-          <p style={body}>Activate a grade plan to access its exams.</p>
-          <Link href="/upgrade" style={button}>View Plans</Link>
+          <h1 style={title}>{t('practice.noPlan')}</h1>
+          <p style={body}>{t('gate.activatePlan')}</p>
+          <Link href="/upgrade" style={button}>{t('common.viewPlans')}</Link>
         </section>
       </main>
     );
@@ -25,11 +27,11 @@ export default function PaidGradeGate({ grade, children }) {
   if (paidGrade !== grade) {
     return (
       <main style={shell}>
-        <BackButton fallback="/practice" label="Back to Exams" />
+        <BackButton fallback="/practice" label={t('common.backToExams')} />
         <section style={card}>
-          <h1 style={title}>Grade {grade} is not in your plan</h1>
-          <p style={body}>Your active plan is for Grade {paidGrade}.</p>
-          <Link href="/practice" style={button}>Back to My Exams</Link>
+          <h1 style={title}>{t('gate.notInPlan', { grade })}</h1>
+          <p style={body}>{t('gate.activePlan', { grade: paidGrade })}</p>
+          <Link href="/practice" style={button}>{t('common.backToMyExams')}</Link>
         </section>
       </main>
     );

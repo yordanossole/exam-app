@@ -4,18 +4,20 @@ import { useNavigate } from '../lib/navigation';
 import { useAppContext } from '../context/AppContext';
 import Card from '../components/Card';
 import Avatar from '../components/Avatar';
+import { useLanguage } from '../context/LanguageContext';
 
 const SETTINGS_ITEMS = [
-  { icon: '🔔', label: 'Notifications',  path: '/notifications' },
-  { icon: '⚙️',  label: 'Settings',       path: '/settings' },
-  { icon: '❓', label: 'Help & Support', path: '/help' },
-  { icon: '⬆️', label: 'Upgrade Plan',  path: '/upgrade' },
+  { icon: '🔔', labelKey: 'nav.notifications', path: '/notifications' },
+  { icon: '⚙️', labelKey: 'nav.settings', path: '/settings' },
+  { icon: '❓', labelKey: 'nav.help', path: '/help' },
+  { icon: '⬆️', labelKey: 'nav.upgrade', path: '/upgrade' },
 ];
 
 export default function ProfilePage() {
   const { state } = useAppContext();
   const { user } = state;
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <div style={screenWrap}>
@@ -24,10 +26,10 @@ export default function ProfilePage() {
         <div style={avatarSection}>
           <Avatar src={user?.avatar_url} name={user?.display_name ?? 'U'} size={72} />
           <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--color-text-primary)', marginTop: 12 }}>
-            {user?.display_name ?? 'Guest'}
+            {user?.display_name ?? t('profile.guest')}
           </p>
           <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', marginTop: 2 }}>
-            {user?.role ?? 'Free'} Member
+            {t('profile.member', { role: user?.role ?? 'Free' })}
           </p>
         </div>
 
@@ -35,7 +37,7 @@ export default function ProfilePage() {
         <Card padding="0" style={{ overflow: 'hidden', marginBottom: 24 }}>
           {SETTINGS_ITEMS.map((item, i) => (
             <button
-              key={item.label}
+              key={item.labelKey}
               onClick={() => navigate(item.path)}
               style={{
                 display: 'flex', alignItems: 'center', gap: 14,
@@ -47,7 +49,7 @@ export default function ProfilePage() {
             >
               <span style={{ fontSize: 20, width: 28, textAlign: 'center' }}>{item.icon}</span>
               <span style={{ font: 'var(--text-body-med)', color: 'var(--color-text-primary)', flex: 1 }}>
-                {item.label}
+                {t(item.labelKey)}
               </span>
               <span style={{ color: 'var(--color-text-secondary)', fontSize: 18 }}>›</span>
             </button>

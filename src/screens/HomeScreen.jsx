@@ -6,6 +6,7 @@ import { getPaidGrade } from '../lib/subscription';
 import Card from '../components/Card';
 import { Badge, StatChip } from '../components/StatChip';
 import Button from '../components/Button';
+import { useLanguage } from '../context/LanguageContext';
 
 const SUBJECT_ICONS = {
   mathematics: '📐',
@@ -18,11 +19,11 @@ const SUBJECT_ICONS = {
   afaan_oromo: '🗣️',
 };
 
-function getGreeting() {
+function getGreeting(t) {
   const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 18) return 'Good afternoon';
-  return 'Good evening';
+  if (hour < 12) return t('home.morning');
+  if (hour < 18) return t('home.afternoon');
+  return t('home.evening');
 }
 
 function subjectIcon(subject) {
@@ -31,6 +32,7 @@ function subjectIcon(subject) {
 
 export default function HomeScreen({ library = [] }) {
   const { state } = useAppContext();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const user = state.user;
   const paidGrade = getPaidGrade(user);
@@ -41,36 +43,36 @@ export default function HomeScreen({ library = [] }) {
     <div style={screenWrap}>
       <main style={scrollContent}>
         <section style={intro}>
-          <p style={greeting}>{getGreeting()}, {firstName}.</p>
-          <h1 style={headline}>Build confidence for exam day.</h1>
-          <p style={introCopy}>Practice official national examination papers, one subject at a time.</p>
+          <p style={greeting}>{getGreeting(t)}, {firstName}.</p>
+          <h1 style={headline}>{t('home.headline')}</h1>
+          <p style={introCopy}>{t('home.intro')}</p>
         </section>
 
         <section style={heroCard}>
           <div style={heroTop}>
             <div style={heroIcon}>📝</div>
             <Badge
-              text={paidGrade ? `Grade ${paidGrade} plan` : 'Plan required'}
+              text={paidGrade ? t('home.gradePlan', { grade: paidGrade }) : t('home.planRequired')}
               variant={paidGrade ? 'orange' : 'neutral'}
             />
           </div>
-          <h2 style={heroTitle}>{paidGrade ? `Grade ${paidGrade} exam library` : 'Unlock your exam library'}</h2>
+          <h2 style={heroTitle}>{paidGrade ? t('home.gradeLibrary', { grade: paidGrade }) : t('home.unlockLibrary')}</h2>
           <p style={heroCopy}>
             {gradeLibrary
-              ? 'Your paid-grade papers are ready. Choose a subject or jump into the full library.'
-              : 'Activate a grade plan to access the papers assigned to your preparation path.'}
+              ? t('home.libraryReady')
+              : t('home.activatePlan')}
           </p>
 
           {gradeLibrary && (
             <div style={statGrid}>
-              <StatChip icon="📚" value={gradeLibrary.exam_count} label="Papers" variant="orange" />
-              <StatChip icon="📖" value={gradeLibrary.subject_count} label="Subjects" variant="blue" />
-              <StatChip icon="❓" value={gradeLibrary.question_count} label="Questions" variant="mint" />
+              <StatChip icon="📚" value={gradeLibrary.exam_count} label={t('home.papers')} variant="orange" />
+              <StatChip icon="📖" value={gradeLibrary.subject_count} label={t('home.subjects')} variant="blue" />
+              <StatChip icon="❓" value={gradeLibrary.question_count} label={t('common.questions')} variant="mint" />
             </div>
           )}
 
           <Button variant="warm" full size="lg" onClick={() => navigate(paidGrade ? '/practice' : '/upgrade')}>
-            {paidGrade ? 'Open Exam Library' : 'View Plans'}
+            {paidGrade ? t('home.openLibrary') : t('common.viewPlans')}
           </Button>
         </section>
 
@@ -79,10 +81,10 @@ export default function HomeScreen({ library = [] }) {
             <section style={section}>
               <div style={sectionHeader}>
                 <div>
-                  <p style={sectionEyebrow}>Your plan</p>
-                  <h2 style={sectionTitle}>Subjects to practice</h2>
+                  <p style={sectionEyebrow}>{t('home.yourPlan')}</p>
+                  <h2 style={sectionTitle}>{t('home.subjectsToPractice')}</h2>
                 </div>
-                <button type="button" onClick={() => navigate('/practice')} style={textButton}>See all</button>
+                <button type="button" onClick={() => navigate('/practice')} style={textButton}>{t('home.seeAll')}</button>
               </div>
               <div style={subjectGrid}>
                 {gradeLibrary.subjects.slice(0, 6).map(subject => (
@@ -94,7 +96,7 @@ export default function HomeScreen({ library = [] }) {
                   >
                     <span style={subjectIconStyle}>{subjectIcon(subject.subject)}</span>
                     <span style={subjectName}>{subject.subject_display}</span>
-                    <span style={subjectMeta}>{subject.exam_count} {subject.exam_count === 1 ? 'paper' : 'papers'}</span>
+                    <span style={subjectMeta}>{subject.exam_count} {t(subject.exam_count === 1 ? 'common.paper' : 'common.papers')}</span>
                   </Card>
                 ))}
               </div>
@@ -103,10 +105,10 @@ export default function HomeScreen({ library = [] }) {
             <section style={section}>
               <div style={sectionHeader}>
                 <div>
-                  <p style={sectionEyebrow}>Recently added</p>
-                  <h2 style={sectionTitle}>Latest exam papers</h2>
+                  <p style={sectionEyebrow}>{t('home.recentlyAdded')}</p>
+                  <h2 style={sectionTitle}>{t('home.latestPapers')}</h2>
                 </div>
-                <span style={sectionHint}>E.C. years</span>
+                <span style={sectionHint}>{t('home.ecYears')}</span>
               </div>
               <div style={paperList}>
                 {gradeLibrary.latest_exams.map((exam, index) => (
@@ -119,7 +121,7 @@ export default function HomeScreen({ library = [] }) {
                     <span style={yearBadge}>{exam.year_ec}</span>
                     <span style={paperInfo}>
                       <strong style={paperTitle}>{exam.subject_display}</strong>
-                      <span style={paperMeta}>{exam.total_questions} questions · {exam.total_sections} sections</span>
+                      <span style={paperMeta}>{t('home.paperMeta', { questions: exam.total_questions, sections: exam.total_sections })}</span>
                     </span>
                     <span style={paperArrow}>›</span>
                   </button>
@@ -132,8 +134,8 @@ export default function HomeScreen({ library = [] }) {
         <section style={tipCard}>
           <span style={tipIcon}>💡</span>
           <div>
-            <p style={sectionEyebrow}>Study tip</p>
-            <p style={tipText}>Use Practice mode when learning. Check the hint first, then reveal the explanation only when you need it.</p>
+            <p style={sectionEyebrow}>{t('home.studyTip')}</p>
+            <p style={tipText}>{t('home.studyTipText')}</p>
           </div>
         </section>
 

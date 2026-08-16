@@ -2,10 +2,12 @@
 
 import { useLocation, useNavigate } from '../../lib/navigation';
 import Button from '../../components/Button';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function PracticeResultsScreen() {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const result = state?.result;
   const exam = state?.exam;
 
@@ -13,8 +15,8 @@ export default function PracticeResultsScreen() {
     return (
       <main style={shell}>
         <div style={shellCentered}>
-          <p>No result found.</p>
-          <Button onClick={() => navigate('/practice')}>Back to Exams</Button>
+          <p>{t('common.noResult')}</p>
+          <Button onClick={() => navigate('/practice')}>{t('common.backToExams')}</Button>
         </div>
       </main>
     );
@@ -23,12 +25,12 @@ export default function PracticeResultsScreen() {
   return (
     <main style={shell}>
       <div style={content}>
-        <p style={subtitle}>{result.answer_key_available ? `${result.correct} of ${result.total} correct` : 'Answer key review is still pending'} · {exam?.subject_display ?? 'Exam'} {exam?.year_ec ? `${exam.year_ec} E.C.` : ''}</p>
+        <p style={subtitle}>{result.answer_key_available ? t('results.correctCount', { correct: result.correct, total: result.total }) : t('results.answerPending')} · {exam?.subject_display ?? t('nav.exam')} {exam?.year_ec ? `${exam.year_ec} E.C.` : ''}</p>
 
-        {!result.answer_key_available && <p style={pendingNotice}>This database exam has not received its answer key yet, so this attempt is not scored.</p>}
+        {!result.answer_key_available && <p style={pendingNotice}>{t('results.pendingNotice')}</p>}
 
         <section style={section}>
-          <h2 style={sectionTitle}>Topic Report</h2>
+          <h2 style={sectionTitle}>{t('results.topicReport')}</h2>
           {result.topics.map(topic => (
             <div key={topic.topic} style={topicRow}>
               <span style={{ textTransform: 'capitalize' }}>{topic.topic.replaceAll('_', ' ')}</span>
@@ -38,17 +40,17 @@ export default function PracticeResultsScreen() {
         </section>
 
         <section style={section}>
-          <h2 style={sectionTitle}>Questions for Review</h2>
+          <h2 style={sectionTitle}>{t('results.reviewQuestions')}</h2>
           {result.items.filter(item => !item.is_correct || item.needs_review).slice(0, 20).map(item => (
             <div key={item.question_id} style={reviewRow}>
               <span>Q{item.q_number}</span>
               <span>{item.topic.replaceAll('_', ' ')}</span>
-              <strong>{item.is_correct === null ? 'Not graded' : item.is_correct ? 'Flagged' : 'Missed'}</strong>
+              <strong>{item.is_correct === null ? t('results.notGraded') : item.is_correct ? t('results.flagged') : t('results.missed')}</strong>
             </div>
           ))}
         </section>
 
-        <Button full size="lg" onClick={() => navigate('/practice')}>Back to Exams</Button>
+        <Button full size="lg" onClick={() => navigate('/practice')}>{t('common.backToExams')}</Button>
       </div>
     </main>
   );

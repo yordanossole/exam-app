@@ -3,24 +3,13 @@
 import { useState } from 'react';
 import Card from '../components/Card';
 import BackButton from '../components/BackButton';
+import { useLanguage } from '../context/LanguageContext';
 
 const FAQS = [
-  {
-    q: 'How do I start an exam?',
-    a: 'Open Exams, choose a subject, then tap any exam year to begin.',
-  },
-  {
-    q: 'Can I resume an exam I left mid-way?',
-    a: 'You can reopen the same exam from Exams and start another attempt at any time.',
-  },
-  {
-    q: 'How is my accuracy calculated?',
-    a: 'Accuracy = (correct answers ÷ total answered) × 100, updated after each submitted exam.',
-  },
-  {
-    q: 'How do I upgrade my plan?',
-    a: 'Tap "Upgrade Plan" on your Profile page to view available subscription tiers.',
-  },
+  { qKey: 'help.startQ', aKey: 'help.startA' },
+  { qKey: 'help.resumeQ', aKey: 'help.resumeA' },
+  { qKey: 'help.accuracyQ', aKey: 'help.accuracyA' },
+  { qKey: 'help.upgradeQ', aKey: 'help.upgradeA' },
 ];
 
 function FaqItem({ q, a, last }) {
@@ -68,16 +57,18 @@ function SectionLabel({ children }) {
 }
 
 const CONTACT_ITEMS = [
-  { icon: '📧', label: 'Email Support',    value: 'support@examapp.com' },
-  { icon: '💬', label: 'Live Chat',        value: 'Available 9am–6pm' },
-  { icon: '📖', label: 'Documentation',    value: 'docs.examapp.com' },
-  { icon: '🐛', label: 'Report a Bug',     value: null },
+  { icon: '📧', labelKey: 'help.email', value: 'support@examapp.com' },
+  { icon: '💬', labelKey: 'help.chat', valueKey: 'help.chatHours' },
+  { icon: '📖', labelKey: 'help.documentation', value: 'docs.examapp.com' },
+  { icon: '🐛', labelKey: 'help.reportBug' },
 ];
 
 export default function HelpSupportPage() {
+  const { t } = useLanguage();
+
   return (
     <div style={screenWrap}>
-      <BackButton fallback="/profile" label="Back to Profile" />
+      <BackButton fallback="/profile" label={t('settings.backToProfile')} />
       <main style={scrollContent}>
 
         {/* Search hint */}
@@ -85,28 +76,28 @@ export default function HelpSupportPage() {
           <span style={{ fontSize: 22 }}>🔍</span>
           <div>
             <p style={{ font: 'var(--text-body-med)', color: 'var(--color-text-primary)', marginBottom: 2 }}>
-              Quick Answers
+              {t('help.quickAnswers')}
             </p>
             <p style={{ font: 'var(--text-body)', fontSize: 13, color: 'var(--color-text-secondary)' }}>
-              Browse FAQs below or contact our support team.
+              {t('help.quickDescription')}
             </p>
           </div>
         </Card>
 
         {/* FAQ */}
-        <SectionLabel>Frequently Asked Questions</SectionLabel>
+        <SectionLabel>{t('help.faq')}</SectionLabel>
         <Card padding="0" style={{ overflow: 'hidden', marginBottom: 20 }}>
           {FAQS.map((item, i) => (
-            <FaqItem key={i} q={item.q} a={item.a} last={i === FAQS.length - 1} />
+            <FaqItem key={item.qKey} q={t(item.qKey)} a={t(item.aKey)} last={i === FAQS.length - 1} />
           ))}
         </Card>
 
         {/* Contact */}
-        <SectionLabel>Contact Us</SectionLabel>
+        <SectionLabel>{t('help.contact')}</SectionLabel>
         <Card padding="0" style={{ overflow: 'hidden', marginBottom: 32 }}>
           {CONTACT_ITEMS.map((item, i) => (
             <button
-              key={item.label}
+              key={item.labelKey}
               style={{
                 display: 'flex', alignItems: 'center', gap: 14,
                 padding: '0 16px', width: '100%', minHeight: 52,
@@ -123,11 +114,11 @@ export default function HelpSupportPage() {
                 {item.icon}
               </span>
               <span style={{ font: 'var(--text-body-med)', color: 'var(--color-text-primary)', flex: 1 }}>
-                {item.label}
+                {t(item.labelKey)}
               </span>
-              {item.value && (
+              {(item.value || item.valueKey) && (
                 <span style={{ font: 'var(--text-body)', fontSize: 13, color: 'var(--color-text-secondary)' }}>
-                  {item.value}
+                  {item.value ?? t(item.valueKey)}
                 </span>
               )}
               <span style={{ color: 'var(--color-text-secondary)', fontSize: 16, marginLeft: 4 }}>›</span>
