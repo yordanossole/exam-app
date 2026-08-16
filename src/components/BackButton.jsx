@@ -2,7 +2,7 @@
 
 import { useNavigate } from '../lib/navigation';
 
-export default function BackButton({ fallback = '/', label = 'Back' }) {
+export default function BackButton({ fallback = '/', label = 'Back', iconOnly = false }) {
   const navigate = useNavigate();
 
   function goBack() {
@@ -17,7 +17,7 @@ export default function BackButton({ fallback = '/', label = 'Back' }) {
     <div style={wrap}>
       <button type="button" onClick={goBack} aria-label={label} style={button}>
         <span aria-hidden="true">←</span>
-        {label}
+        {!iconOnly && label}
       </button>
     </div>
   );

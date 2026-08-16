@@ -16,6 +16,7 @@ export default function TopAppBar() {
   const logoSrc = theme === 'dark' ? '/@Logos/logo-white.png' : '/@Logos/logo-blue.png';
   const isHome = pathname === '/';
   const isExam = pathname.startsWith('/practice/exam/');
+  const isResults = pathname === '/practice/results';
   const isQuestionFlow = isExam && pathname.split('/').length > 4;
   const title = getPageTitle(pathname);
 
@@ -31,7 +32,7 @@ export default function TopAppBar() {
   return (
     <header style={bar}>
       <div style={inner}>
-        {isExam ? (
+        {isExam || isResults ? (
           <>
             <button type="button" onClick={goBackFromExam} aria-label="Go back" style={examBackButton}>
               <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none">
@@ -103,6 +104,7 @@ const bar = {
   position: 'sticky', top: 0, zIndex: 300,
   background: 'var(--color-surface)',
   borderBottom: '1px solid var(--color-border)',
+  boxShadow: '0 2px 8px rgba(11, 16, 32, 0.06)',
 };
 const inner = {
   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
