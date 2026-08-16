@@ -48,6 +48,31 @@ function MediaBlock({ media }) {
   );
 }
 
+function PassageBlock({ passage }) {
+  const [expanded, setExpanded] = useState(false);
+  const content = passage?.content || '';
+  const canCollapse = content.length > 360 || content.split(/\r?\n/).length > 5;
+
+  if (!content) return null;
+
+  return (
+    <article style={passageCard} dir="auto">
+      {passage.passage_title && <h2 style={passageTitle}>{passage.passage_title}</h2>}
+      <p style={{ ...passageText, ...(canCollapse && !expanded ? passagePreview : {}) }}>{content}</p>
+      {canCollapse && (
+        <button
+          type="button"
+          aria-expanded={expanded}
+          onClick={() => setExpanded(current => !current)}
+          style={passageToggle}
+        >
+          {expanded ? 'Show less' : 'Show more'}
+        </button>
+      )}
+    </article>
+  );
+}
+
 function OptionContent({ value, media }) {
   if (value === 'IMAGE' && media) {
     return (
@@ -169,12 +194,7 @@ export default function PracticeQuestionFlow({ exam, questions }) {
       </header>
 
       <section style={content}>
-        {question.passage?.content && (
-          <article style={passageCard} dir="auto">
-            {question.passage.passage_title && <h2 style={passageTitle}>{question.passage.passage_title}</h2>}
-            <p style={passageText}>{question.passage.content}</p>
-          </article>
-        )}
+        <PassageBlock key={question.question_id} passage={question.passage} />
 
         <article style={questionCard}>
           <div style={questionMeta}>
@@ -266,6 +286,8 @@ const content = { flex: 1, overflowY: 'auto', padding: 16 };
 const passageCard = { background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 16, marginBottom: 14, whiteSpace: 'pre-wrap' };
 const passageTitle = { font: 'var(--text-card-title)', color: 'var(--color-text-strong)', marginBottom: 8 };
 const passageText = { font: 'var(--text-body-med)', color: 'var(--color-text-primary)', lineHeight: 1.7, fontFamily: 'var(--font-ethiopic)' };
+const passagePreview = { display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden' };
+const passageToggle = { marginTop: 10, padding: '6px 0', color: 'var(--color-primary)', font: 'var(--text-btn)', fontSize: 13, cursor: 'pointer' };
 const questionCard = { background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 16, marginBottom: 14 };
 const questionMeta = { display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12, font: 'var(--text-label)', letterSpacing: 'var(--ls-wide)', textTransform: 'uppercase', color: 'var(--color-primary)' };
 const reviewBadge = { borderRadius: 999, padding: '2px 7px', background: 'var(--color-accent-tint)', color: 'var(--color-accent)' };
