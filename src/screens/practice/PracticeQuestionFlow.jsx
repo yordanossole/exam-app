@@ -213,9 +213,6 @@ export default function PracticeQuestionFlow({ exam, questions }) {
         </section>
 
         <div style={{ display: 'grid', gap: 10 }}>
-          <Button full size="lg" disabled={!selectedLetter || checking} onClick={() => checkAnswer(false)}>
-            {checking ? 'Checking...' : 'Check Answer'}
-          </Button>
           {feedback?.hint && !feedback?.explanation && (
             <article style={hintCard} dir="auto">
               <strong>Hint</strong>
@@ -241,8 +238,23 @@ export default function PracticeQuestionFlow({ exam, questions }) {
       </section>
 
       <footer style={footer}>
-        <Button variant="ghost" disabled={index === 0} onClick={() => jumpTo(index - 1)}>Back</Button>
-        <Button disabled={submitting} onClick={next}>{isLast ? 'Submit' : 'Next'}</Button>
+        <Button
+          variant="ghost"
+          style={{ ...footerButton, background: 'var(--color-surface-alt)', border: '1px solid var(--color-border)' }}
+          disabled={index === 0}
+          onClick={() => jumpTo(index - 1)}
+        >
+          Back
+        </Button>
+        <Button
+          variant="secondary"
+          style={footerButton}
+          disabled={!selectedLetter || checking}
+          onClick={() => checkAnswer(false)}
+        >
+          {checking ? 'Checking…' : 'Check'}
+        </Button>
+        <Button style={footerButton} disabled={submitting} onClick={next}>{isLast ? 'Submit' : 'Next'}</Button>
       </footer>
     </main>
   );
@@ -269,6 +281,7 @@ const thStyle = { border: '1px solid var(--color-border)', padding: 8, backgroun
 const tdStyle = { border: '1px solid var(--color-border)', padding: 8, textAlign: 'left' };
 const hintCard = { display: 'grid', gap: 10, background: 'var(--color-accent-tint)', color: 'var(--color-text-primary)', border: '1px solid var(--color-accent)', borderRadius: 12, padding: 14, font: 'var(--text-body-med)' };
 const correctCard = { ...hintCard, background: 'var(--color-success-tint)', border: '1px solid var(--color-success)' };
-const footer = { position: 'fixed', left: 0, right: 0, bottom: 56, maxWidth: 560, margin: '0 auto', display: 'flex', justifyContent: 'space-between', gap: 10, padding: '12px 16px', paddingBottom: 'max(12px, env(safe-area-inset-bottom))', background: 'var(--color-surface)', borderTop: '1px solid var(--color-border)' };
+const footer = { position: 'fixed', left: 0, right: 0, bottom: 56, maxWidth: 560, margin: '0 auto', display: 'flex', gap: 8, padding: '10px 16px', paddingBottom: 'max(10px, env(safe-area-inset-bottom))', background: 'var(--color-surface)', borderTop: '1px solid var(--color-border)' };
+const footerButton = { flex: 1, minWidth: 0, minHeight: 36, height: 38, padding: '8px 6px', borderRadius: 10, font: 'var(--text-label)', fontSize: 12, whiteSpace: 'nowrap' };
 const unavailableCard = { display: 'grid', gap: 16, margin: '80px 16px', padding: 18, borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)' };
 const backButton = { minHeight: 44, borderRadius: 10, background: 'var(--color-primary)', color: '#fff', font: 'var(--text-btn)' };
