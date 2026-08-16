@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { getDb } from './db';
+import { getDb, isDatabaseReadOnly } from './db';
 
 export type AdminPlan = {
   plan_id: string;
@@ -120,6 +120,9 @@ export function getAdminDashboardData() {
   `).get() as { count: number };
 
   return {
+    database: {
+      read_only: isDatabaseReadOnly(),
+    },
     stats: {
       users: users.length,
       active_subscriptions: users.filter(user => user.status === 'active' && user.plan_id).length,

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { updateAdminUser } from '../../../../../lib/admin';
+import { isDatabaseReadOnly } from '../../../../../lib/db';
 
 const updateSchema = z.object({
   display_name: z.string().trim().min(2).max(80).optional(),
@@ -12,6 +13,7 @@ const updateSchema = z.object({
 }).refine(value => Object.keys(value).length > 0, 'No changes supplied.');
 
 export async function PATCH(request: Request, context: { params: Promise<{ userId: string }> }) {
+  if (isDatabaseReadOnly()) return NextResponse.json({ error: 'User management requires a persistent production database.' }, { status: 503 });
   const { userId } = await context.params;
   const parsed = updateSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'Enter valid user details.', details: parsed.error.flatten() }, { status: 400 });

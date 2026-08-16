@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getDb, getQuestionsForExam } from '../../../../../../../lib/db';
+import { getDb, getQuestionsForExam, isDatabaseReadOnly } from '../../../../../../../lib/db';
 
 export const runtime = 'nodejs';
 
@@ -7,6 +7,9 @@ export async function POST(
   request: Request,
   context: { params: Promise<{ examId: string; questionId: string }> }
 ) {
+  if (isDatabaseReadOnly()) {
+    return NextResponse.json({ error: 'Question reporting requires a persistent production database.' }, { status: 503 });
+  }
   const { examId, questionId } = await context.params;
   const body = await request.json().catch(() => ({}));
   const message = typeof body?.message === 'string' ? body.message.trim() : '';

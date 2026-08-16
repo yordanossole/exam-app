@@ -190,6 +190,11 @@ export default function AdminDashboard({ initialData }) {
         </header>
 
         <main className={styles.main}>
+          {data.database?.read_only && (
+            <div className={`${styles.notice} ${styles.noticeWarning}`}>
+              This deployment is using the bundled database in read-only mode. Connect a persistent database before changing users, plans, or exams.
+            </div>
+          )}
           {notice && <div className={`${styles.notice} ${notice.type === 'error' ? styles.noticeError : ''}`}>{notice.message}</div>}
 
           {view === 'overview' && <Overview data={data} onNavigate={changeView} />}

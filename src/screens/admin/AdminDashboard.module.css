@@ -97,6 +97,7 @@
 .main { display: grid; gap: 22px; max-width: 1480px; margin: 0 auto; padding: 28px clamp(22px, 4vw, 52px) 48px; }
 .notice { position: sticky; top: 126px; z-index: 15; padding: 11px 14px; border: 1px solid #a6dfc1; border-radius: 10px; color: #17623b; background: #edfbf3; font-size: 13px; box-shadow: 0 8px 24px rgba(16, 27, 54, .08); }
 .noticeError { border-color: #f0b7bd; color: #a3293b; background: #fff1f2; }
+.noticeWarning { border-color: #efd18f; color: #81510e; background: #fff8e8; }
 
 .primaryButton, .secondaryButton, .textButton { min-height: 40px; border-radius: 9px; font: var(--text-btn); font-size: 12px; }
 .primaryButton { padding: 0 17px; color: #fff; background: var(--admin-primary); box-shadow: 0 5px 14px rgba(49, 88, 216, .2); }

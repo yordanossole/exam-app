@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createAdminUser } from '../../../../lib/admin';
+import { isDatabaseReadOnly } from '../../../../lib/db';
 
 const userSchema = z.object({
   display_name: z.string().trim().min(2).max(80),
@@ -12,6 +13,7 @@ const userSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  if (isDatabaseReadOnly()) return NextResponse.json({ error: 'User management requires a persistent production database.' }, { status: 503 });
   const parsed = userSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'Enter valid user details.', details: parsed.error.flatten() }, { status: 400 });
 

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createAdminPlan } from '../../../../lib/admin';
+import { isDatabaseReadOnly } from '../../../../lib/db';
 
 const planSchema = z.object({
   name: z.string().trim().min(2).max(80),
@@ -14,6 +15,7 @@ const planSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  if (isDatabaseReadOnly()) return NextResponse.json({ error: 'Plan changes require a persistent production database.' }, { status: 503 });
   const parsed = planSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'Enter valid plan details.', details: parsed.error.flatten() }, { status: 400 });
 

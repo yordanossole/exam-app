@@ -82,6 +82,9 @@ export type HydratedQuestion = Omit<QuestionRow, 'content'> & {
 };
 
 const dbPath = process.env.NT_EXAMS_DB_PATH || path.join(process.cwd(), 'nt-exams.db');
+const databaseReadOnly = process.env.NT_EXAMS_DB_READ_ONLY !== undefined
+  ? process.env.NT_EXAMS_DB_READ_ONLY === '1'
+  : Boolean(process.env.VERCEL);
 
 declare global {
   // eslint-disable-next-line no-var
@@ -90,13 +93,17 @@ declare global {
 
 export function getDb() {
   if (!globalThis.__ntExamsDb) {
-    const db = new Database(dbPath);
+    const db = new Database(dbPath, databaseReadOnly ? { readonly: true, fileMustExist: true } : undefined);
     db.pragma('foreign_keys = ON');
-    db.exec(schemaSql);
+    if (!databaseReadOnly) db.exec(schemaSql);
     globalThis.__ntExamsDb = db;
   }
 
   return globalThis.__ntExamsDb;
+}
+
+export function isDatabaseReadOnly() {
+  return databaseReadOnly;
 }
 
 function parseJsonArray(value: string | null | undefined) {
