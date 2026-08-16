@@ -17,27 +17,25 @@ export default function TopAppBar() {
   const paidGrade = getPaidGrade(state.user);
   const logoSrc = theme === 'dark' ? '/@Logos/logo-white.png' : '/@Logos/logo-blue.png';
   const isHome = pathname === '/';
-  const isExam = pathname.startsWith('/practice/exam/');
-  const isResults = pathname === '/practice/results';
-  const isYearChoosing = pathname.startsWith('/practice/grade/') && pathname.includes('/subject/');
-  const isQuestionFlow = isExam && pathname.split('/').length > 4;
-  const title = getPageTitle(pathname, t);
+  const isRootPage = pathname === '/' || pathname === '/practice' || pathname === '/profile';
+  const isQuestionFlow = /^\/practice\/exam\/[^/]+\/exam$/.test(pathname);
+  const title = pathname === '/practice' ? t('nav.exams') : t('nav.profile');
 
-  function goBackFromExam() {
+  function goBack() {
     if (typeof window !== 'undefined' && window.history.length > 1) {
       navigate(-1);
       return;
     }
 
-    navigate('/practice', { replace: true });
+    navigate(getBackFallback(pathname), { replace: true });
   }
 
   return (
     <header style={bar}>
       <div style={inner}>
-        {isExam || isResults || isYearChoosing ? (
+        {!isRootPage ? (
           <>
-            <button type="button" onClick={goBackFromExam} aria-label={t('nav.goBack')} style={examBackButton}>
+            <button type="button" onClick={goBack} aria-label={t('nav.goBack')} style={backButton}>
               <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none">
                 <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -90,18 +88,11 @@ function ExamTimer() {
   );
 }
 
-function getPageTitle(pathname, t) {
-  if (pathname.startsWith('/practice/exam/')) return t('nav.exam');
-  if (pathname.startsWith('/practice/grade/')) return pathname.includes('/subject/') ? t('nav.examYears') : t('nav.subjects');
-  if (pathname.startsWith('/practice')) return t('nav.exams');
-  if (pathname.startsWith('/profile')) return t('nav.profile');
-  if (pathname.startsWith('/settings')) return t('nav.settings');
-  if (pathname.startsWith('/notifications')) return t('nav.notifications');
-  if (pathname.startsWith('/help')) return t('nav.help');
-  if (pathname.startsWith('/upgrade')) return t('nav.upgrade');
-  if (pathname.startsWith('/payment')) return t('nav.payment');
-  if (pathname.startsWith('/admin')) return t('nav.review');
-  return 'NT Exams';
+function getBackFallback(pathname) {
+  if (pathname.startsWith('/payment')) return '/upgrade';
+  if (pathname.startsWith('/settings') || pathname.startsWith('/notifications') || pathname.startsWith('/help') || pathname.startsWith('/upgrade')) return '/profile';
+  if (pathname.startsWith('/practice')) return '/practice';
+  return '/';
 }
 
 const bar = {
@@ -117,7 +108,7 @@ const inner = {
 const brandButton = {
   display: 'inline-flex', alignItems: 'center', minHeight: 44, padding: 0,
 };
-const examBackButton = {
+const backButton = {
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
   width: 40, height: 40, padding: 0, border: 'none', borderRadius: '50%',
   background: 'transparent', color: 'var(--color-primary)', cursor: 'pointer',

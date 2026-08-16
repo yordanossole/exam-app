@@ -1,5 +1,4 @@
 import { getQuestionsNeedingReview } from '../../../lib/db';
-import BackButton from '../../../components/BackButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,7 +7,6 @@ export default function Page() {
 
   return (
     <main style={shell}>
-      <BackButton fallback="/" label="Back to App" />
       <h1 style={title}>Content Review</h1>
       <p style={subtitle}>{questions.length} flagged questions shown. These should be checked before publishing.</p>
 

@@ -4,15 +4,12 @@ import { useState } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import Card from '../components/Card';
-import BackButton from '../components/BackButton';
 
 /* ── Reusable sub-components ──────────────────────────────────── */
 
 function PageShell({ children }) {
-  const { t } = useLanguage();
   return (
     <div style={screenWrap}>
-      <BackButton fallback="/profile" label={t('settings.backToProfile')} />
       <main style={scrollContent}>{children}</main>
     </div>
   );

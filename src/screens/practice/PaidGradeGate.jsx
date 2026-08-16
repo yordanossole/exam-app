@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useAppContext } from '../../context/AppContext';
 import { getPaidGrade } from '../../lib/subscription';
-import BackButton from '../../components/BackButton';
 import { useLanguage } from '../../context/LanguageContext';
 
 export default function PaidGradeGate({ grade, children }) {
@@ -14,7 +13,6 @@ export default function PaidGradeGate({ grade, children }) {
   if (!paidGrade) {
     return (
       <main style={shell}>
-        <BackButton fallback="/practice" label={t('common.backToExams')} />
         <section style={card}>
           <h1 style={title}>{t('practice.noPlan')}</h1>
           <p style={body}>{t('gate.activatePlan')}</p>
@@ -27,7 +25,6 @@ export default function PaidGradeGate({ grade, children }) {
   if (paidGrade !== grade) {
     return (
       <main style={shell}>
-        <BackButton fallback="/practice" label={t('common.backToExams')} />
         <section style={card}>
           <h1 style={title}>{t('gate.notInPlan', { grade })}</h1>
           <p style={body}>{t('gate.activePlan', { grade: paidGrade })}</p>

@@ -6,7 +6,6 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import { Badge } from '../components/StatChip';
 import { paymentApi } from '../services/api';
-import BackButton from '../components/BackButton';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function UpgradePage() {
@@ -39,7 +38,6 @@ export default function UpgradePage() {
 
   return (
     <div style={screenWrap}>
-      <BackButton fallback="/profile" label={t('settings.backToProfile')} />
       <main style={scrollContent}>
         <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', textAlign: 'center', marginBottom: 24 }}>
           {t('upgrade.intro')}
