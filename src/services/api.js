@@ -36,7 +36,7 @@ export const userApi = {
 };
 
 export const paymentApi = {
-  getPlans: () => api.get('/admin/plans'), // Using admin endpoint for plans for now, or move to public
+  getPlans: () => axios.get('/api/plans'),
   submitPayment: (data) => api.post('/payments/', data),
   uploadProof: (paymentId, file) => {
     const formData = new FormData();

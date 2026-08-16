@@ -1,6 +1,45 @@
 export const schemaSql = `
 PRAGMA foreign_keys = ON;
 
+CREATE TABLE IF NOT EXISTS plans (
+  plan_id       TEXT PRIMARY KEY,
+  name          TEXT NOT NULL,
+  description   TEXT NOT NULL DEFAULT '',
+  grade         INTEGER NOT NULL,
+  price_etb     REAL NOT NULL,
+  duration_days INTEGER NOT NULL,
+  badge         TEXT,
+  is_active     INTEGER NOT NULL DEFAULT 1,
+  sort_order    INTEGER NOT NULL DEFAULT 0,
+  created_at    TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS users (
+  user_id        TEXT PRIMARY KEY,
+  display_name   TEXT NOT NULL,
+  email          TEXT NOT NULL UNIQUE,
+  role           TEXT NOT NULL DEFAULT 'student',
+  status         TEXT NOT NULL DEFAULT 'active',
+  grade          INTEGER,
+  plan_id        TEXT REFERENCES plans(plan_id) ON DELETE SET NULL,
+  created_at     TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_active_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
+CREATE INDEX IF NOT EXISTS idx_users_plan ON users(plan_id);
+CREATE INDEX IF NOT EXISTS idx_plans_active_sort ON plans(is_active, sort_order);
+
+INSERT OR IGNORE INTO plans (plan_id, name, description, grade, price_etb, duration_days, badge, sort_order)
+VALUES
+  ('grade-6-monthly', 'Grade 6 Access', 'All Grade 6 national exam papers and detailed results.', 6, 149, 30, NULL, 1),
+  ('grade-8-monthly', 'Grade 8 Access', 'Complete Grade 8 exam library with answer explanations.', 8, 199, 30, 'Popular', 2),
+  ('grade-12-monthly', 'Grade 12 Access', 'Full Grade 12 preparation library and performance insights.', 12, 249, 30, NULL, 3);
+
+INSERT OR IGNORE INTO users (user_id, display_name, email, role, status, grade, plan_id, last_active_at)
+VALUES ('demo-user', 'Test User', 'student@example.com', 'student', 'active', 6, 'grade-6-monthly', CURRENT_TIMESTAMP);
+
 CREATE TABLE IF NOT EXISTS exams (
   exam_id             TEXT PRIMARY KEY,
   grade               INTEGER NOT NULL,
