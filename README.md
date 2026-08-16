@@ -14,7 +14,7 @@ The app does not use local question-bank data for exams. The practice entry page
 
 ## Exam flow
 
-`/practice` → paid grade subjects → exam year → practice or timed mode → results by topic.
+`/practice` → paid grade subjects → exam year → exam → results by topic.
 
 Legacy `/subjects`, `/quiz`, and `/exam` URLs redirect into the database-backed practice flow. `/admin/review` lists questions that need content or answer-key review.
 

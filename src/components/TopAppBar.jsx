@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useNavigate } from '../lib/navigation';
 import { usePathname } from 'next/navigation';
 import { useAppContext } from '../context/AppContext';
@@ -14,20 +15,74 @@ export default function TopAppBar() {
   const paidGrade = getPaidGrade(state.user);
   const logoSrc = theme === 'dark' ? '/@Logos/logo-white.png' : '/@Logos/logo-blue.png';
   const isHome = pathname === '/';
+  const isExam = pathname.startsWith('/practice/exam/');
+  const isQuestionFlow = isExam && pathname.split('/').length > 4;
   const title = getPageTitle(pathname);
+
+  function goBackFromExam() {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      navigate(-1);
+      return;
+    }
+
+    const examId = pathname.split('/')[3];
+    navigate(isQuestionFlow && examId ? `/practice/exam/${examId}` : '/practice', { replace: true });
+  }
 
   return (
     <header style={bar}>
       <div style={inner}>
-        <button type="button" onClick={() => navigate('/')} aria-label="Go to home" style={brandButton}>
-          <img src={logoSrc} alt="NT Exams" style={logo} />
-        </button>
-        {!isHome && <span style={pageTitle}>{title}</span>}
-        <div style={actions}>
-          <span className="grade-badge">{paidGrade ? `Grade ${paidGrade}` : '—'}</span>
-        </div>
+        {isExam ? (
+          <>
+            <button type="button" onClick={goBackFromExam} aria-label="Go back" style={examBackButton}>
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none">
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            {isQuestionFlow && <ExamTimer key={pathname} />}
+          </>
+        ) : (
+          <>
+            <button type="button" onClick={() => navigate('/')} aria-label="Go to home" style={brandButton}>
+              <img src={logoSrc} alt="NT Exams" style={logo} />
+            </button>
+            {!isHome && <span style={pageTitle}>{title}</span>}
+            <div style={actions}>
+              <span className="grade-badge">{paidGrade ? `Grade ${paidGrade}` : '—'}</span>
+            </div>
+          </>
+        )}
       </div>
     </header>
+  );
+}
+
+function ExamTimer() {
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+  useEffect(() => {
+    const timerId = window.setInterval(() => {
+      setElapsedSeconds(seconds => seconds + 1);
+    }, 1000);
+
+    return () => window.clearInterval(timerId);
+  }, []);
+
+  const hours = Math.floor(elapsedSeconds / 3600);
+  const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+  const seconds = elapsedSeconds % 60;
+  const time = hours > 0
+    ? [hours, minutes, seconds].map(value => String(value).padStart(2, '0')).join(':')
+    : [minutes, seconds].map(value => String(value).padStart(2, '0')).join(':');
+
+  return (
+    <div role="timer" aria-label={`Elapsed time ${time}`} style={timer}>
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none">
+        <circle cx="12" cy="13" r="8" stroke="currentColor" strokeWidth="1.8" />
+        <path d="M12 9v4l2.5 1.5M9 3h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span>{time}</span>
+    </div>
   );
 }
 
@@ -56,6 +111,16 @@ const inner = {
 };
 const brandButton = {
   display: 'inline-flex', alignItems: 'center', minHeight: 44, padding: 0,
+};
+const examBackButton = {
+  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+  width: 40, height: 40, padding: 0, border: 'none', borderRadius: '50%',
+  background: 'transparent', color: 'var(--color-primary)', cursor: 'pointer',
+};
+const timer = {
+  display: 'inline-flex', alignItems: 'center', gap: 6, minWidth: 70,
+  justifyContent: 'flex-end', color: 'var(--color-primary)',
+  font: 'var(--text-label)', fontVariantNumeric: 'tabular-nums',
 };
 const pageTitle = { flex: 1, textAlign: 'center', font: 'var(--text-card-title)', color: 'var(--color-text-strong)' };
 const logo = { display: 'block', width: 'auto', height: 32 };
