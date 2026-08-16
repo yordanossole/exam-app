@@ -19,11 +19,11 @@ export default async function Page({ params }: { params: Promise<{ grade: string
       <BackButton fallback="/practice" label="Back to Exams" />
       <main style={shell}>
         <h1 style={title}>{subjectName}</h1>
-        <p style={subtitle}>Choose an exam year, then select practice or mock exam mode.</p>
+        <p style={subtitle}>Choose an exam year to begin.</p>
 
         <section style={grid}>
           {exams.map(exam => (
-            <Link key={exam.exam_id} href={`/practice/exam/${exam.exam_id}`} style={card}>
+            <Link key={exam.exam_id} href={`/practice/exam/${exam.exam_id}/exam`} style={card}>
               <span style={cardTitle}>{exam.year_ec} E.C.</span>
               <span style={meta}>{exam.total_questions} questions · {exam.total_sections} sections</span>
               {!exam.verified && <span style={reviewBadge}>Unverified</span>}

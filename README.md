@@ -37,7 +37,7 @@ The root layout provides the uniform top app bar, logo, subscription-grade badge
 - `/` — home
 - `/practice` — subjects for the paid grade
 - `/practice/grade/[grade]/subject/[subject]` — exam years
-- `/practice/exam/[examId]` — mode selection
+- `/practice/exam/[examId]` — legacy redirect to the exam flow
 - `/practice/exam/[examId]/[mode]` — question flow
 - `/practice/results` — topic score report
 - `/profile`, `/settings`, `/upgrade` — account and subscription screens

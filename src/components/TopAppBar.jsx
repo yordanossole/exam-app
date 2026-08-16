@@ -25,8 +25,7 @@ export default function TopAppBar() {
       return;
     }
 
-    const examId = pathname.split('/')[3];
-    navigate(isQuestionFlow && examId ? `/practice/exam/${examId}` : '/practice', { replace: true });
+    navigate('/practice', { replace: true });
   }
 
   return (
