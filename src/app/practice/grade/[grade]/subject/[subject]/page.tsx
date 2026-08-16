@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getExamsByGradeAndSubject } from '../../../../../../lib/db';
 import PaidGradeGate from '../../../../../../screens/practice/PaidGradeGate';
-import BackButton from '../../../../../../components/BackButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +15,6 @@ export default async function Page({ params }: { params: Promise<{ grade: string
 
   return (
     <PaidGradeGate grade={gradeNumber}>
-      <BackButton fallback="/practice" label="Back to Exams" />
       <main style={shell}>
         <h1 style={title}>{subjectName}</h1>
         <p style={subtitle}>Choose an exam year to begin.</p>

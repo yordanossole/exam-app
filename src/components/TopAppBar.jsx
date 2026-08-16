@@ -17,6 +17,7 @@ export default function TopAppBar() {
   const isHome = pathname === '/';
   const isExam = pathname.startsWith('/practice/exam/');
   const isResults = pathname === '/practice/results';
+  const isYearChoosing = pathname.startsWith('/practice/grade/') && pathname.includes('/subject/');
   const isQuestionFlow = isExam && pathname.split('/').length > 4;
   const title = getPageTitle(pathname);
 
@@ -32,7 +33,7 @@ export default function TopAppBar() {
   return (
     <header style={bar}>
       <div style={inner}>
-        {isExam || isResults ? (
+        {isExam || isResults || isYearChoosing ? (
           <>
             <button type="button" onClick={goBackFromExam} aria-label="Go back" style={examBackButton}>
               <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none">
