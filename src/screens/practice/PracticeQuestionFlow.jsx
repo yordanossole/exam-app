@@ -95,6 +95,11 @@ export default function PracticeQuestionFlow({ exam, questions }) {
   const [feedback, setFeedback] = useState(null);
   const [checking, setChecking] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportText, setReportText] = useState('');
+  const [reportSubmitted, setReportSubmitted] = useState(false);
+  const [reportError, setReportError] = useState('');
+  const [reportSubmitting, setReportSubmitting] = useState(false);
 
   const question = questions[index];
   const isLast = index === questions.length - 1;
@@ -125,6 +130,35 @@ export default function PracticeQuestionFlow({ exam, questions }) {
     setIndex(boundedIndex);
     setSelected(answers[nextQuestion.question_id] ?? null);
     setFeedback(null);
+    setReportOpen(false);
+    setReportText('');
+    setReportSubmitted(false);
+    setReportError('');
+  }
+
+  async function submitReport() {
+    const message = reportText.trim();
+    if (!message) {
+      setReportError('Please describe the issue before sending.');
+      return;
+    }
+
+    setReportSubmitting(true);
+    setReportError('');
+    try {
+      const response = await fetch(`/api/exams/${exam.exam_id}/questions/${question.question_id}/report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
+      if (!response.ok) throw new Error('Report failed');
+      setReportSubmitted(true);
+      setReportText('');
+    } catch {
+      setReportError('The report could not be sent. Please try again.');
+    } finally {
+      setReportSubmitting(false);
+    }
   }
 
   function saveCurrentAnswer(letter = selectedLetter) {
@@ -254,6 +288,30 @@ export default function PracticeQuestionFlow({ exam, questions }) {
           )}
         </div>
 
+        <section style={reportWrap}>
+          <button type="button" onClick={() => setReportOpen(open => !open)} style={reportButton}>
+            <span aria-hidden="true">⚑</span> Report issue
+          </button>
+          {reportOpen && !reportSubmitted && (
+            <div style={reportPanel}>
+              <p style={reportPrompt}>Found an incorrect question, answer, or explanation? Tell us what needs fixing.</p>
+              <textarea
+                value={reportText}
+                onChange={event => setReportText(event.target.value)}
+                placeholder="Describe the issue..."
+                aria-label="Describe the issue"
+                rows={4}
+                style={reportInput}
+              />
+              {reportError && <p style={reportErrorText}>{reportError}</p>}
+              <Button size="sm" disabled={reportSubmitting} onClick={submitReport}>
+                {reportSubmitting ? 'Sending...' : 'Send report'}
+              </Button>
+            </div>
+          )}
+          {reportSubmitted && <p style={reportSuccess}>Thanks — your report was sent for review.</p>}
+        </section>
+
         <div style={{ height: 160 }} />
       </section>
 
@@ -303,6 +361,13 @@ const thStyle = { border: '1px solid var(--color-border)', padding: 8, backgroun
 const tdStyle = { border: '1px solid var(--color-border)', padding: 8, textAlign: 'left' };
 const hintCard = { display: 'grid', gap: 10, background: 'var(--color-accent-tint)', color: 'var(--color-text-primary)', border: '1px solid var(--color-accent)', borderRadius: 12, padding: 14, font: 'var(--text-body-med)' };
 const correctCard = { ...hintCard, background: 'var(--color-success-tint)', border: '1px solid var(--color-success)' };
+const reportWrap = { margin: '18px 0 0' };
+const reportButton = { display: 'inline-flex', alignItems: 'center', gap: 6, minHeight: 36, padding: '7px 10px', borderRadius: 9, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text-secondary)', font: 'var(--text-label)', cursor: 'pointer' };
+const reportPanel = { display: 'grid', gap: 10, marginTop: 10, padding: 12, borderRadius: 12, border: '1px solid var(--color-border)', background: 'var(--color-surface-alt)' };
+const reportPrompt = { font: 'var(--text-caption)', color: 'var(--color-text-secondary)' };
+const reportInput = { width: '100%', resize: 'vertical', minHeight: 88, padding: 10, borderRadius: 9, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text-primary)', font: 'var(--text-body-med)', fontFamily: 'var(--font-body)' };
+const reportErrorText = { font: 'var(--text-caption)', color: 'var(--color-error)' };
+const reportSuccess = { marginTop: 10, font: 'var(--text-caption)', color: 'var(--color-success)' };
 const footer = { position: 'fixed', left: 0, right: 0, bottom: 56, maxWidth: 560, margin: '0 auto', display: 'flex', gap: 8, padding: '10px 16px', paddingBottom: 'max(10px, env(safe-area-inset-bottom))', background: 'var(--color-surface)', borderTop: '1px solid var(--color-border)' };
 const footerButton = { flex: 1, minWidth: 0, minHeight: 36, height: 38, padding: '8px 6px', borderRadius: 10, font: 'var(--text-label)', fontSize: 12, whiteSpace: 'nowrap' };
 const unavailableCard = { display: 'grid', gap: 16, margin: '80px 16px', padding: 18, borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)' };

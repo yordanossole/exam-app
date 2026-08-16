@@ -77,4 +77,14 @@ CREATE INDEX IF NOT EXISTS idx_sections_exam ON sections(exam_id);
 CREATE INDEX IF NOT EXISTS idx_questions_exam ON questions(exam_id);
 CREATE INDEX IF NOT EXISTS idx_questions_section ON questions(section_id);
 CREATE INDEX IF NOT EXISTS idx_media_exam ON media(exam_id);
+
+CREATE TABLE IF NOT EXISTS question_reports (
+  report_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+  exam_id     TEXT NOT NULL REFERENCES exams(exam_id) ON DELETE CASCADE,
+  question_id TEXT NOT NULL REFERENCES questions(question_id) ON DELETE CASCADE,
+  message     TEXT NOT NULL,
+  created_at  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_question_reports_question ON question_reports(question_id);
 `;
