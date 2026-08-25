@@ -18,6 +18,8 @@ import {
   onMainButtonClick,
   restoreInitData,
   retrieveRawInitData,
+  requestFullscreen,
+  isFullscreen,
   setMainButtonParams,
   showBackButton,
   hideBackButton,
@@ -26,7 +28,9 @@ import {
   unmountMiniApp,
   unmountThemeParams,
   unmountViewport,
+  viewportContentSafeAreaInsets,
   viewportHeight,
+  viewportSafeAreaInsets,
 } from '@telegram-apps/sdk-react';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -121,7 +125,37 @@ export function TelegramProvider({ children }) {
       };
       syncViewportHeight();
       cleanups.push(viewportHeight.sub(syncViewportHeight));
+
+      // Some Android Telegram versions expose the inset values through SDK
+      // events before/without injecting Telegram's CSS variables. Mirror the
+      // reactive signals into stable app tokens and use the larger of device
+      // and Telegram-content insets—never their sum—to avoid both overlap and
+      // an unnecessarily large top gap.
+      const syncSafeAreas = () => {
+        const safe = viewportSafeAreaInsets();
+        const content = viewportContentSafeAreaInsets();
+        for (const side of ['top', 'right', 'bottom', 'left']) {
+          root.style.setProperty(`--app-safe-area-${side}`, `${safe[side]}px`);
+          root.style.setProperty(`--app-content-safe-area-${side}`, `${Math.max(safe[side], content[side])}px`);
+        }
+      };
+      syncSafeAreas();
+      cleanups.push(viewportSafeAreaInsets.sub(syncSafeAreas));
+      cleanups.push(viewportContentSafeAreaInsets.sub(syncSafeAreas));
       expandViewport.ifAvailable();
+
+      // Bot API 8.0+: expand() only maximizes the sheet, while this requests
+      // true edge-to-edge display underneath the device status bar. Calling it
+      // for every mount keeps bot/menu/direct-link launches consistent.
+      const syncFullscreenState = () => {
+        root.dataset.telegramFullscreen = String(isFullscreen());
+      };
+      syncFullscreenState();
+      cleanups.push(isFullscreen.sub(syncFullscreenState));
+      const fullscreenPromise = valueFromSafeCall(requestFullscreen.ifAvailable());
+      fullscreenPromise?.catch(() => {
+        // Telegram clients before 8.0 continue in expanded, non-fullscreen mode.
+      });
     }).catch(() => {
       // Older clients still get a useful window.innerHeight fallback above.
     });
@@ -164,7 +198,12 @@ export function TelegramProvider({ children }) {
       cleanupSdk();
       delete root.dataset.telegramMiniApp;
       delete root.dataset.telegramTheme;
+      delete root.dataset.telegramFullscreen;
       root.style.removeProperty('--app-viewport-height');
+      for (const side of ['top', 'right', 'bottom', 'left']) {
+        root.style.removeProperty(`--app-safe-area-${side}`);
+        root.style.removeProperty(`--app-content-safe-area-${side}`);
+      }
     };
   }, [dispatch]);
 

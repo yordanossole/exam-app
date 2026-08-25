@@ -10,7 +10,7 @@
 .telegram-auth-error {
   position: fixed;
   z-index: 1000;
-  top: max(12px, env(safe-area-inset-top));
+  top: max(12px, var(--app-content-safe-area-top));
   left: 50%;
   width: min(calc(100% - 24px), 480px);
   transform: translateX(-50%);

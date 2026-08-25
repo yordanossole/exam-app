@@ -349,7 +349,7 @@ export default function PracticeQuestionFlow({ exam, questions }) {
   );
 }
 
-const shell = { height: 'calc(var(--app-viewport-height) - 64px)', minHeight: 0, maxWidth: 560, margin: '0 auto', background: 'var(--color-bg)', display: 'flex', flexDirection: 'column', overflow: 'hidden' };
+const shell = { height: 'calc(var(--app-viewport-height) - var(--app-header-height))', minHeight: 0, maxWidth: 560, margin: '0 auto', background: 'var(--color-bg)', display: 'flex', flexDirection: 'column', overflow: 'hidden' };
 const topBar = { position: 'sticky', top: 0, zIndex: 20, display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' };
 const content = { flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain', padding: 16 };
 const passageCard = { background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 16, marginBottom: 14, whiteSpace: 'pre-wrap' };
@@ -379,7 +379,7 @@ const reportPrompt = { font: 'var(--text-caption)', color: 'var(--color-text-sec
 const reportInput = { width: '100%', resize: 'vertical', minHeight: 88, padding: 10, borderRadius: 9, border: '1px solid var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-text-primary)', font: 'var(--text-body-med)', fontFamily: 'var(--font-body)' };
 const reportErrorText = { font: 'var(--text-caption)', color: 'var(--color-error)' };
 const reportSuccess = { marginTop: 10, font: 'var(--text-caption)', color: 'var(--color-success)' };
-const footer = { position: 'fixed', left: 0, right: 0, bottom: 56, maxWidth: 560, margin: '0 auto', display: 'flex', gap: 8, padding: '10px 16px', paddingBottom: 'max(10px, env(safe-area-inset-bottom))', background: 'var(--color-surface)', borderTop: '1px solid var(--color-border)' };
+const footer = { position: 'fixed', left: 0, right: 0, bottom: 'calc(56px + var(--app-content-safe-area-bottom))', maxWidth: 560, margin: '0 auto', display: 'flex', gap: 8, padding: '10px max(16px, var(--app-content-safe-area-right)) 10px max(16px, var(--app-content-safe-area-left))', background: 'var(--color-surface)', borderTop: '1px solid var(--color-border)' };
 const footerButton = { flex: 1, minWidth: 0, minHeight: 36, height: 38, padding: '8px 6px', borderRadius: 10, font: 'var(--text-label)', fontSize: 12, whiteSpace: 'nowrap' };
 const unavailableCard = { display: 'grid', gap: 16, margin: '80px 16px', padding: 18, borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)' };
 const backButton = { minHeight: 44, borderRadius: 10, background: 'var(--color-primary)', color: '#fff', font: 'var(--text-btn)' };

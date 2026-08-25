@@ -101,14 +101,20 @@ function getBackFallback(pathname) {
 }
 
 const bar = {
-  position: 'sticky', top: 0, zIndex: 300,
+  // The shell supplies the initial inset; this keeps the sticky state below
+  // Telegram's fullscreen Close/dropdown/menu controls while scrolling.
+  position: 'sticky', top: 'var(--app-content-safe-area-top)', zIndex: 300,
   background: 'var(--color-surface)',
   borderBottom: '1px solid var(--color-border)',
   boxShadow: '0 2px 8px rgba(11, 16, 32, 0.06)',
 };
 const inner = {
   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-  width: '100%', maxWidth: 480, minHeight: 64, margin: '0 auto', padding: '10px var(--screen-pad)',
+  width: '100%', maxWidth: 480, minHeight: 64, margin: '0 auto',
+  paddingTop: 10,
+  paddingRight: 'calc(var(--screen-pad) + var(--app-content-safe-area-right))',
+  paddingBottom: 10,
+  paddingLeft: 'calc(var(--screen-pad) + var(--app-content-safe-area-left))',
 };
 const brandButton = {
   display: 'inline-flex', alignItems: 'center', minHeight: 44, padding: 0,

@@ -21,7 +21,9 @@ export default function BottomTabBar() {
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 200,
         background: 'var(--color-surface)',
         borderTop: '1px solid var(--color-border)',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        paddingRight: 'var(--app-content-safe-area-right)',
+        paddingBottom: 'var(--app-content-safe-area-bottom)',
+        paddingLeft: 'var(--app-content-safe-area-left)',
       }}
     >
       <div style={{ display: 'flex', maxWidth: 480, margin: '0 auto' }}>

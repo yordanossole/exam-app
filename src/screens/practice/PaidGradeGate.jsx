@@ -37,7 +37,7 @@ export default function PaidGradeGate({ grade, children }) {
   return children;
 }
 
-const shell = { minHeight: 'calc(var(--app-viewport-height) - 64px)', maxWidth: 520, margin: '0 auto', padding: 16, background: 'var(--color-bg)' };
+const shell = { minHeight: 'calc(var(--app-viewport-height) - var(--app-header-height))', maxWidth: 520, margin: '0 auto', padding: 16, background: 'var(--color-bg)' };
 const card = { display: 'grid', gap: 12, padding: 18, borderRadius: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-card)' };
 const title = { font: 'var(--text-screen-title)', color: 'var(--color-text-strong)' };
 const body = { font: 'var(--text-body)', lineHeight: 1.45, color: 'var(--color-text-secondary)' };

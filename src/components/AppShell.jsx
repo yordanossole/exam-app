@@ -20,5 +20,8 @@ export default function AppShell({ children }) {
 
 const shell = {
   minHeight: 'var(--app-viewport-height)',
+  // In fullscreen Telegram draws its native controls over the web viewport.
+  // Begin application chrome below the content-safe region it reports.
+  paddingTop: 'var(--app-content-safe-area-top)',
   background: 'var(--color-bg)',
 };

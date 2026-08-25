@@ -51,7 +51,7 @@ export default function PracticeLanding({ catalog }) {
   );
 }
 
-const shell = { minHeight: 'calc(var(--app-viewport-height) - 64px)', maxWidth: 520, margin: '0 auto', padding: 16, background: 'var(--color-bg)' };
+const shell = { minHeight: 'calc(var(--app-viewport-height) - var(--app-header-height))', maxWidth: 520, margin: '0 auto', padding: 16, background: 'var(--color-bg)' };
 const eyebrow = { font: 'var(--text-label)', letterSpacing: 'var(--ls-wide)', textTransform: 'uppercase', color: 'var(--color-primary)', marginBottom: 8 };
 const title = { font: 'var(--text-screen-title)', color: 'var(--color-text-strong)', lineHeight: 1.25, marginBottom: 8 };
 const subtitle = { font: 'var(--text-body)', color: 'var(--color-text-secondary)', marginBottom: 20 };
