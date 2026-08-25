@@ -12,6 +12,11 @@ export const runtime = 'nodejs';
 
 const requestSchema = z.object({ initData: z.string().min(1).max(16_384) });
 
+function telegramFreeGrade(): 6 | 8 | 12 {
+  const configuredGrade = Number(process.env.TELEGRAM_FREE_GRADE);
+  return configuredGrade === 8 || configuredGrade === 12 ? configuredGrade : 6;
+}
+
 export async function POST(request: Request) {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   if (!botToken) {
@@ -35,7 +40,15 @@ export async function POST(request: Request) {
       avatar_url: telegramUser.photo_url ?? null,
       role: 'student',
       status: 'active',
-      active_subscription: null,
+      // Every verified Telegram launch receives the free Telegram plan. The
+      // grade is configurable, while Grade 6 remains the safe default.
+      active_subscription: {
+        status: 'active',
+        grade: telegramFreeGrade(),
+        plan_id: 'telegram-free',
+        name: 'Telegram Free',
+        is_free: true,
+      },
     };
 
     const response = NextResponse.json({ user });
@@ -55,4 +68,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 401, headers: { 'Cache-Control': 'no-store' } });
   }
 }
-

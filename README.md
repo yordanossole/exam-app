@@ -40,6 +40,8 @@ Copy `.env.example` to `.env.local` and set `TELEGRAM_BOT_TOKEN` to the token fr
 
 On each Telegram launch, raw signed `initData` is posted to `/api/auth/telegram`. The route validates Telegram's two-stage HMAC-SHA256 signature and `auth_date` before reading the Telegram user, then issues a signed HTTP-only session cookie. Invalid, stale, or malformed data receives a `401`; a missing server token receives a `503`.
 
+Verified Telegram users automatically receive the `Telegram Free` plan for Grade 6, so they can open the exam library without payment. Set `TELEGRAM_FREE_GRADE` to `8` or `12` to expose a different grade.
+
 ## Routes
 
 - `/` — home

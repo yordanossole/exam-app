@@ -13,7 +13,13 @@ export type TelegramSessionUser = {
   avatar_url: string | null;
   role: 'student';
   status: 'active';
-  active_subscription: null;
+  active_subscription: {
+    status: 'active';
+    grade: 6 | 8 | 12;
+    plan_id: 'telegram-free';
+    name: 'Telegram Free';
+    is_free: true;
+  };
 };
 
 type TelegramSession = {
@@ -58,4 +64,3 @@ export function readTelegramSessionCookie(cookie: string | undefined, secret: st
     return null;
   }
 }
-
