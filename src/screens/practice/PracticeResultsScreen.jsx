@@ -56,9 +56,9 @@ export default function PracticeResultsScreen() {
   );
 }
 
-const shell = { minHeight: '100dvh', maxWidth: 560, margin: '0 auto', background: 'var(--color-bg)' };
+const shell = { minHeight: 'var(--app-viewport-height)', maxWidth: 560, margin: '0 auto', background: 'var(--color-bg)' };
 const content = { padding: '12px 16px 96px' };
-const shellCentered = { ...content, minHeight: 'calc(100dvh - 64px)', display: 'grid', placeItems: 'center', gap: 12, textAlign: 'center' };
+const shellCentered = { ...content, minHeight: 'calc(var(--app-viewport-height) - 64px)', display: 'grid', placeItems: 'center', gap: 12, textAlign: 'center' };
 const subtitle = { font: 'var(--text-body)', color: 'var(--color-text-secondary)', textAlign: 'center', margin: '0 0 24px' };
 const pendingNotice = { font: 'var(--text-body)', color: 'var(--color-accent)', background: 'var(--color-accent-tint)', border: '1px solid var(--color-accent)', borderRadius: 12, padding: 12, marginBottom: 16 };
 const section = { background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 16, marginBottom: 16 };

@@ -36,7 +36,7 @@ export default async function Page({ params }: { params: Promise<{ grade: string
   );
 }
 
-const shell = { minHeight: '100dvh', maxWidth: 520, margin: '0 auto', padding: 16, background: 'var(--color-bg)' } as const;
+const shell = { minHeight: 'var(--app-viewport-height)', maxWidth: 520, margin: '0 auto', padding: 16, background: 'var(--color-bg)' } as const;
 const title = { font: 'var(--text-screen-title)', color: 'var(--color-text-strong)', marginTop: 8, textTransform: 'capitalize' } as const;
 const subtitle = { font: 'var(--text-body)', color: 'var(--color-text-secondary)', margin: '8px 0 20px' } as const;
 const grid = { display: 'grid', gap: 12 } as const;

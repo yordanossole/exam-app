@@ -6,3 +6,19 @@
 
 /* ── Brand design tokens (colors, type scale, spacing, motion) ── */
 @import './tokens.css';
+
+.telegram-auth-error {
+  position: fixed;
+  z-index: 1000;
+  top: max(12px, env(safe-area-inset-top));
+  left: 50%;
+  width: min(calc(100% - 24px), 480px);
+  transform: translateX(-50%);
+  padding: 12px 14px;
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-btn);
+  background: var(--color-error-tint);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-raised);
+  font: var(--text-caption);
+}

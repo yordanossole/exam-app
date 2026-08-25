@@ -7,15 +7,18 @@ import { useAppContext } from '../context/AppContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
 import { getPaidGrade } from '../lib/subscription';
+import { useTelegram } from '../context/TelegramContext';
 
 export default function TopAppBar() {
   const navigate = useNavigate();
   const { state } = useAppContext();
   const { theme } = useTheme();
+  const { isTelegram, telegramTheme } = useTelegram();
   const { t } = useLanguage();
   const pathname = usePathname();
   const paidGrade = getPaidGrade(state.user);
-  const logoSrc = theme === 'dark' ? '/@Logos/logo-white.png' : '/@Logos/logo-blue.png';
+  const effectiveTheme = isTelegram ? telegramTheme : theme;
+  const logoSrc = effectiveTheme === 'dark' ? '/@Logos/logo-white.png' : '/@Logos/logo-blue.png';
   const isHome = pathname === '/';
   const isRootPage = pathname === '/' || pathname === '/practice' || pathname === '/profile';
   const isQuestionFlow = /^\/practice\/exam\/[^/]+\/exam$/.test(pathname);
@@ -35,11 +38,13 @@ export default function TopAppBar() {
       <div style={inner}>
         {!isRootPage ? (
           <>
-            <button type="button" onClick={goBack} aria-label={t('nav.goBack')} style={backButton}>
-              <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none">
-                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
+            {!isTelegram && (
+              <button type="button" onClick={goBack} aria-label={t('nav.goBack')} style={backButton}>
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none">
+                  <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            )}
             {isQuestionFlow && <ExamTimer key={pathname} />}
           </>
         ) : (

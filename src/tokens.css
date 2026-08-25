@@ -10,6 +10,9 @@
    LIGHT MODE (default)
    ══════════════════════════════════════════════════ */
 :root {
+  /* Overridden reactively by TelegramContext while inside a Mini App. */
+  --app-viewport-height: 100dvh;
+
   /* ── Brand palette ──────────────────────────── */
   --nt-blue:          #2E6AFC;   /* Nova Blue — primary */
   --nt-orange:        #DB743A;   /* Spark Orange — warm/mock CTA */
@@ -112,6 +115,26 @@
   --tag-chem:    #1E1A00;
   --tag-phys:    #1A0E30;
 }
+
+/* Telegram's bound theme variables update automatically on theme_changed. */
+html[data-telegram-mini-app="true"] {
+  --color-bg: var(--tg-theme-bg-color, #F7F8FC);
+  --color-surface: var(--tg-theme-section-bg-color, var(--tg-theme-secondary-bg-color, #FFFFFF));
+  --color-surface-alt: var(--tg-theme-secondary-bg-color, #EDF1FA);
+  --color-border: var(--tg-theme-section-separator-color, var(--tg-theme-hint-color, #DCE3F2));
+  --color-text-primary: var(--tg-theme-text-color, #1C2434);
+  --color-text-strong: var(--tg-theme-text-color, #0B1020);
+  --color-text-secondary: var(--tg-theme-subtitle-text-color, var(--tg-theme-hint-color, #5A657D));
+  --color-text-muted: var(--tg-theme-hint-color, #8C96A8);
+  --color-primary: var(--tg-theme-button-color, var(--tg-theme-link-color, #2E6AFC));
+  --color-primary-hover: var(--tg-theme-link-color, #2558D6);
+  --color-primary-tint: var(--tg-theme-secondary-bg-color, #EAF0FF);
+  --color-accent: var(--tg-theme-accent-text-color, var(--tg-theme-link-color, #DB743A));
+  --color-error: var(--tg-theme-destructive-text-color, #E24C4C);
+}
+
+html[data-telegram-theme="light"] { color-scheme: light; }
+html[data-telegram-theme="dark"] { color-scheme: dark; }
 
 /* ══════════════════════════════════════════════════
    TYPOGRAPHY — Plus Jakarta Sans + Manrope

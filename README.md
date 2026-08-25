@@ -32,6 +32,14 @@ The importer reads `exams/Exam_Data_Entry_Template.xlsx`, detects each sheet's r
 
 The root layout provides the uniform top app bar, logo, subscription-grade badge, and bottom navigation across the application. The active exam screen keeps its question controls above the shared navigation.
 
+## Telegram Mini App
+
+The root client providers initialize `@telegram-apps/sdk-react` only when Telegram launch parameters are present. Telegram receives `ready()` and `expand()` immediately; its theme and viewport values are bound to CSS variables, and native Back/Main Buttons are used on supported clients. Normal browser visits continue to use the existing theme, navigation, and HTML action buttons.
+
+Copy `.env.example` to `.env.local` and set `TELEGRAM_BOT_TOKEN` to the token from BotFather. The token is server-only and must never use a `NEXT_PUBLIC_` prefix. `TELEGRAM_SESSION_SECRET` is optional but recommended in production so session signing can be rotated separately from the bot token.
+
+On each Telegram launch, raw signed `initData` is posted to `/api/auth/telegram`. The route validates Telegram's two-stage HMAC-SHA256 signature and `auth_date` before reading the Telegram user, then issues a signed HTTP-only session cookie. Invalid, stale, or malformed data receives a `401`; a missing server token receives a `503`.
+
 ## Routes
 
 - `/` — home

@@ -18,15 +18,25 @@ const initialState = {
   },
   currentSession: null, // { examId, subjectId, currentIndex, answers: {qId: optionId}, submitted: bool, questions: [] }
   isOffline: false,
+  authSource: 'browser',
+  authStatus: 'authenticated',
 };
 
 function appReducer(state, action) {
   switch (action.type) {
     case 'LOGIN_SUCCESS':
       return { ...state, isAuthenticated: true, user: action.payload };
+    case 'TELEGRAM_AUTH_START':
+      return { ...state, isAuthenticated: false, user: null, authSource: 'telegram', authStatus: 'authenticating' };
+    case 'TELEGRAM_AUTH_SUCCESS':
+      return { ...state, isAuthenticated: true, user: action.payload, authSource: 'telegram', authStatus: 'authenticated' };
+    case 'TELEGRAM_AUTH_FAILED':
+      return { ...state, isAuthenticated: false, user: null, authSource: 'telegram', authStatus: 'error' };
     case 'LOGOUT':
       return { ...state, isAuthenticated: false, user: null };
     case 'SET_USER':
+      // A legacy token response must never replace a server-verified Telegram identity.
+      if (state.authSource === 'telegram') return state;
       return { ...state, user: action.payload };
     case 'START_EXAM':
       return {

@@ -145,7 +145,7 @@ export default function HomeScreen({ library = [] }) {
   );
 }
 
-const screenWrap = { display: 'flex', flexDirection: 'column', minHeight: '100dvh', maxWidth: 480, margin: '0 auto', background: 'var(--color-bg)' };
+const screenWrap = { display: 'flex', flexDirection: 'column', minHeight: 'var(--app-viewport-height)', maxWidth: 480, margin: '0 auto', background: 'var(--color-bg)' };
 const scrollContent = { flex: 1, overflowY: 'auto', padding: 'var(--space-4) var(--screen-pad)', WebkitOverflowScrolling: 'touch' };
 const intro = { marginBottom: 20 };
 const greeting = { font: 'var(--text-body)', fontSize: 14, color: 'var(--color-text-secondary)', marginBottom: 6 };

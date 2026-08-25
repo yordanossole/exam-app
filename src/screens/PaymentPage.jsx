@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLocation, useNavigate } from '../lib/navigation';
 import { paymentApi } from '../services/api';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import { useLanguage } from '../context/LanguageContext';
+import { useTelegramMainButton } from '../context/TelegramContext';
 
 export default function PaymentPage() {
   const location = useLocation();
@@ -16,6 +17,14 @@ export default function PaymentPage() {
   const [loading,   setLoading]   = useState(false);
   const [file,      setFile]      = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const formRef = useRef(null);
+  const usesTelegramMainButton = useTelegramMainButton({
+    text: loading ? t('payment.submitting') : t('payment.submitProof'),
+    onClick: () => formRef.current?.requestSubmit(),
+    disabled: loading,
+    loading,
+    visible: Boolean(plan && !submitted),
+  });
 
   if (!plan) {
     return (
@@ -112,7 +121,7 @@ export default function PaymentPage() {
 
         {/* Upload form */}
         <Card style={{ marginBottom: 24 }}>
-          <form onSubmit={handleSubmit}>
+          <form ref={formRef} onSubmit={handleSubmit}>
             <p style={labelStyle}>{t('payment.uploadTitle')}</p>
             <p style={{ font: 'var(--text-body)', color: 'var(--color-text-secondary)', marginBottom: 16 }}>
               {t('payment.uploadDescription')}
@@ -141,7 +150,7 @@ export default function PaymentPage() {
               {file ? `✓ ${file.name}` : t('payment.chooseFile')}
             </label>
 
-            <Button full size="lg" type="submit" disabled={loading}>
+            <Button full size="lg" type="submit" disabled={loading} style={usesTelegramMainButton ? { display: 'none' } : undefined}>
               {loading ? t('payment.submitting') : t('payment.submitProof')}
             </Button>
           </form>
@@ -155,7 +164,7 @@ export default function PaymentPage() {
 
 const screenWrap = {
   display: 'flex', flexDirection: 'column',
-  minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
+  minHeight: 'var(--app-viewport-height)', maxWidth: 480, margin: '0 auto',
   background: 'var(--color-bg)',
 };
 const scrollContent = {

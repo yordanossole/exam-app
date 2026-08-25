@@ -19,6 +19,6 @@ export default function AppShell({ children }) {
 }
 
 const shell = {
-  minHeight: '100dvh',
+  minHeight: 'var(--app-viewport-height)',
   background: 'var(--color-bg)',
 };

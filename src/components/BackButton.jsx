@@ -1,9 +1,14 @@
 'use client';
 
 import { useNavigate } from '../lib/navigation';
+import { useTelegram } from '../context/TelegramContext';
 
 export default function BackButton({ fallback = '/', label = 'Back', iconOnly = false }) {
   const navigate = useNavigate();
+  const { isTelegram } = useTelegram();
+
+  // Telegram supplies its native Back Button through TelegramProvider.
+  if (isTelegram) return null;
 
   function goBack() {
     if (typeof window !== 'undefined' && window.history.length > 1) {

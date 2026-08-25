@@ -7,6 +7,7 @@ import { getPaidGrade } from '../../lib/subscription';
 import Button from '../../components/Button';
 import QuestionNavigator from '../../components/QuestionNavigator';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTelegramMainButton } from '../../context/TelegramContext';
 
 function parseTableRows(tableContent) {
   return String(tableContent || '')
@@ -106,6 +107,13 @@ export default function PracticeQuestionFlow({ exam, questions }) {
 
   const question = questions[index];
   const isLast = index === questions.length - 1;
+  const usesTelegramMainButton = useTelegramMainButton({
+    text: isLast ? t('question.submit') : t('question.next'),
+    onClick: next,
+    disabled: submitting,
+    loading: submitting,
+    visible: getPaidGrade(state.user) === exam.grade,
+  });
 
   const savedSelection = answers[question.question_id] ?? null;
   const selectedLetter = selected ?? savedSelection;
@@ -335,13 +343,13 @@ export default function PracticeQuestionFlow({ exam, questions }) {
         >
           {checking ? t('question.checking') : t('question.check')}
         </Button>
-        <Button style={footerButton} disabled={submitting} onClick={next}>{isLast ? t('question.submit') : t('question.next')}</Button>
+        <Button style={{ ...footerButton, ...(usesTelegramMainButton ? { display: 'none' } : {}) }} disabled={submitting} onClick={next}>{isLast ? t('question.submit') : t('question.next')}</Button>
       </footer>
     </main>
   );
 }
 
-const shell = { height: 'calc(100dvh - 64px)', minHeight: 0, maxWidth: 560, margin: '0 auto', background: 'var(--color-bg)', display: 'flex', flexDirection: 'column', overflow: 'hidden' };
+const shell = { height: 'calc(var(--app-viewport-height) - 64px)', minHeight: 0, maxWidth: 560, margin: '0 auto', background: 'var(--color-bg)', display: 'flex', flexDirection: 'column', overflow: 'hidden' };
 const topBar = { position: 'sticky', top: 0, zIndex: 20, display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' };
 const content = { flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain', padding: 16 };
 const passageCard = { background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 16, marginBottom: 14, whiteSpace: 'pre-wrap' };

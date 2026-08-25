@@ -28,7 +28,7 @@ api.interceptors.response.use(
 );
 
 export const authApi = {
-  loginWithTelegram: (initData) => api.post('/auth/telegram', { init_data: initData }),
+  loginWithTelegram: (initData) => axios.post('/api/auth/telegram', { initData }),
 };
 
 export const userApi = {

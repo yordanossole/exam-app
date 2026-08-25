@@ -63,7 +63,7 @@ export default function ProfilePage() {
 
 const screenWrap = {
   display: 'flex', flexDirection: 'column',
-  minHeight: '100dvh', maxWidth: 480, margin: '0 auto',
+  minHeight: 'var(--app-viewport-height)', maxWidth: 480, margin: '0 auto',
   background: 'var(--color-bg)',
 };
 const scrollContent = {
